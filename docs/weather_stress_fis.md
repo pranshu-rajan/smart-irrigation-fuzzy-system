@@ -217,7 +217,7 @@ class WeatherStressFIS:
 ## 7. Verification Summary
 
 - **Test Suite**: 21 unit and regression tests in `tests/test_weather_stress.py`.
-- **Global Regression**: 141/141 passing across all 8 phases (0 failures, 0 errors, 0 warnings).
+- **Global Regression**: 141/141 passing across the historical 8-phase snapshot; see docs/FINAL_VERIFICATION_REPORT.md for the current release status.
 - **Sanity Verification**: All 6 benchmark operating cases verified (Cool/Humid $\to 13.11\%$, Normal $\to 45.00\%$, Hot/Dry $\to 79.17\%$, Extreme Hot/Dry $\to 89.29\%$, Heavy Rain $\to 16.00\%$, Rain Relief $\Delta = -63.17\%$).
 - **Monotonicity**: Rigorously proven across all 5 physical dimensions.
 - **Coverage**: Zero rule gaps or zero-area fallbacks across 6,125 grid test points.

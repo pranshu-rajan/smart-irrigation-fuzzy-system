@@ -198,7 +198,7 @@ All parameters are fully configuration-driven via `config/config.json` and `conf
 - [x] **Phase 20**: Next.js 16 + React 19 Frontend Platform (12 Interactive Pages) (`frontend/`)
 - [x] **Phase 21–22**: Groq LLM Advisory Copilot & Grounded RAG (`backend/app/services/ai_service.py`)
 - [x] **Phase 23**: Automated Engineering Audit PDF Reports via ReportLab (`backend/app/services/report_service.py`)
-- [x] **Phase 24**: Comprehensive Test Suite (300 Automated Tests Passing)
+- [x] **Phase 24**: Comprehensive Test Suite infrastructure and regression coverage (full suite includes long-running integration tests)
 
 ---
 
@@ -213,11 +213,13 @@ Interactive API documentation is available at `http://localhost:8000/docs`.
 
 ### 9.2 Frontend Application (Next.js 16)
 ```bash
-# In frontend/ directory:
-npm install
+cd frontend
+npm ci
 npm run dev
 ```
 Open `http://localhost:3000` to access the full-stack engineering platform.
+
+For production, set `NEXT_PUBLIC_API_BASE` to the deployed Render API (see `frontend/.env.production.example`).
 
 ### 9.3 Running Automated Tests
 ```bash

@@ -29,6 +29,7 @@ from backend.app.api.routes.allocation import router as allocation_router
 from backend.app.api.routes.optimization import router as optimization_router
 from backend.app.api.routes.ai import router as ai_router
 from backend.app.api.routes.reports import router as reports_router
+from backend.app.api.routes.verification import router as verification_router
 
 logger = get_logger("main")
 settings = get_settings()
@@ -44,7 +45,7 @@ app = FastAPI(
 # CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -62,6 +63,7 @@ app.include_router(allocation_router, prefix="/api")
 app.include_router(optimization_router, prefix="/api")
 app.include_router(ai_router, prefix="/api")
 app.include_router(reports_router, prefix="/api")
+app.include_router(verification_router, prefix="/api")
 
 
 # Backward compatibility root health check
@@ -103,7 +105,8 @@ def api_root():
             "allocation": "/api/allocation/config",
             "optimization": "/api/optimization/summary",
             "scenarios": "/api/scenarios",
-            "reports": "/api/reports/generate"
+            "reports": "/api/reports/generate",
+            "verification": "/api/verification/system"
         },
         "version": settings.APP_VERSION,
     }

@@ -3,7 +3,13 @@
  * Connects Next.js frontend to FastAPI backend.
  */
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
+const DEFAULT_API_BASE =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:8000/api'
+    : 'https://smart-irrigation-fuzzy-system.onrender.com/api';
+
+export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || DEFAULT_API_BASE;
 
 // --- Interfaces ---
 
@@ -264,6 +270,8 @@ export const api = {
   getZoneStatus: () => fetchApi<ZoneStatus[]>('/zones/status'),
   updateZone: (id: number, data: Partial<ZoneConfig>) =>
     fetchApi<ZoneConfig>(`/zones/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  createZone: (data: Record<string, any>) =>
+    fetchApi<any>('/zones', { method: 'POST', body: JSON.stringify(data) }),
   getCrops: () => fetchApi<any[]>('/crops'),
   getSoils: () => fetchApi<any[]>('/soils'),
   getScenarios: () => fetchApi<any[]>('/scenarios'),
@@ -324,6 +332,9 @@ export const api = {
     }),
   getAllocationResults: (simulationId: string) =>
     fetchApi<any>(`/allocation/results/${simulationId}`),
+
+  // Live System Verification
+  verifySystem: () => fetchApi<any>('/verification/system'),
 
   // PSO Optimization
   getOptimizationSummary: () => fetchApi<OptimizationSummaryResponse>('/optimization/summary'),

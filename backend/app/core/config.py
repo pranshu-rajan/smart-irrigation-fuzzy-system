@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api"
 
     # CORS
-    ALLOWED_ORIGINS: List[str] = ["*"]
+    CORS_ORIGINS: str = "http://localhost:3000,https://irrigation-fuzzy-system.vercel.app"
 
     # Supabase / PostgreSQL Credentials
     SUPABASE_URL: Optional[str] = None
@@ -33,6 +33,12 @@ class Settings(BaseSettings):
     # Local Storage & Database
     LOCAL_DB_PATH: str = "data/platform.db"
     REPORTS_DIR: str = "reports/generated"
+
+    @property
+    def allowed_origins(self) -> List[str]:
+        """Return normalized CORS origins from a comma-separated environment value."""
+        origins = [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+        return origins or ["http://localhost:3000"]
 
     @property
     def has_supabase(self) -> bool:
