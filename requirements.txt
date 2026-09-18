@@ -1,0 +1,24 @@
+# Core Scientific & Computing
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+scikit-fuzzy>=0.4.2
+matplotlib>=3.7.0
+plotly>=5.14.0
+
+# Backend & API
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# Testing & Quality
+pytest>=7.3.0
+pytest-asyncio>=0.21.0
+httpx>=0.24.0
+
+# Production & Service Layer Libraries
+reportlab>=4.0.0
+groq>=0.4.0
+supabase>=2.0.0
+

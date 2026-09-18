@@ -1,0 +1,11 @@
+{
+  "simulation": {
+    "duration_hours": 24,
+    "timestep_minutes": 1
+  },
+  "zones": 3,
+  "controller": {
+    "type": "mamdani",
+    "defuzzification": "centroid"
+  }
+}
