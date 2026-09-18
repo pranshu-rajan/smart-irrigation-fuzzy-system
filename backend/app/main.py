@@ -86,3 +86,24 @@ def root():
         "docs": "/docs",
         "version": settings.APP_VERSION,
     }
+
+
+@app.get("/api", tags=["System"])
+def api_root():
+    """API base route returning endpoint index."""
+    return {
+        "status": "healthy",
+        "message": "Smart Multizone Fuzzy Irrigation Platform API is running.",
+        "docs": "/docs",
+        "endpoints": {
+            "health": "/api/health",
+            "zones": "/api/zones",
+            "simulations": "/api/simulations/run",
+            "fuzzy": "/api/fuzzy/overview",
+            "allocation": "/api/allocation/config",
+            "optimization": "/api/optimization/summary",
+            "scenarios": "/api/scenarios",
+            "reports": "/api/reports/generate"
+        },
+        "version": settings.APP_VERSION,
+    }
