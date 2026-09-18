@@ -334,10 +334,10 @@ export default function EndToEndStudioPage() {
   const stepsLabels = activeZoneRecords.map((r) => `${Math.floor(r.step / 60)}h`);
 
   const metrics = currentSimulation?.summary_metrics || {};
-  const totalReq = metrics.total_water_volume_requested_l || 0;
-  const totalAlloc = metrics.total_water_volume_allocated_l || 0;
-  const totalUnmet = metrics.total_water_volume_unmet_l || 0;
-  const fulfillmentRatio = metrics.overall_fulfillment_ratio ?? (totalReq > 0 ? (totalAlloc / totalReq) * 100 : 100);
+  const totalReq = metrics.total_requested_l || metrics.total_water_volume_requested_l || 0;
+  const totalAlloc = metrics.total_allocated_l || metrics.total_water_volume_allocated_l || 0;
+  const totalUnmet = metrics.total_unmet_l || metrics.total_water_volume_unmet_l || 0;
+  const fulfillmentRatio = metrics.system_fulfillment_ratio ?? metrics.overall_fulfillment_ratio ?? (totalReq > 0 ? (totalAlloc / totalReq) * 100 : 100);
 
   // Stepper Header Definitions
   const STEPS = [
