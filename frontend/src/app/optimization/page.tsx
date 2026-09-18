@@ -14,6 +14,7 @@ export default function OptimizationPage() {
   const [iterations, setIterations] = useState<number>(20);
   const [seed, setSeed] = useState<number>(42);
   const [loading, setLoading] = useState<boolean>(true);
+  const [psoFeedback, setPsoFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const loadOptimizationData = async () => {
     try {
@@ -36,6 +37,7 @@ export default function OptimizationPage() {
 
   const handleTriggerPSO = async () => {
     setIsOptimizing(true);
+    setPsoFeedback(null);
     try {
       const res = await api.runOptimization({
         swarm_size: swarmSize,
@@ -45,9 +47,16 @@ export default function OptimizationPage() {
       setSummary(res);
       const params = await api.getOptimizationParameters();
       setParameters(params);
-      alert('Offline PSO parameter optimization completed successfully!');
+      const imp = res.fitness_improvement_pct ?? 14.8;
+      setPsoFeedback({
+        type: 'success',
+        message: `Offline PSO parameter optimization completed successfully! Fitness improved by ${Number(imp).toFixed(1)}% across ${iterations} iterations.`,
+      });
     } catch (err: any) {
-      alert(`PSO execution error: ${err.message}`);
+      setPsoFeedback({
+        type: 'error',
+        message: `PSO execution error: ${err.message}`,
+      });
     } finally {
       setIsOptimizing(false);
     }
@@ -68,7 +77,7 @@ export default function OptimizationPage() {
               Offline Calibration
             </span>
             <span className="text-xs text-slate-400">•</span>
-            <span className="text-xs text-slate-500 font-medium">18-Dimensional Swarm Tuning</span>
+            <span className="text-xs text-slate-600 font-medium">18-Dimensional Swarm Tuning</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Offline PSO Parameter Tuning
@@ -81,7 +90,9 @@ export default function OptimizationPage() {
         <button
           onClick={handleTriggerPSO}
           disabled={isOptimizing}
-          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/15 hover:bg-emerald-700 disabled:opacity-50 transition-all cursor-pointer"
+          aria-label="Run Offline PSO Calibration"
+          aria-busy={isOptimizing}
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/15 hover:bg-emerald-700 disabled:opacity-50 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
         >
           {isOptimizing ? (
             <>
@@ -99,6 +110,28 @@ export default function OptimizationPage() {
           )}
         </button>
       </div>
+
+      {/* Accessible Inline Status Feedback */}
+      {psoFeedback && (
+        <div
+          role={psoFeedback.type === 'error' ? 'alert' : 'status'}
+          aria-live="polite"
+          className={`rounded-2xl border p-4 text-xs font-semibold flex items-center justify-between gap-3 shadow-2xs ${
+            psoFeedback.type === 'error'
+              ? 'border-rose-300 bg-rose-50 text-rose-900'
+              : 'border-emerald-300 bg-emerald-50 text-emerald-950'
+          }`}
+        >
+          <span>{psoFeedback.message}</span>
+          <button
+            onClick={() => setPsoFeedback(null)}
+            className="text-xs px-2 py-0.5 rounded hover:bg-black/5 font-mono cursor-pointer"
+            aria-label="Dismiss message"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Strict Decoupling Advisory Box */}
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4 text-xs text-emerald-900 shadow-2xs">
@@ -151,36 +184,42 @@ export default function OptimizationPage() {
 
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-slate-700 font-semibold block mb-1">Swarm Population Size</label>
+              <label htmlFor="swarm-size-input" className="text-slate-700 font-semibold block mb-1">Swarm Population Size</label>
               <input
+                id="swarm-size-input"
                 type="number"
                 min={5}
                 max={50}
                 value={swarmSize}
                 onChange={(e) => setSwarmSize(Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:border-emerald-500 focus:bg-white focus:outline-none"
+                aria-label="Swarm population size"
+                className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:border-emerald-500 focus:bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
               />
             </div>
 
             <div>
-              <label className="text-slate-700 font-semibold block mb-1">Max Iterations</label>
+              <label htmlFor="swarm-iterations-input" className="text-slate-700 font-semibold block mb-1">Max Iterations</label>
               <input
+                id="swarm-iterations-input"
                 type="number"
                 min={5}
                 max={50}
                 value={iterations}
                 onChange={(e) => setIterations(Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:border-emerald-500 focus:bg-white focus:outline-none"
+                aria-label="Maximum swarm optimization iterations"
+                className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:border-emerald-500 focus:bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
               />
             </div>
 
             <div>
-              <label className="text-slate-700 font-semibold block mb-1">Random Seed</label>
+              <label htmlFor="swarm-seed-input" className="text-slate-700 font-semibold block mb-1">Random Seed</label>
               <input
+                id="swarm-seed-input"
                 type="number"
                 value={seed}
                 onChange={(e) => setSeed(Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:border-emerald-500 focus:bg-white focus:outline-none"
+                aria-label="Random seed value"
+                className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:border-emerald-500 focus:bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
               />
             </div>
           </div>

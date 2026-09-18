@@ -293,7 +293,7 @@ export default function DigitalTwin3D() {
                 Three.js WebGL
               </span>
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-600">
               Real-time spatial visualization of 3-zone root-zone soil strata & active sprinkler actuation
             </p>
           </div>
@@ -303,13 +303,15 @@ export default function DigitalTwin3D() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsSprinkling(!isSprinkling)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            aria-pressed={isSprinkling}
+            aria-label={isSprinkling ? 'Turn off sprinkler spray animation' : 'Turn on sprinkler spray animation'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none cursor-pointer ${
               isSprinkling
-                ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-2xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                ? 'bg-sky-50 text-sky-800 border border-sky-300 shadow-2xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
-            <Droplets className="h-3.5 w-3.5 text-sky-500" />
+            <Droplets className="h-3.5 w-3.5 text-sky-600" />
             <span>{isSprinkling ? 'Sprinklers Spraying' : 'Sprinklers Off'}</span>
           </button>
         </div>
@@ -318,40 +320,48 @@ export default function DigitalTwin3D() {
       {/* 3D Canvas Mount */}
       <div
         ref={mountRef}
+        role="img"
+        aria-label="3D interactive visualization of 3 farm zones showing soil strata and active irrigation spray. Use buttons below to inspect individual zones."
         className="w-full h-[380px] cursor-grab active:cursor-grabbing bg-slate-50"
       />
 
       {/* Interactive Zone Selector Pill Bar */}
-      <div className="p-3 border-t border-slate-100 bg-white grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div
+        className="p-3 border-t border-slate-100 bg-white grid grid-cols-1 sm:grid-cols-3 gap-2.5"
+        role="group"
+        aria-label="Select zone to inspect"
+      >
         {zones.map((zone) => (
           <button
             key={zone.id}
             onClick={() => setSelectedZone(zone)}
-            className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all ${
+            aria-pressed={selectedZone.id === zone.id}
+            aria-label={`Zone ${zone.id}: ${zone.name}, crop ${zone.crop}, soil ${zone.soil}, target moisture ${zone.target} percent, current moisture ${zone.moisture} percent`}
+            className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none cursor-pointer ${
               selectedZone.id === zone.id
-                ? 'bg-emerald-50/80 border-emerald-300 shadow-2xs'
-                : 'bg-white border-slate-200 hover:border-emerald-200'
+                ? 'bg-emerald-50/90 border-emerald-300 shadow-2xs'
+                : 'bg-white border-slate-200 hover:border-emerald-300'
             }`}
           >
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-semibold text-xs text-slate-900">{zone.name}</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">
                   {zone.crop} &bull; {zone.soil}
                 </span>
               </div>
-              <div className="text-[11px] text-slate-500 mt-0.5">
-                Target: <span className="font-mono font-medium text-slate-700">{zone.target}%</span> | Current:{' '}
-                <span className="font-mono font-semibold text-emerald-700">{zone.moisture}%</span>
+              <div className="text-[11px] text-slate-600 mt-0.5">
+                Target: <span className="font-mono font-medium text-slate-800">{zone.target}%</span> | Current:{' '}
+                <span className="font-mono font-semibold text-emerald-800">{zone.moisture}%</span>
               </div>
             </div>
 
             {zone.isIrrigating ? (
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-sky-100 text-sky-800 border border-sky-200 animate-pulse">
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-sky-100 text-sky-800 border border-sky-300 animate-pulse">
                 <Droplets className="h-3 w-3" /> VALVE OPEN
               </span>
             ) : (
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-slate-100 text-slate-600">
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-slate-100 text-slate-700 border border-slate-200">
                 <CheckCircle className="h-3 w-3 text-emerald-600" /> OPTIMAL
               </span>
             )}

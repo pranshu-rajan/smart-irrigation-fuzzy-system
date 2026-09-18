@@ -489,13 +489,15 @@ export default function EndToEndStudioPage() {
                 {/* Inputs */}
                 <div className="space-y-3 text-xs">
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    <label htmlFor={`zone-crop-${zone.id}`} className="block text-[11px] font-semibold text-slate-700 mb-1">
                       Crop Selection (Sets Crop Coefficient Kc)
                     </label>
                     <select
+                      id={`zone-crop-${zone.id}`}
                       value={zone.crop}
                       onChange={(e) => updateZoneField(idx, 'crop', e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:border-emerald-500 focus:outline-none"
+                      aria-label={`Zone ${zone.id} crop selection`}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                     >
                       {(cropsList.length
                         ? cropsList
@@ -509,13 +511,15 @@ export default function EndToEndStudioPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    <label htmlFor={`zone-soil-${zone.id}`} className="block text-[11px] font-semibold text-slate-700 mb-1">
                       Soil Texture (Sets Field Capacity & Wilting Point)
                     </label>
                     <select
+                      id={`zone-soil-${zone.id}`}
                       value={zone.soil}
                       onChange={(e) => updateZoneField(idx, 'soil', e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:border-emerald-500 focus:outline-none"
+                      aria-label={`Zone ${zone.id} soil texture`}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                     >
                       {(soilsList.length
                         ? soilsList
@@ -530,44 +534,53 @@ export default function EndToEndStudioPage() {
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">Area (m²)</label>
+                      <label htmlFor={`zone-area-${zone.id}`} className="block text-[11px] font-semibold text-slate-700 mb-1">Area (m²)</label>
                       <input
+                        id={`zone-area-${zone.id}`}
                         type="number"
                         min={10}
                         max={10000}
                         value={zone.area_m2}
                         onChange={(e) => updateZoneField(idx, 'area_m2', Number(e.target.value))}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-mono font-medium focus:border-emerald-500 focus:outline-none"
+                        aria-label={`Zone ${zone.id} area in square meters`}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-mono font-medium focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">Root Depth (m)</label>
+                      <label htmlFor={`zone-root-${zone.id}`} className="block text-[11px] font-semibold text-slate-700 mb-1">Root Depth (m)</label>
                       <input
+                        id={`zone-root-${zone.id}`}
                         type="number"
                         step={0.1}
                         min={0.2}
                         max={2.0}
                         value={zone.root_depth}
                         onChange={(e) => updateZoneField(idx, 'root_depth', Number(e.target.value))}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-mono font-medium focus:border-emerald-500 focus:outline-none"
+                        aria-label={`Zone ${zone.id} root depth in meters`}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-mono font-medium focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-[11px] font-semibold text-slate-600 mb-1">
-                      <span>Target Moisture:</span>
-                      <span className="text-emerald-700 font-mono font-bold">{zone.target_moisture}% vol</span>
+                    <div className="flex justify-between text-[11px] font-semibold text-slate-700 mb-1">
+                      <label htmlFor={`zone-moisture-${zone.id}`}>Target Moisture:</label>
+                      <span className="text-emerald-800 font-mono font-bold">{zone.target_moisture}% vol</span>
                     </div>
                     <input
+                      id={`zone-moisture-${zone.id}`}
                       type="range"
                       min={15}
                       max={45}
                       value={zone.target_moisture}
                       onChange={(e) => updateZoneField(idx, 'target_moisture', Number(e.target.value))}
-                      className="w-full accent-emerald-600 h-1.5 rounded-lg bg-slate-200 cursor-pointer"
+                      aria-label={`Zone ${zone.id} target moisture percentage`}
+                      aria-valuenow={zone.target_moisture}
+                      aria-valuemin={15}
+                      aria-valuemax={45}
+                      className="w-full accent-emerald-600 h-1.5 rounded-lg bg-slate-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                     />
-                    <div className="flex justify-between text-[9px] text-slate-400 font-mono">
+                    <div className="flex justify-between text-[9px] text-slate-500 font-mono">
                       <span>Dry (15%)</span>
                       <span>Target Band</span>
                       <span>Saturated (45%)</span>
@@ -575,17 +588,22 @@ export default function EndToEndStudioPage() {
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-[11px] font-semibold text-slate-600 mb-1">
-                      <span>Priority Weight (Scarcity share):</span>
-                      <span className="text-emerald-700 font-mono font-bold">{zone.priority}%</span>
+                    <div className="flex justify-between text-[11px] font-semibold text-slate-700 mb-1">
+                      <label htmlFor={`zone-priority-${zone.id}`}>Priority Weight (Scarcity share):</label>
+                      <span className="text-emerald-800 font-mono font-bold">{zone.priority}%</span>
                     </div>
                     <input
+                      id={`zone-priority-${zone.id}`}
                       type="range"
                       min={10}
                       max={100}
                       value={zone.priority}
                       onChange={(e) => updateZoneField(idx, 'priority', Number(e.target.value))}
-                      className="w-full accent-emerald-600 h-1.5 rounded-lg bg-slate-200 cursor-pointer"
+                      aria-label={`Zone ${zone.id} priority weight percentage`}
+                      aria-valuenow={zone.priority}
+                      aria-valuemin={10}
+                      aria-valuemax={100}
+                      className="w-full accent-emerald-600 h-1.5 rounded-lg bg-slate-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                     />
                   </div>
                 </div>
@@ -925,11 +943,15 @@ export default function EndToEndStudioPage() {
                 </h3>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-mono">Active Controller Mode:</span>
+                <label htmlFor="controller-mode-select" className="text-xs text-slate-700 font-mono">
+                  Active Mode:
+                </label>
                 <select
+                  id="controller-mode-select"
                   value={controllerType}
                   onChange={(e) => setControllerType(e.target.value)}
-                  className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:border-emerald-500"
+                  aria-label="Active Controller Mode"
+                  className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-900 focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                 >
                   <option value="fuzzy">Hierarchical Adaptive Fuzzy (HAFC)</option>
                   <option value="pso_tuned">PSO-Calibrated Parameters</option>
@@ -939,7 +961,7 @@ export default function EndToEndStudioPage() {
             </div>
 
             {loadingFisDetails ? (
-              <div className="py-12 text-center text-xs text-slate-400 font-mono animate-pulse">
+              <div className="py-12 text-center text-xs text-slate-500 font-mono animate-pulse" role="status" aria-live="polite">
                 Loading live membership functions and rule base from FastAPI backend...
               </div>
             ) : (
@@ -956,7 +978,7 @@ export default function EndToEndStudioPage() {
                           <span className="font-bold text-slate-800">
                             {v.name} {v.unit ? `(${v.unit})` : ''}
                           </span>
-                          <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300">
                             Universe: [{v.universe_min ?? (v as any).min ?? 0}, {v.universe_max ?? (v as any).max ?? 100}]
                           </span>
                         </div>
@@ -964,7 +986,7 @@ export default function EndToEndStudioPage() {
                           {(v.terms || Object.keys((v as any).sets || {})).map((termItem: any) => {
                             const termName = typeof termItem === 'string' ? termItem : termItem.term || termItem.name;
                             return (
-                              <span key={termName} className="px-2 py-1 rounded bg-white border border-slate-200 text-[10px] font-medium text-slate-700">
+                              <span key={termName} className="px-2 py-1 rounded bg-white border border-slate-200 text-[10px] font-medium text-slate-800">
                                 {termName}
                               </span>
                             );
@@ -983,24 +1005,26 @@ export default function EndToEndStudioPage() {
                         <FlaskConical className="h-4 w-4 text-emerald-600" />
                         <span>Instant Sandbox Defuzzification Test</span>
                       </span>
-                      <span className="text-[10px] text-slate-500 font-mono">Centroid Defuzzifier</span>
+                      <span className="text-[10px] text-slate-600 font-mono">Centroid Defuzzifier</span>
                     </div>
 
                     {/* Inputs */}
                     <div className="space-y-3 text-xs">
                       {Object.keys(sandboxInputs).map((inputKey) => (
                         <div key={inputKey} className="flex items-center justify-between gap-3">
-                          <span className="font-semibold text-slate-700 capitalize">
+                          <label htmlFor={`sandbox-input-${inputKey}`} className="font-semibold text-slate-800 capitalize">
                             {inputKey.replaceAll('_', ' ')}:
-                          </span>
+                          </label>
                           <input
+                            id={`sandbox-input-${inputKey}`}
                             type="number"
                             step={0.1}
                             value={sandboxInputs[inputKey]}
                             onChange={(e) =>
                               setSandboxInputs({ ...sandboxInputs, [inputKey]: parseFloat(e.target.value) || 0 })
                             }
-                            className="w-24 text-right rounded-lg border border-slate-200 bg-white px-2 py-1 font-mono text-xs font-bold text-slate-900"
+                            aria-label={`Sandbox input value for ${inputKey.replaceAll('_', ' ')}`}
+                            className="w-24 text-right rounded-lg border border-slate-300 bg-white px-2 py-1 font-mono text-xs font-bold text-slate-900 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                           />
                         </div>
                       ))}

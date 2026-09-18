@@ -16,6 +16,7 @@ export default function FuzzyExplorerPage() {
   const [inputValues, setInputValues] = useState<Record<string, number>>({});
   const [evalResult, setEvalResult] = useState<FuzzyEvaluateResponse | null>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evalError, setEvalError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Load controllers overview
@@ -105,6 +106,7 @@ export default function FuzzyExplorerPage() {
   // Handle live evaluation
   const handleEvaluate = async () => {
     setIsEvaluating(true);
+    setEvalError(null);
     try {
       const res: any = await api.evaluateFuzzy(selectedController, inputValues);
       const output_val = Number(res.crisp_output ?? res.output_value ?? 0);
@@ -123,7 +125,7 @@ export default function FuzzyExplorerPage() {
         fired_rules,
       });
     } catch (err: any) {
-      alert(`Inference evaluation error: ${err.message}`);
+      setEvalError(`Inference evaluation error: ${err.message}`);
     } finally {
       setIsEvaluating(false);
     }
@@ -316,29 +318,49 @@ export default function FuzzyExplorerPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Sliders for Inputs */}
           <div className="lg:col-span-2 space-y-4">
+            {evalError && (
+              <div
+                role="alert"
+                aria-live="assertive"
+                className="rounded-xl border border-rose-300 bg-rose-50 p-3 text-xs font-semibold text-rose-900 shadow-2xs"
+              >
+                {evalError}
+              </div>
+            )}
+
             {variables.filter((v) => !v.is_output).map((v) => {
               const currentVal = inputValues[v.name] ?? v.universe_min;
               const range = v.universe_max - v.universe_min || 1;
               const stepVal = range / 100;
+              const inputId = `fuzzy-slider-${v.name.replace(/\s+/g, '-').toLowerCase()}`;
 
               return (
                 <div key={v.name} className="space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="font-semibold text-slate-800">{v.name} {v.unit ? `(${v.unit})` : ''}</span>
-                    <span className="font-mono text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/70">{currentVal}</span>
+                    <label htmlFor={inputId} className="font-semibold text-slate-800">
+                      {v.name} {v.unit ? `(${v.unit})` : ''}
+                    </label>
+                    <span className="font-mono text-emerald-800 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      {currentVal}
+                    </span>
                   </div>
                   <input
+                    id={inputId}
                     type="range"
                     min={v.universe_min}
                     max={v.universe_max}
                     step={stepVal}
                     value={currentVal}
+                    aria-label={`Adjust ${v.name} input value`}
+                    aria-valuenow={currentVal}
+                    aria-valuemin={v.universe_min}
+                    aria-valuemax={v.universe_max}
                     onChange={(e) =>
                       setInputValues({ ...inputValues, [v.name]: parseFloat(e.target.value) })
                     }
-                    className="w-full accent-emerald-600 bg-slate-200 h-2 rounded-lg cursor-pointer"
+                    className="w-full accent-emerald-600 bg-slate-200 h-2 rounded-lg cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   />
-                  <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                  <div className="flex justify-between text-[10px] text-slate-500 font-mono">
                     <span>min: {v.universe_min}</span>
                     <span>max: {v.universe_max}</span>
                   </div>
@@ -349,7 +371,9 @@ export default function FuzzyExplorerPage() {
             <button
               onClick={handleEvaluate}
               disabled={isEvaluating}
-              className="mt-4 w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer flex items-center justify-center gap-1.5"
+              aria-label="Compute Fuzzy Inference Step"
+              aria-busy={isEvaluating}
+              className="mt-4 w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer flex items-center justify-center gap-1.5 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
             >
               {isEvaluating ? (
                 'Evaluating Defuzzification...'
@@ -365,14 +389,24 @@ export default function FuzzyExplorerPage() {
           {/* Defuzzification Output Box */}
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-5 flex flex-col justify-between shadow-2xs">
             <div>
-              <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider block">
+              <span className="text-xs font-bold text-emerald-950 uppercase tracking-wider block">
                 Defuzzified Output
               </span>
-              <div className="mt-2 text-3xl font-mono font-extrabold text-emerald-950">
-                {evalResult && typeof evalResult.output_value === 'number' ? evalResult.output_value.toFixed(3) : '—'}
-              </div>
-              <div className="mt-2 text-xs font-semibold text-emerald-700">
-                {evalResult?.linguistic_summary || 'Adjust sliders and click Compute'}
+              <div className="mt-3 rounded-xl bg-white border border-emerald-200 p-4 text-center shadow-2xs">
+                {evalResult ? (
+                  <div>
+                    <div className="text-3xl font-extrabold text-emerald-700 font-mono">
+                      {evalResult.output_value.toFixed(2)}
+                    </div>
+                    <div className="mt-1 text-xs text-slate-600 font-medium">
+                      {evalResult.linguistic_summary}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="py-4 text-xs text-slate-500 italic">
+                    Adjust antecedent input sliders and click compute to trigger Mamdani centroid defuzzification.
+                  </div>
+                )}
               </div>
             </div>
 
@@ -407,7 +441,7 @@ export default function FuzzyExplorerPage() {
               <ScrollText className="h-5 w-5 text-emerald-600" />
               <span>Linguistic Rule Base Matrix ({rules.length} Rules)</span>
             </h2>
-            <p className="text-xs text-slate-500">Mamdani inference rules governing controller decisions.</p>
+            <p className="text-xs text-slate-600">Mamdani inference rules governing controller decisions.</p>
           </div>
 
           <input
@@ -415,7 +449,8 @@ export default function FuzzyExplorerPage() {
             placeholder="Search rules (e.g. LOW, HIGH, AND)..."
             value={ruleSearch}
             onChange={(e) => setRuleSearch(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-2xs sm:w-64"
+            aria-label="Filter rules by keyword"
+            className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-900 placeholder-slate-500 focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none shadow-2xs sm:w-64"
           />
         </div>
 

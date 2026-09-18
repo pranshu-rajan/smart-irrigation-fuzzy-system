@@ -15,6 +15,7 @@ function ReportsContent() {
   const [includeAi, setIncludeAi] = useState<boolean>(true);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [generatedReport, setGeneratedReport] = useState<ReportResponse | null>(null);
+  const [reportFeedback, setReportFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     const fetchSims = async () => {
@@ -33,16 +34,23 @@ function ReportsContent() {
 
   const handleGenerateReport = async () => {
     if (!selectedSimId) {
-      alert('Please select a simulation run first.');
+      setReportFeedback({ type: 'error', message: 'Please select a target simulation run first.' });
       return;
     }
     setIsGenerating(true);
+    setReportFeedback(null);
     try {
       const res = await api.generateReport(selectedSimId, includeAi);
       setGeneratedReport(res);
-      alert('PDF Audit Report compiled and verified successfully!');
+      setReportFeedback({
+        type: 'success',
+        message: 'PDF Audit Report compiled and verified successfully via ReportLab! Download link generated below.',
+      });
     } catch (err: any) {
-      alert(`Report generation error: ${err.message}`);
+      setReportFeedback({
+        type: 'error',
+        message: `Report generation error: ${err.message}`,
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -59,7 +67,7 @@ function ReportsContent() {
             Publication Engine
           </span>
           <span className="text-xs text-slate-400">•</span>
-          <span className="text-xs text-slate-500 font-medium">ReportLab PDF Synthesis & 1-Min CSV Export</span>
+          <span className="text-xs text-slate-600 font-medium">ReportLab PDF Synthesis & 1-Min CSV Export</span>
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Engineering Audit PDF Reports & Telemetry Export
@@ -68,6 +76,28 @@ function ReportsContent() {
           Automated publication-grade PDF report synthesis via ReportLab and high-frequency CSV telemetry dispatch.
         </p>
       </div>
+
+      {/* Accessible Inline Status Feedback */}
+      {reportFeedback && (
+        <div
+          role={reportFeedback.type === 'error' ? 'alert' : 'status'}
+          aria-live="polite"
+          className={`rounded-2xl border p-4 text-xs font-semibold flex items-center justify-between gap-3 shadow-2xs ${
+            reportFeedback.type === 'error'
+              ? 'border-rose-300 bg-rose-50 text-rose-900'
+              : 'border-emerald-300 bg-emerald-50 text-emerald-950'
+          }`}
+        >
+          <span>{reportFeedback.message}</span>
+          <button
+            onClick={() => setReportFeedback(null)}
+            className="text-xs px-2 py-0.5 rounded hover:bg-black/5 font-mono cursor-pointer"
+            aria-label="Dismiss notification"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Generator & Exporter Controls */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -80,11 +110,13 @@ function ReportsContent() {
 
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-slate-700 font-semibold block mb-1">Target Simulation Run</label>
+              <label htmlFor="report-target-sim" className="text-slate-700 font-semibold block mb-1">Target Simulation Run</label>
               <select
+                id="report-target-sim"
                 value={selectedSimId}
                 onChange={(e) => setSelectedSimId(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
+                aria-label="Target simulation run to compile report for"
+                className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
               >
                 {simulations.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -99,7 +131,7 @@ function ReportsContent() {
                 type="checkbox"
                 checked={includeAi}
                 onChange={(e) => setIncludeAi(e.target.checked)}
-                className="rounded border-slate-300 accent-emerald-600 h-4 w-4"
+                className="rounded border-slate-300 accent-emerald-600 h-4 w-4 focus-visible:ring-2 focus-visible:ring-emerald-500"
               />
               <span>Include Advisory AI Technical Commentary & Interpretation</span>
             </label>
@@ -108,7 +140,9 @@ function ReportsContent() {
           <button
             onClick={handleGenerateReport}
             disabled={isGenerating || !selectedSimId}
-            className="w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer flex items-center justify-center gap-1.5"
+            aria-label="Generate Engineering Audit PDF"
+            aria-busy={isGenerating}
+            className="w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer flex items-center justify-center gap-1.5 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
           >
             {isGenerating ? (
               'Synthesizing PDF Report with ReportLab...'
@@ -134,7 +168,8 @@ function ReportsContent() {
                 href={`${API_BASE}/reports/download/${generatedReport.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg transition-colors shadow-xs"
+                aria-label={`Download Official PDF Report: ${generatedReport.filename}`}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg transition-colors shadow-xs focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
               >
                 <Download className="h-3.5 w-3.5" />
                 <span>Download Official PDF Report</span>

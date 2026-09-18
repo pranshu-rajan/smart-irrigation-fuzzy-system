@@ -9,6 +9,7 @@ export default function ZonesManagementPage() {
   const [crops, setCrops] = useState<any[]>([]);
   const [soils, setSoils] = useState<any[]>([]);
   const [editingZone, setEditingZone] = useState<ZoneConfig | null>(null);
+  const [zoneFeedback, setZoneFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadZoneData = async () => {
@@ -63,14 +64,21 @@ export default function ZonesManagementPage() {
   const handleSaveZone = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingZone) return;
+    setZoneFeedback(null);
 
     try {
       await api.updateZone(editingZone.id, editingZone);
       await loadZoneData();
       setEditingZone(null);
-      alert(`Zone ${editingZone.id} updated successfully!`);
+      setZoneFeedback({
+        type: 'success',
+        message: `Zone ${editingZone.id} (${editingZone.name}) updated successfully!`,
+      });
     } catch (err: any) {
-      alert(`Failed to update zone: ${err.message}`);
+      setZoneFeedback({
+        type: 'error',
+        message: `Failed to update zone: ${err.message}`,
+      });
     }
   };
 
@@ -83,13 +91,35 @@ export default function ZonesManagementPage() {
             Agronomic Management
           </span>
           <span className="text-xs text-slate-400">•</span>
-          <span className="text-xs text-slate-500 font-medium">Multi-Crop Soil Hydraulics & Flow Rates</span>
+          <span className="text-xs text-slate-600 font-medium">Multi-Crop Soil Hydraulics & Flow Rates</span>
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">Zone Configuration & Agronomy Management</h1>
         <p className="mt-1 text-sm text-slate-600">
           Configure crop agronomic parameters, soil hydraulic properties, surface areas, and priority weights across all irrigation zones.
         </p>
       </div>
+
+      {/* Accessible Inline Status Feedback */}
+      {zoneFeedback && (
+        <div
+          role={zoneFeedback.type === 'error' ? 'alert' : 'status'}
+          aria-live="polite"
+          className={`rounded-2xl border p-4 text-xs font-semibold flex items-center justify-between gap-3 shadow-2xs ${
+            zoneFeedback.type === 'error'
+              ? 'border-rose-300 bg-rose-50 text-rose-900'
+              : 'border-emerald-300 bg-emerald-50 text-emerald-950'
+          }`}
+        >
+          <span>{zoneFeedback.message}</span>
+          <button
+            onClick={() => setZoneFeedback(null)}
+            className="text-xs px-2 py-0.5 rounded hover:bg-black/5 font-mono cursor-pointer"
+            aria-label="Dismiss notification"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Zones Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -162,28 +192,39 @@ export default function ZonesManagementPage() {
 
       {/* Edit Modal */}
       {editingZone && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl space-y-4">
-            <h2 className="text-base font-bold text-slate-900">Edit Zone {editingZone.id} Parameters</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-zone-title"
+            className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl space-y-4"
+          >
+            <h2 id="edit-zone-title" className="text-base font-bold text-slate-900">
+              Edit Zone {editingZone.id} Parameters
+            </h2>
             <form onSubmit={handleSaveZone} className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Zone Name</label>
+                <label htmlFor="edit-zone-name" className="block text-slate-700 font-semibold mb-1">Zone Name</label>
                 <input
+                  id="edit-zone-name"
                   type="text"
                   value={editingZone.name}
                   onChange={(e) => setEditingZone({ ...editingZone, name: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus:outline-none"
+                  aria-label="Zone name"
+                  className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Crop Type</label>
+                  <label htmlFor="edit-crop-type" className="block text-slate-700 font-semibold mb-1">Crop Type</label>
                   <select
+                    id="edit-crop-type"
                     value={editingZone.crop_type}
                     onChange={(e) => setEditingZone({ ...editingZone, crop_type: e.target.value })}
-                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus:outline-none"
+                    aria-label="Crop cultivar"
+                    className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   >
                     <option value="Tomato">Tomato</option>
                     <option value="Potato">Potato</option>
@@ -194,11 +235,13 @@ export default function ZonesManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Soil Type</label>
+                  <label htmlFor="edit-soil-type" className="block text-slate-700 font-semibold mb-1">Soil Type</label>
                   <select
+                    id="edit-soil-type"
                     value={editingZone.soil_type}
                     onChange={(e) => setEditingZone({ ...editingZone, soil_type: e.target.value })}
-                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus:outline-none"
+                    aria-label="Soil texture"
+                    className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   >
                     <option value="Loam">Loam</option>
                     <option value="Sandy Loam">Sandy Loam</option>
@@ -211,50 +254,58 @@ export default function ZonesManagementPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Area (m²)</label>
+                  <label htmlFor="edit-area-m2" className="block text-slate-700 font-semibold mb-1">Area (m²)</label>
                   <input
+                    id="edit-area-m2"
                     type="number"
                     value={editingZone.area_m2}
                     onChange={(e) => setEditingZone({ ...editingZone, area_m2: parseFloat(e.target.value) || 0 })}
-                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
+                    aria-label="Zone surface area in square meters"
+                    className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Flow Rate (L/min)</label>
+                  <label htmlFor="edit-flow-rate" className="block text-slate-700 font-semibold mb-1">Flow Rate (L/min)</label>
                   <input
+                    id="edit-flow-rate"
                     type="number"
                     value={editingZone.flow_rate_lpm}
                     onChange={(e) => setEditingZone({ ...editingZone, flow_rate_lpm: parseFloat(e.target.value) || 0 })}
-                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
+                    aria-label="Sprinkler flow rate in liters per minute"
+                    className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Target Moisture (0.1–0.5)</label>
+                  <label htmlFor="edit-target-moisture" className="block text-slate-700 font-semibold mb-1">Target Moisture (0.1–0.5)</label>
                   <input
+                    id="edit-target-moisture"
                     type="number"
                     step={0.01}
                     min={0.1}
                     max={0.5}
                     value={editingZone.target_moisture_fraction}
                     onChange={(e) => setEditingZone({ ...editingZone, target_moisture_fraction: parseFloat(e.target.value) || 0.28 })}
-                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
+                    aria-label="Target moisture volumetric fraction"
+                    className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Priority Weight (0.1–1.0)</label>
+                  <label htmlFor="edit-priority-weight" className="block text-slate-700 font-semibold mb-1">Priority Weight (0.1–1.0)</label>
                   <input
+                    id="edit-priority-weight"
                     type="number"
                     step={0.1}
                     min={0.1}
                     max={1.0}
                     value={editingZone.priority_weight}
                     onChange={(e) => setEditingZone({ ...editingZone, priority_weight: parseFloat(e.target.value) || 1.0 })}
-                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
+                    aria-label="Scarcity priority allocation weight"
+                    className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   />
                 </div>
               </div>
@@ -263,13 +314,13 @@ export default function ZonesManagementPage() {
                 <button
                   type="button"
                   onClick={() => setEditingZone(null)}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-md shadow-emerald-600/15 transition-all cursor-pointer"
+                  className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-md shadow-emerald-600/15 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                 >
                   Save Changes
                 </button>

@@ -158,11 +158,13 @@ function SimulationStudioContent() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Environmental Scenario</label>
+            <label htmlFor="sim-scenario-select" className="block text-xs font-semibold text-slate-700 mb-1.5">Environmental Scenario</label>
             <select
+              id="sim-scenario-select"
               value={scenario}
               onChange={(e) => setScenario(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus:outline-none transition-colors"
+              aria-label="Environmental climate scenario"
+              className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none transition-colors"
             >
               <option value="Normal">Normal</option>
               <option value="Hot & Dry">Hot & Dry</option>
@@ -174,11 +176,13 @@ function SimulationStudioContent() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Shared Supply Scenario</label>
+            <label htmlFor="sim-supply-select" className="block text-xs font-semibold text-slate-700 mb-1.5">Shared Supply Scenario</label>
             <select
+              id="sim-supply-select"
               value={supplyScenario}
               onChange={(e) => setSupplyScenario(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus:outline-none transition-colors"
+              aria-label="Shared reservoir supply scenario"
+              className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none transition-colors"
             >
               <option value="Abundant">Abundant (100% capacity)</option>
               <option value="Normal Supply">Normal Supply (100% standard)</option>
@@ -190,11 +194,13 @@ function SimulationStudioContent() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Controller Type</label>
+            <label htmlFor="sim-controller-select" className="block text-xs font-semibold text-slate-700 mb-1.5">Controller Type</label>
             <select
+              id="sim-controller-select"
               value={controllerType}
               onChange={(e) => setControllerType(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus:outline-none transition-colors"
+              aria-label="Fuzzy or baseline controller algorithm"
+              className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none transition-colors"
             >
               <option value="fuzzy">Hierarchical Adaptive Fuzzy (Default)</option>
               <option value="pso_tuned">PSO-Tuned Fuzzy Parameters</option>
@@ -203,11 +209,13 @@ function SimulationStudioContent() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Duration & Resolution</label>
+            <label htmlFor="sim-duration-select" className="block text-xs font-semibold text-slate-700 mb-1.5">Duration & Resolution</label>
             <select
+              id="sim-duration-select"
               value={durationHours}
               onChange={(e) => setDurationHours(Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus:outline-none transition-colors"
+              aria-label="Simulation duration horizon"
+              className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none transition-colors"
             >
               <option value={24}>24 Hours (1440 timesteps @ 1 min)</option>
               <option value={48}>48 Hours (2880 timesteps)</option>
@@ -218,12 +226,14 @@ function SimulationStudioContent() {
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-slate-100">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-slate-600">Telemetry Zone:</span>
+            <span className="text-xs font-medium text-slate-700">Telemetry Zone:</span>
             {[1, 2, 3].map((z) => (
               <button
                 key={z}
                 onClick={() => setSelectedZone(z)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                aria-pressed={selectedZone === z}
+                aria-label={`Show telemetry for Zone ${z} (${z === 1 ? 'Tomato' : z === 2 ? 'Potato' : 'Maize'})`}
+                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none cursor-pointer ${
                   selectedZone === z
                     ? 'bg-emerald-600 text-white shadow-xs'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'
@@ -237,7 +247,9 @@ function SimulationStudioContent() {
           <button
             onClick={handleRunSimulation}
             disabled={isRunning}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/15 hover:bg-emerald-700 disabled:opacity-50 transition-all cursor-pointer"
+            aria-label="Run Multizone Simulation"
+            aria-busy={isRunning}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/15 hover:bg-emerald-700 disabled:opacity-50 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
           >
             {isRunning ? (
               <>

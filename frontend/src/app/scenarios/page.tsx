@@ -21,6 +21,7 @@ interface ScenarioComparisonItem {
 
 export default function ScenariosPage() {
   const [isRunningAll, setIsRunningAll] = useState(false);
+  const [batchFeedback, setBatchFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [comparisonData, setComparisonData] = useState<ScenarioComparisonItem[]>([
     {
       name: 'Normal',
@@ -98,6 +99,7 @@ export default function ScenariosPage() {
 
   const handleRunAllScenarios = async () => {
     setIsRunningAll(true);
+    setBatchFeedback(null);
     try {
       const res = await api.runAllScenarios();
       if (res.results) {
@@ -119,10 +121,16 @@ export default function ScenariosPage() {
           return item;
         });
         setComparisonData(updated);
-        alert('All 6 environmental scenarios evaluated successfully!');
+        setBatchFeedback({
+          type: 'success',
+          message: 'All 6 environmental benchmark scenarios evaluated successfully across 8,640 timesteps.',
+        });
       }
     } catch (err: any) {
-      alert(`Batch scenario run failed: ${err.message}`);
+      setBatchFeedback({
+        type: 'error',
+        message: `Batch scenario evaluation failed: ${err.message}`,
+      });
     } finally {
       setIsRunningAll(false);
     }
@@ -138,7 +146,7 @@ export default function ScenariosPage() {
               Meteorological Benchmarks
             </span>
             <span className="text-xs text-slate-400">•</span>
-            <span className="text-xs text-slate-500 font-medium">6 Validated FAO-56 Climates</span>
+            <span className="text-xs text-slate-600 font-medium">6 Validated FAO-56 Climates</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             6-Scenario Environmental Benchmark Matrix
@@ -151,7 +159,9 @@ export default function ScenariosPage() {
         <button
           onClick={handleRunAllScenarios}
           disabled={isRunningAll}
-          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/15 hover:bg-emerald-700 disabled:opacity-50 transition-all cursor-pointer"
+          aria-label="Run all 6 scenarios benchmark simulation"
+          aria-busy={isRunningAll}
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/15 hover:bg-emerald-700 disabled:opacity-50 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
         >
           {isRunningAll ? (
             <>
@@ -169,6 +179,28 @@ export default function ScenariosPage() {
           )}
         </button>
       </div>
+
+      {/* Accessible Inline Status Feedback */}
+      {batchFeedback && (
+        <div
+          role={batchFeedback.type === 'error' ? 'alert' : 'status'}
+          aria-live="polite"
+          className={`rounded-2xl border p-4 text-xs font-semibold flex items-center justify-between gap-3 shadow-2xs ${
+            batchFeedback.type === 'error'
+              ? 'border-rose-300 bg-rose-50 text-rose-900'
+              : 'border-emerald-300 bg-emerald-50 text-emerald-950'
+          }`}
+        >
+          <span>{batchFeedback.message}</span>
+          <button
+            onClick={() => setBatchFeedback(null)}
+            className="text-xs px-2 py-0.5 rounded hover:bg-black/5 font-mono cursor-pointer"
+            aria-label="Dismiss notification"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Scenario Matrix Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

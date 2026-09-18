@@ -87,23 +87,28 @@ export default function WaterAllocationPage() {
           {/* Left: Shared Supply Slider */}
           <div className="space-y-4 rounded-xl bg-slate-50/70 p-4 border border-slate-200">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-semibold text-slate-800">Shared Water Supply Available</span>
-              <span className="font-mono text-emerald-700 bg-emerald-100/70 border border-emerald-200 px-2.5 py-0.5 rounded-md font-bold text-sm">{availableSupplyPct}%</span>
+              <label htmlFor="shared-supply-slider" className="font-semibold text-slate-800">Shared Water Supply Available</label>
+              <span className="font-mono text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2.5 py-0.5 rounded-md font-bold text-sm">{availableSupplyPct}%</span>
             </div>
             <input
+              id="shared-supply-slider"
               type="range"
               min={0}
               max={100}
               step={1}
               value={availableSupplyPct}
+              aria-label="Shared water supply available percentage"
+              aria-valuenow={availableSupplyPct}
+              aria-valuemin={0}
+              aria-valuemax={100}
               onChange={(e) => {
                 const val = Number(e.target.value);
                 setAvailableSupplyPct(val);
                 runEvaluation(val);
               }}
-              className="w-full accent-emerald-600 bg-slate-200 h-2.5 rounded-lg cursor-pointer"
+              className="w-full accent-emerald-600 bg-slate-200 h-2.5 rounded-lg cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
             />
-            <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+            <div className="flex justify-between text-[11px] text-slate-600 font-mono">
               <span>0% (Extreme Drought)</span>
               <span>50% (Deficit)</span>
               <span>100% (Abundant)</span>
@@ -111,17 +116,17 @@ export default function WaterAllocationPage() {
 
             <div className="pt-2 text-xs">
               {availableSupplyPct < 40 ? (
-                <span className="inline-flex items-center gap-1.5 text-rose-700 font-semibold bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md">
+                <span className="inline-flex items-center gap-1.5 text-rose-800 font-semibold bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md">
                   <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                   <span>Critical Scarcity: Strict priority rationing active</span>
                 </span>
               ) : availableSupplyPct < 80 ? (
-                <span className="inline-flex items-center gap-1.5 text-amber-800 font-semibold bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md">
+                <span className="inline-flex items-center gap-1.5 text-amber-900 font-semibold bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md">
                   <Zap className="h-3.5 w-3.5 shrink-0" />
                   <span>Moderate Scarcity: Proportional deficit scaling active</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 text-emerald-800 font-semibold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md">
+                <span className="inline-flex items-center gap-1.5 text-emerald-900 font-semibold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md">
                   <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                   <span>Abundant Supply: 100% demands fulfilled</span>
                 </span>
@@ -138,8 +143,9 @@ export default function WaterAllocationPage() {
                 <div key={zId} className="grid grid-cols-3 gap-3 items-center text-xs">
                   <span className="font-medium text-slate-700 truncate">Zone {zId}: {cropName}</span>
                   <div>
-                    <label className="text-[10px] text-slate-500 block font-medium">Req (mm)</label>
+                    <label htmlFor={`zone-req-${zId}`} className="text-[10px] text-slate-600 block font-medium">Req (mm)</label>
                     <input
+                      id={`zone-req-${zId}`}
                       type="number"
                       step={0.5}
                       min={0}
@@ -149,12 +155,14 @@ export default function WaterAllocationPage() {
                         const newReqs = { ...requestsMm, [zId]: parseFloat(e.target.value) || 0 };
                         setRequestsMm(newReqs);
                       }}
-                      className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-900 font-mono shadow-2xs focus:border-emerald-500 focus:outline-none"
+                      aria-label={`Zone ${zId} water request depth in millimeters`}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-900 font-mono shadow-2xs focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] text-slate-500 block font-medium">Priority (%)</label>
+                    <label htmlFor={`zone-priority-${zId}`} className="text-[10px] text-slate-600 block font-medium">Priority (%)</label>
                     <input
+                      id={`zone-priority-${zId}`}
                       type="number"
                       step={10}
                       min={10}
@@ -164,7 +172,8 @@ export default function WaterAllocationPage() {
                         const newPriors = { ...prioritiesPct, [zId]: parseFloat(e.target.value) || 10 };
                         setPrioritiesPct(newPriors);
                       }}
-                      className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-900 font-mono shadow-2xs focus:border-emerald-500 focus:outline-none"
+                      aria-label={`Zone ${zId} priority weight percentage`}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-900 font-mono shadow-2xs focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                     />
                   </div>
                 </div>
@@ -177,7 +186,8 @@ export default function WaterAllocationPage() {
           <button
             onClick={() => runSweep()}
             disabled={isSweeping}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-emerald-300 transition-colors shadow-2xs cursor-pointer inline-flex items-center gap-1.5"
+            aria-label="Recompute Supervisory Scarcity Sweep Curve"
+            className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-emerald-300 transition-colors shadow-2xs cursor-pointer inline-flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isSweeping ? 'animate-spin' : ''}`} />
             <span>{isSweeping ? 'Recomputing Sweep...' : 'Recompute Sensitivity Sweep'}</span>

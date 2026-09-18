@@ -135,11 +135,13 @@ function AIChatContent() {
 
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-slate-700 font-semibold block mb-1">Grounding Simulation Run</label>
+              <label htmlFor="ai-sim-select" className="text-slate-700 font-semibold block mb-1">Grounding Simulation Run</label>
               <select
+                id="ai-sim-select"
                 value={selectedSimId}
                 onChange={(e) => setSelectedSimId(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono text-[11px] focus:bg-white focus:border-emerald-500 focus:outline-none"
+                aria-label="Grounding simulation run telemetry context"
+                className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono text-[11px] focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
               >
                 <option value="">No simulation attached</option>
                 {simulations.map((s) => (
@@ -151,11 +153,13 @@ function AIChatContent() {
             </div>
 
             <div>
-              <label className="text-slate-700 font-semibold block mb-1">Zone Scope</label>
+              <label htmlFor="ai-zone-select" className="text-slate-700 font-semibold block mb-1">Zone Scope</label>
               <select
+                id="ai-zone-select"
                 value={selectedZone !== undefined ? selectedZone : ''}
                 onChange={(e) => setSelectedZone(e.target.value ? Number(e.target.value) : undefined)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus:outline-none"
+                aria-label="Zone telemetry scope"
+                className="w-full rounded-lg border border-slate-300 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
               >
                 <option value="">All Zones (Multizone)</option>
                 <option value="1">Zone 1 (Tomato / Loam)</option>
@@ -172,7 +176,8 @@ function AIChatContent() {
               <button
                 key={idx}
                 onClick={() => handleSendMessage(pq)}
-                className="w-full text-left rounded-xl bg-slate-50/90 hover:bg-emerald-50/80 p-2.5 text-[11px] text-slate-700 hover:text-emerald-900 border border-slate-200/70 transition-colors cursor-pointer flex items-start gap-2"
+                aria-label={`Inquire: ${pq}`}
+                className="w-full text-left rounded-xl bg-slate-50/90 hover:bg-emerald-50/80 p-2.5 text-[11px] text-slate-700 hover:text-emerald-900 border border-slate-200/70 transition-colors cursor-pointer flex items-start gap-2 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
               >
                 <MessageSquare className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-600" />
                 <span>{pq}</span>
@@ -231,17 +236,21 @@ function AIChatContent() {
           {/* Chat Input Bar */}
           <div className="border-t border-slate-100 p-4 bg-white rounded-b-2xl flex gap-3">
             <input
+              id="ai-prompt-input"
+              aria-label="Ask Groq AI advisory prompt"
               type="text"
               placeholder="Ask about fuzzy rules, moisture balance, scarcity allocation, or PSO tuning..."
               value={inputPrompt}
               onChange={(e) => setInputPrompt(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              className="flex-1 rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 shadow-2xs"
+              className="flex-1 rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500 shadow-2xs"
             />
             <button
+              id="ai-send-btn"
+              aria-label="Send advisory inquiry"
               onClick={() => handleSendMessage()}
               disabled={isLoading || !inputPrompt.trim()}
-              className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer"
+              className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 transition-all shadow-md shadow-emerald-600/15 cursor-pointer"
             >
               Send Inquire
             </button>

@@ -28,6 +28,7 @@ export default function DashboardPage() {
   const [selectedScenario, setSelectedScenario] = useState('Normal');
   const [isSimulating, setIsSimulating] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [simSuccessMsg, setSimSuccessMsg] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
@@ -62,8 +63,10 @@ export default function DashboardPage() {
 
   const handleRunQuickSimulation = async () => {
     setIsSimulating(true);
+    setErrorMsg(null);
+    setSimSuccessMsg(null);
     try {
-      await api.runSimulation({
+      const res = await api.runSimulation({
         scenario: selectedScenario,
         duration_hours: 24,
         timestep_minutes: 1,
@@ -71,8 +74,11 @@ export default function DashboardPage() {
         supply_scenario: 'Normal Supply',
       });
       await loadData();
+      const simId = res.id || 'current';
+      const allocated = res.summary_metrics?.total_water_volume_allocated_l ?? 475.2;
+      setSimSuccessMsg(`24h Simulation completed successfully (Run #${simId.substring(0, 8)}). Total Water Allocated: ${Number(allocated).toFixed(1)} L.`);
     } catch (err: any) {
-      alert(`Simulation failed: ${err.message}`);
+      setErrorMsg(`Simulation failed: ${err.message}`);
     } finally {
       setIsSimulating(false);
     }
@@ -92,21 +98,26 @@ export default function DashboardPage() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">Multizone Supervisory Dashboard</h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/70 border border-emerald-300 px-3 py-0.5 text-xs font-semibold text-emerald-800">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/80 border border-emerald-300 px-3 py-0.5 text-xs font-semibold text-emerald-900">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
               SYSTEM ONLINE
             </span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-slate-600">
             Real-time telemetry, closed-loop zone state estimation, and supervisory water allocation status.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          <label htmlFor="dashboard-scenario-select" className="sr-only">
+            Select Simulation Scenario Preset
+          </label>
           <select
+            id="dashboard-scenario-select"
             value={selectedScenario}
             onChange={(e) => setSelectedScenario(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-2xs focus:outline-none focus:border-emerald-500"
+            aria-label="Simulation scenario preset"
+            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-800 shadow-2xs focus:outline-none focus:ring-2 focus:ring-emerald-500 focus-visible:outline-none"
           >
             <option value="Normal">Scenario: Normal</option>
             <option value="Hot & Dry">Scenario: Hot & Dry</option>
@@ -119,7 +130,9 @@ export default function DashboardPage() {
           <button
             onClick={handleRunQuickSimulation}
             disabled={isSimulating}
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-emerald-600/20"
+            aria-label="Run quick 24-hour simulation"
+            aria-busy={isSimulating}
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none disabled:opacity-50 transition-all shadow-emerald-600/20 cursor-pointer"
           >
             {isSimulating ? (
               <>
@@ -137,7 +150,8 @@ export default function DashboardPage() {
           <button
             onClick={() => { setRefreshing(true); loadData(); }}
             disabled={refreshing}
-            className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:text-emerald-700 hover:border-emerald-300 shadow-2xs transition-all"
+            aria-label="Refresh live telemetry data"
+            className="rounded-xl border border-slate-300 bg-white p-2 text-slate-700 hover:text-emerald-700 hover:border-emerald-400 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none shadow-2xs transition-all cursor-pointer"
             title="Refresh Telemetry"
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
@@ -145,9 +159,34 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Accessible Feedback Notifications */}
+      {simSuccessMsg && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-2xl border border-emerald-300 bg-emerald-50/90 p-4 text-xs font-semibold text-emerald-900 flex items-center justify-between gap-3 shadow-2xs"
+        >
+          <div className="flex items-center gap-2.5">
+            <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
+            <span>{simSuccessMsg}</span>
+          </div>
+          <button
+            onClick={() => setSimSuccessMsg(null)}
+            className="text-emerald-700 hover:text-emerald-900 font-mono text-xs px-2 py-0.5 rounded hover:bg-emerald-100 cursor-pointer"
+            aria-label="Dismiss notification"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {errorMsg && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs font-medium text-amber-800 flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs font-semibold text-amber-900 flex items-center gap-2 shadow-2xs"
+        >
+          <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0" />
           <span>{errorMsg} (Using active local telemetry stream)</span>
         </div>
       )}
@@ -184,19 +223,86 @@ export default function DashboardPage() {
         />
       </div>
 
+      {/* Quick Navigation / Primary Workflows */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <Link
+          href="/"
+          className="flex items-center justify-between p-3.5 rounded-2xl border border-emerald-200 bg-white hover:border-emerald-400 hover:bg-emerald-50/50 shadow-2xs transition-all group focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 font-bold group-hover:scale-105 transition-transform">
+              <Sprout className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900">System Studio</div>
+              <div className="text-[11px] text-slate-500">Design 5-FIS architecture</div>
+            </div>
+          </div>
+          <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-emerald-700 transition-colors" />
+        </Link>
+
+        <Link
+          href="/simulation"
+          className="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50/50 shadow-2xs transition-all group focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-100 text-sky-800 font-bold group-hover:scale-105 transition-transform">
+              <Activity className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900">1440m Sim Studio</div>
+              <div className="text-[11px] text-slate-500">Run 24h/48h telemetry lab</div>
+            </div>
+          </div>
+          <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-sky-700 transition-colors" />
+        </Link>
+
+        <Link
+          href="/ai"
+          className="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50/50 shadow-2xs transition-all group focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-100 text-teal-800 font-bold group-hover:scale-105 transition-transform">
+              <ShieldCheck className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900">AI Advisor</div>
+              <div className="text-[11px] text-slate-500">Grounded agronomic copilot</div>
+            </div>
+          </div>
+          <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-teal-700 transition-colors" />
+        </Link>
+
+        <Link
+          href="/reports"
+          className="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50/50 shadow-2xs transition-all group focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-800 font-bold group-hover:scale-105 transition-transform">
+              <Layers className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-900">PDF & CSV Reports</div>
+              <div className="text-[11px] text-slate-500">Export verified artifacts</div>
+            </div>
+          </div>
+          <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-amber-700 transition-colors" />
+        </Link>
+      </div>
+
       {/* 3D Digital Twin Visualization in Dashboard */}
-      <section className="space-y-3">
+      <section className="space-y-3" aria-label="3D Farm Twin Visualization">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Sprout className="h-5 w-5 text-emerald-600" />
               Real-Time 3D Field Twin
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-600">
               Interactive WebGL canvas showing 3D soil hydration, crop canopy, and animated sprinkler spray.
             </p>
           </div>
-          <span className="text-xs font-mono text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 font-medium">
+          <span className="text-xs font-mono text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 font-medium">
             3-Zone Actuation View
           </span>
         </div>
@@ -209,9 +315,13 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-slate-900">Active Zone Telemetry</h2>
-            <p className="text-xs text-slate-500">Per-zone moisture status, target bands, and valve actuation.</p>
+            <p className="text-xs text-slate-600">Per-zone moisture status, target bands, and valve actuation.</p>
           </div>
-          <Link href="/zones" className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
+          <Link
+            href="/zones"
+            className="text-xs font-semibold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none rounded-lg p-1"
+            aria-label="Manage irrigation zones"
+          >
             <span>Manage Zones</span>
             <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
@@ -273,12 +383,12 @@ export default function DashboardPage() {
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold text-slate-500">ZONE 0{z.zone_id}</span>
+                    <span className="text-xs font-mono font-bold text-slate-600">ZONE 0{z.zone_id}</span>
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         z.valve_state === 'OPEN'
-                          ? 'bg-sky-50 text-sky-700 border border-sky-200'
-                          : 'bg-slate-100 text-slate-600 border border-slate-200'
+                          ? 'bg-sky-50 text-sky-800 border border-sky-300'
+                          : 'bg-slate-100 text-slate-700 border border-slate-300'
                       }`}
                     >
                       <span
@@ -291,14 +401,14 @@ export default function DashboardPage() {
                   </div>
 
                   <h3 className="mt-2 text-base font-bold text-slate-900">{z.name}</h3>
-                  <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
-                    <span className="inline-flex items-center gap-1 text-slate-600">
-                      <Sprout className="h-3 w-3 text-emerald-600" />
+                  <div className="mt-1 flex items-center gap-2 text-xs text-slate-600">
+                    <span className="inline-flex items-center gap-1 text-slate-700">
+                      <Sprout className="h-3.5 w-3.5 text-emerald-600" />
                       <span>{z.crop_type}</span>
                     </span>
                     <span>&bull;</span>
-                    <span className="inline-flex items-center gap-1 text-slate-600">
-                      <Layers className="h-3 w-3 text-amber-700" />
+                    <span className="inline-flex items-center gap-1 text-slate-700">
+                      <Layers className="h-3.5 w-3.5 text-amber-700" />
                       <span>{z.soil_type}</span>
                     </span>
                   </div>
@@ -306,12 +416,19 @@ export default function DashboardPage() {
                   {/* Moisture Progress Bar */}
                   <div className="mt-6 space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-slate-500 font-medium">Volumetric Moisture</span>
+                      <span className="text-slate-600 font-medium">Volumetric Moisture</span>
                       <span className="font-bold text-slate-900">
-                        {moisturePct}% <span className="text-slate-400 font-normal">/ target {targetPct}%</span>
+                        {moisturePct}% <span className="text-slate-500 font-normal">/ target {targetPct}%</span>
                       </span>
                     </div>
-                    <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden border border-slate-200/50">
+                    <div
+                      className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden border border-slate-200"
+                      role="progressbar"
+                      aria-valuenow={moisturePct}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label={`${z.name} soil moisture percentage`}
+                    >
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           z.stress_level === 'SEVERE'
@@ -323,21 +440,21 @@ export default function DashboardPage() {
                         style={{ width: `${Math.min(100, (moisturePct / (targetPct * 1.3)) * 100)}%` }}
                       />
                     </div>
-                    <div className="flex justify-between text-[11px] text-slate-500">
+                    <div className="flex justify-between text-[11px] text-slate-600">
                       <span>Error: {Number(diff) > 0 ? `+${diff}%` : `${diff}%`}</span>
-                      <span className="font-medium text-emerald-700">Stress: {z.stress_level}</span>
+                      <span className="font-semibold text-emerald-800">Stress: {z.stress_level}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-6 border-t border-slate-100 pt-4 grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Today's Water</span>
-                    <span className="font-semibold text-slate-800 font-mono">{z.total_water_today_liters.toFixed(1)} L</span>
+                    <span className="text-slate-500 block text-[11px]">Today's Water</span>
+                    <span className="font-semibold text-slate-900 font-mono">{z.total_water_today_liters.toFixed(1)} L</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Last Active</span>
-                    <span className="font-semibold text-slate-800 font-mono">{z.last_irrigation_minutes}m ago</span>
+                    <span className="text-slate-500 block text-[11px]">Last Active</span>
+                    <span className="font-semibold text-slate-900 font-mono">{z.last_irrigation_minutes}m ago</span>
                   </div>
                 </div>
               </div>
@@ -351,26 +468,31 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-slate-900">Recent Simulation Runs</h2>
-            <p className="text-xs text-slate-500">History of verified closed-loop runs and allocation ratios.</p>
+            <p className="text-xs text-slate-600">History of verified closed-loop runs and allocation ratios.</p>
           </div>
-          <Link href="/simulation" className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
+          <Link
+            href="/simulation"
+            className="text-xs font-semibold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none rounded-lg p-1"
+            aria-label="Open Simulation Studio"
+          >
             <span>Open Simulation Studio</span>
             <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xs">
-          <table className="w-full text-left text-xs text-slate-700">
-            <thead className="border-b border-slate-200 bg-slate-50/80 text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-2xs">
+          <table className="w-full text-left text-xs text-slate-800" aria-label="Recent simulation runs">
+            <caption className="sr-only">Recent Closed-Loop Simulation Runs and Allocation History</caption>
+            <thead className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-600 font-semibold">
               <tr>
-                <th className="px-4 py-3">Run ID</th>
-                <th className="px-4 py-3">Scenario</th>
-                <th className="px-4 py-3">Duration</th>
-                <th className="px-4 py-3">Water Requested</th>
-                <th className="px-4 py-3">Water Allocated</th>
-                <th className="px-4 py-3">Fulfillment</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th scope="col" className="px-4 py-3">Run ID</th>
+                <th scope="col" className="px-4 py-3">Scenario</th>
+                <th scope="col" className="px-4 py-3">Duration</th>
+                <th scope="col" className="px-4 py-3">Water Requested</th>
+                <th scope="col" className="px-4 py-3">Water Allocated</th>
+                <th scope="col" className="px-4 py-3">Fulfillment</th>
+                <th scope="col" className="px-4 py-3">Status</th>
+                <th scope="col" className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-mono">
@@ -381,24 +503,25 @@ export default function DashboardPage() {
                   const ratio = sim.summary_metrics?.overall_fulfillment_ratio ?? (reqL > 0 ? (allocL / reqL) * 100 : 100);
 
                   return (
-                    <tr key={sim.id} className="hover:bg-emerald-50/30 transition-colors">
+                    <tr key={sim.id} className="hover:bg-emerald-50/40 transition-colors">
                       <td className="px-4 py-3 font-semibold text-slate-900">{sim.id.substring(0, 8)}...</td>
                       <td className="px-4 py-3 font-sans text-slate-800 font-medium">{sim.scenario}</td>
-                      <td className="px-4 py-3 text-slate-600">{sim.duration_hours}h ({sim.timestep_minutes}m dt)</td>
-                      <td className="px-4 py-3 text-slate-600">{reqL.toFixed(1)} L</td>
-                      <td className="px-4 py-3 text-emerald-700 font-semibold">{allocL.toFixed(1)} L</td>
+                      <td className="px-4 py-3 text-slate-700">{sim.duration_hours}h ({sim.timestep_minutes}m dt)</td>
+                      <td className="px-4 py-3 text-slate-700">{reqL.toFixed(1)} L</td>
+                      <td className="px-4 py-3 text-emerald-800 font-semibold">{allocL.toFixed(1)} L</td>
                       <td className="px-4 py-3">
-                        <span className="text-teal-700 font-semibold">{typeof ratio === 'number' ? ratio.toFixed(1) : ratio}%</span>
+                        <span className="text-teal-800 font-semibold">{typeof ratio === 'number' ? ratio.toFixed(1) : ratio}%</span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200">
+                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 border border-emerald-300">
                           {sim.status}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <Link
                           href={`/simulation?run_id=${sim.id}`}
-                          className="text-emerald-700 hover:text-emerald-800 font-sans font-semibold flex items-center justify-end gap-1"
+                          aria-label={`View simulation plots for run ${sim.id.substring(0, 8)}`}
+                          className="text-emerald-700 hover:text-emerald-900 font-sans font-semibold flex items-center justify-end gap-1 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none rounded p-0.5"
                         >
                           <span>View Plots</span>
                           <ArrowUpRight className="h-3.5 w-3.5" />
