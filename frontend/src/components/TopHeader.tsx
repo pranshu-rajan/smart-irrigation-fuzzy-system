@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 const ROUTE_LABELS: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
-  '/': { label: '3D Digital Twin Overview', icon: Compass },
+  '/': { label: 'End-to-End Fuzzy Architecture Studio', icon: Sliders },
   '/dashboard': { label: 'Telemetry & Supervisory Dashboard', icon: Activity },
   '/simulation': { label: 'Closed-Loop Simulation Studio', icon: Cpu },
   '/fuzzy': { label: 'Fuzzy Logic Diagnostics', icon: Sliders },
@@ -48,7 +48,7 @@ export default function TopHeader() {
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/90 bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-2xs">
       <div className="flex items-center gap-3.5">
-        {/* 3-Line Bar (Hamburger) Toggle Button for Mobile (< lg) */}
+        {/* Mobile Sidebar Toggle Button (< lg) */}
         <button
           onClick={toggleSidebar}
           className="flex lg:hidden items-center justify-center h-9 w-9 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer"
@@ -56,16 +56,6 @@ export default function TopHeader() {
           title="Toggle Navigation Menu"
         >
           <Menu className="h-5 w-5" />
-        </button>
-
-        {/* 3-Line Bar (Hamburger) Toggle Button for Desktop (lg+) */}
-        <button
-          onClick={toggleCollapse}
-          className="hidden lg:flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 transition-colors cursor-pointer"
-          aria-label={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-          title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-        >
-          <Menu className="h-4 w-4" />
         </button>
 
         {/* Current Active Page Breadcrumb & Vector Icon */}

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { api, ControllerOverview, FuzzyVariableSchema, FuzzyRuleSchema, FuzzyEvaluateResponse } from '@/lib/api';
-import { TrendingUp, FlaskConical, Zap, ScrollText } from 'lucide-react';
+import { TrendingUp, FlaskConical, Zap, ScrollText, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function FuzzyExplorerPage() {
   const [controllers, setControllers] = useState<any[]>([]);
@@ -150,6 +151,28 @@ export default function FuzzyExplorerPage() {
         <p className="mt-1 text-sm text-slate-600">
           Inspect membership functions, linguistic rule matrices, and real-time defuzzification across all 5 Mamdani FIS subsystems.
         </p>
+      </div>
+
+      {/* Guided Studio Link Banner */}
+      <div className="rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50 via-teal-50 to-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+            <Sparkles className="h-4 w-4" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-emerald-950">Want to design the complete system from scratch?</div>
+            <div className="text-[11px] text-slate-600">
+              Use the step-by-step studio to configure crops, weather constraints, execute simulation, and export PDF reports.
+            </div>
+          </div>
+        </div>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 shrink-0 transition-colors shadow-2xs"
+        >
+          <span>Open System Studio</span>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
 
       {/* Subsystems Navigation Tabs */}

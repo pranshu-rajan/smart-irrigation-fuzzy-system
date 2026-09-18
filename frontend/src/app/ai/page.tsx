@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api, SimulationSummaryResponse } from '@/lib/api';
 import { Lock, MessageSquare } from 'lucide-react';
+import FormattedAIResponse from '@/components/FormattedAIResponse';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -193,10 +194,14 @@ function AIChatContent() {
                   className={`max-w-2xl rounded-2xl p-4 text-xs leading-relaxed ${
                     m.role === 'user'
                       ? 'bg-emerald-600 text-white rounded-br-none shadow-xs'
-                      : 'bg-slate-50 text-slate-800 border border-slate-200/90 rounded-bl-none shadow-2xs'
+                      : 'bg-slate-50/90 text-slate-800 border border-slate-200/90 rounded-bl-none shadow-2xs'
                   }`}
                 >
-                  <p className="whitespace-pre-line">{m.content}</p>
+                  {m.role === 'user' ? (
+                    <p className="whitespace-pre-line font-medium text-white">{m.content}</p>
+                  ) : (
+                    <FormattedAIResponse content={m.content} />
+                  )}
 
                   {m.grounded_context && (
                     <div className="mt-3 pt-2 border-t border-slate-200 text-[10px] text-slate-500 font-mono">

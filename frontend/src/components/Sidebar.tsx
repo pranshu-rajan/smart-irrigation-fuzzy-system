@@ -36,25 +36,25 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    group: 'Supervisory Control',
+    group: 'Primary Workflow',
     items: [
-      { href: '/dashboard', label: 'Dashboard', icon: Activity },
-      { href: '/', label: '3D Digital Twin', icon: Compass, badge: 'WebGL' },
-      { href: '/simulation', label: 'Simulation Studio', icon: Cpu, badge: '1440m' },
-      { href: '/allocation', label: 'Water Allocation', icon: Layers },
+      { href: '/', label: 'System Studio', icon: Sliders, badge: 'Start Here' },
     ],
   },
   {
-    group: 'Fuzzy & Optimization',
+    group: 'Subsystem Deep-Dives',
     items: [
-      { href: '/fuzzy', label: 'Fuzzy Subsystems', icon: Sliders, badge: '5 FIS' },
+      { href: '/fuzzy', label: '5 Fuzzy Engines', icon: Sliders, badge: '5 FIS' },
+      { href: '/simulation', label: 'Simulation Studio', icon: Cpu, badge: '1440m' },
+      { href: '/dashboard', label: 'Dashboard & 3D Twin', icon: Activity, badge: 'WebGL' },
+      { href: '/allocation', label: 'Supervisory Allocation', icon: Layers },
       { href: '/optimization', label: 'PSO Parameter Tuning', icon: TrendingUp },
       { href: '/scenarios', label: '6 Climate Scenarios', icon: GitFork },
       { href: '/zones', label: 'Zone Agronomy', icon: MapPin },
     ],
   },
   {
-    group: 'Intelligence & Audit',
+    group: 'Outputs & Advisory',
     items: [
       { href: '/ai', label: 'AI Advisory Copilot', icon: Bot, badge: 'Groq' },
       { href: '/reports', label: 'PDF Reports & CSV', icon: FileText },
@@ -112,7 +112,7 @@ export default function Sidebar() {
             )}
           </Link>
 
-          {/* Desktop collapse toggle button (3-line hamburger bar or chevron) */}
+          {/* Desktop collapse toggle button */}
           <button
             onClick={toggleCollapse}
             className={`hidden lg:flex items-center justify-center h-8 w-8 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors ${
@@ -121,7 +121,7 @@ export default function Sidebar() {
             title="Collapse sidebar"
             aria-label="Collapse sidebar"
           >
-            <Menu className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" />
           </button>
 
           {/* Close button on mobile inside drawer */}
@@ -229,7 +229,7 @@ export default function Sidebar() {
                 title="Expand sidebar"
                 aria-label="Expand sidebar"
               >
-                <Menu className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           )}

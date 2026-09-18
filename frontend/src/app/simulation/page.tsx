@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { api, SimulationSummaryResponse, TimeseriesResponse, TimeseriesRecord } from '@/lib/api';
 import LineChart from '@/components/LineChart';
 import MetricCard from '@/components/MetricCard';
-import { Bot, FileText, AlertTriangle, Settings2, Play } from 'lucide-react';
+import { Bot, FileText, AlertTriangle, Settings2, Play, Sparkles, ArrowRight } from 'lucide-react';
 
 function SimulationStudioContent() {
   const searchParams = useSearchParams();
@@ -118,6 +118,28 @@ function SimulationStudioContent() {
             </Link>
           </div>
         )}
+      </div>
+
+      {/* Guided Studio Link Banner */}
+      <div className="rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50 via-teal-50 to-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+            <Sparkles className="h-4 w-4" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-emerald-950">Want to customize plant crops, soils, and fuzzy architecture?</div>
+            <div className="text-[11px] text-slate-600">
+              The 5-step System Studio lets you modify crop coefficients, soil textures, inspect all 5 FIS, and audit results with AI.
+            </div>
+          </div>
+        </div>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 shrink-0 transition-colors shadow-2xs"
+        >
+          <span>Open System Studio</span>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
 
       {errorMsg && (
