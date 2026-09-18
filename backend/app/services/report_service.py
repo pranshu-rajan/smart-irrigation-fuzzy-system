@@ -30,6 +30,7 @@ from reportlab.platypus import (
 )
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
 
 from backend.app.schemas.allocation import ReportGenerateRequest, ReportResponse
 from backend.app.database.client import DatabaseRepository
@@ -114,9 +115,11 @@ class ReportService:
             "Body_Custom",
             parent=styles["Normal"],
             fontName="Helvetica",
-            fontSize=9,
-            leading=13,
+            fontSize=10,
+            leading=16,
             textColor=colors.HexColor("#2D3748"),
+            alignment=TA_JUSTIFY,
+            spaceAfter=6,
         )
         body_bold = ParagraphStyle(
             "Body_Bold",
@@ -153,8 +156,22 @@ class ReportService:
             story.append(Paragraph(f"<b>Agronomic AI Advisor Diagnostic:</b><br/>{cleaned_ai}", body_style))
             story.append(Spacer(1, 10))
 
-        # 2. Zone Configurations Table
-        story.append(Paragraph("2. System & Zone Physical Configurations", h1_style))
+        # 2. Fuzzy System Architecture (HAFC)
+        story.append(Paragraph("2. Hierarchical Adaptive Fuzzy Control Architecture", h1_style))
+        fuzzy_text = (
+            "The system employs a 5-subsystem Mamdani fuzzy cascade to compute precise water demands and arbitrate scarcity:<br/><br/>"
+            "• <b>FIS 1 (Soil Stress):</b> Inputs: Relative Soil Moisture, Error → Output: Soil Stress [0-100%]<br/>"
+            "• <b>FIS 2 (Weather Stress):</b> Inputs: Temp, RH, Radiation, Wind, Rain → Output: Weather Stress [0-100%]<br/>"
+            "• <b>FIS 3 (Water Demand):</b> Inputs: Crop ETc, Deficit, Eff. Rainfall → Output: Water Demand [0-100%]<br/>"
+            "• <b>FIS 4 (Main Controller):</b> Inputs: Soil Stress, Weather, Water Demand, Error → Output: Irrigation Command [0-100%]<br/>"
+            "• <b>FIS 5 (Allocation):</b> Inputs: Supply, Request, Stress, Priority → Output: Final Bounded Allocation (mm)<br/><br/>"
+            "The Mamdani min-max centroid defuzzification guarantees continuous, bounded, and deterministic physical actuation."
+        )
+        story.append(Paragraph(fuzzy_text, body_style))
+        story.append(Spacer(1, 12))
+
+        # 3. Zone Configurations Table
+        story.append(Paragraph("3. System & Zone Physical Configurations", h1_style))
         zone_table_data = [
             ["Zone ID", "Crop Type", "Soil Type", "Area (m²)", "Target SM (%)", "FC (%)", "WP (%)", "Priority"],
         ]
@@ -185,8 +202,8 @@ class ReportService:
         story.append(t_zones)
         story.append(Spacer(1, 12))
 
-        # 3. Key Performance Metrics Table
-        story.append(Paragraph("3. Closed-Loop Performance Metrics", h1_style))
+        # 4. Key Performance Metrics Table
+        story.append(Paragraph("4. Closed-Loop Performance Metrics", h1_style))
         metrics_table_data = [
             ["Zone", "Applied (L)", "Applied (mm)", "MAE (%)", "Fulfillment (%)", "Mean SM (%)", "Max SM (%)", "Deficit (h)"],
         ]
@@ -220,8 +237,8 @@ class ReportService:
         story.append(t_metrics)
         story.append(Spacer(1, 12))
 
-        # 4. Water Balance Verification Audit
-        story.append(Paragraph("4. Physical Conservation & Water Balance Audit", h1_style))
+        # 5. Water Balance Verification Audit
+        story.append(Paragraph("5. Physical Conservation & Water Balance Audit", h1_style))
         wb_text = (
             "<b>Conservation Law:</b> ΔStorage = Infiltration + Irrigation - ETc - Deep Percolation - Runoff<br/>"
             f"- <b>Simulation Max Residual:</b> {max_residual_mm:.8f} mm<br/>"
@@ -230,11 +247,9 @@ class ReportService:
         )
         story.append(Paragraph(wb_text, body_style))
         story.append(Spacer(1, 12))
-        story.append(Paragraph(wb_text, body_style))
-        story.append(Spacer(1, 12))
 
-        # 5. Offline PSO Optimization Benchmark
-        story.append(Paragraph("5. Offline PSO Parameter Tuning Summary", h1_style))
+        # 6. Offline PSO Optimization Benchmark
+        story.append(Paragraph("6. Offline PSO Parameter Tuning Summary", h1_style))
         pso_text = (
             "The supervisory actuator controller (MainIrrigationFIS) has been systematically calibrated via continuous "
             "Particle Swarm Optimization across 18 membership function transition breakpoints:<br/>"
