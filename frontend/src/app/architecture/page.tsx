@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import Link from 'next/link';
 import { Network, Scale, ArrowDown, CheckCircle2, Settings2, PlayCircle, GitBranch, FlaskConical, FileCheck2, ChevronLeft, ChevronRight, Play, Save, SlidersHorizontal } from 'lucide-react';
+import BackendFuzzyArchitectureInspector from '@/components/BackendFuzzyArchitectureInspector';
 
 export default function ArchitecturePage() {
   return (
@@ -253,6 +254,9 @@ export default function ArchitecturePage() {
           </div>
         </div>
       </div>
+
+      {/* Backend Implementation & Engine Inspector */}
+      <BackendFuzzyArchitectureInspector />
 
       {/* User-driven end-to-end system designer */}
       <EndToEndDesigner />

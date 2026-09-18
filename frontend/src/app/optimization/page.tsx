@@ -177,7 +177,7 @@ export default function OptimizationPage() {
       {/* Hyperparameter Controls & Convergence Plot */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left: PSO Hyperparameters */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800">
             Swarm Configuration
           </h2>
@@ -234,7 +234,7 @@ export default function OptimizationPage() {
         </div>
 
         {/* Right: Convergence Curve */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900">
               Convergence History (Fitness vs Iterations)
@@ -276,8 +276,8 @@ export default function OptimizationPage() {
           18-Dimensional Parameter Space (Baseline vs PSO-Tuned)
         </h2>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
-          <table className="w-full text-left text-xs text-slate-700">
+        <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+          <table className="w-full min-w-[650px] text-left text-xs text-slate-700">
             <thead className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-600 font-mono">
               <tr>
                 <th className="px-4 py-3">Parameter Name</th>

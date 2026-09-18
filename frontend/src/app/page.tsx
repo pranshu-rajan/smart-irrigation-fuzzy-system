@@ -351,7 +351,7 @@ export default function EndToEndStudioPage() {
   return (
     <div className="space-y-8 pb-20 max-w-7xl mx-auto">
       {/* Top Welcome & Value Proposition */}
-      <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/50 p-6 md:p-8 shadow-xs">
+      <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/50 p-4 sm:p-6 md:p-8 shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-2 max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/95 px-3 py-1 text-xs font-semibold text-emerald-800 shadow-2xs">
@@ -386,8 +386,8 @@ export default function EndToEndStudioPage() {
         </div>
 
         {/* 5-Step Progress Stepper */}
-        <div className="mt-8 pt-6 border-t border-emerald-100/80">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-emerald-100/80">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
             {STEPS.map((s) => {
               const isCurrent = currentStep === s.num;
               const isPast = currentStep > s.num;
@@ -395,7 +395,7 @@ export default function EndToEndStudioPage() {
                 <button
                   key={s.num}
                   onClick={() => setCurrentStep(s.num)}
-                  className={`flex flex-col text-left p-3 rounded-2xl border transition-all cursor-pointer ${
+                  className={`flex flex-col text-left p-2.5 sm:p-3 rounded-2xl border transition-all cursor-pointer ${
                     isCurrent
                       ? 'border-emerald-500 bg-white shadow-md ring-2 ring-emerald-500/20'
                       : isPast
@@ -427,7 +427,7 @@ export default function EndToEndStudioPage() {
       <div ref={stepContentRef}>
       {/* STEP 1: DEFINE PLANT & ZONES */}
       {currentStep === 1 && (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 md:p-8 shadow-xs space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md mb-2">
               <HelpCircle className="h-3.5 w-3.5" />
@@ -626,7 +626,7 @@ export default function EndToEndStudioPage() {
 
       {/* STEP 2: CLIMATE & SUPPLY CONSTRAINTS */}
       {currentStep === 2 && (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 md:p-8 shadow-xs space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md mb-2">
               <Sun className="h-3.5 w-3.5" />
@@ -774,7 +774,7 @@ export default function EndToEndStudioPage() {
 
       {/* STEP 3: WHOLE FUZZY SYSTEM ARCHITECTURE */}
       {currentStep === 3 && (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-8">
+        <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 md:p-8 shadow-xs space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md mb-2">
               <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -1088,7 +1088,7 @@ export default function EndToEndStudioPage() {
 
       {/* STEP 4: SIMULATION RUN & TELEMETRY CHARTS */}
       {currentStep === 4 && (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-8">
+        <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 md:p-8 shadow-xs space-y-8">
           <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md mb-2">
@@ -1312,7 +1312,7 @@ export default function EndToEndStudioPage() {
 
       {/* STEP 5: AUDIT PDF REPORT & GROUNDED AI COPILOT */}
       {currentStep === 5 && (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-8">
+        <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 md:p-8 shadow-xs space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md mb-2">
               <Bot className="h-3.5 w-3.5" />

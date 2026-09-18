@@ -126,7 +126,7 @@ export default function ZonesManagementPage() {
         {zones.map((z) => (
           <div
             key={z.id}
-            className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all hover:border-emerald-300 hover:shadow-sm"
+            className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs transition-all hover:border-emerald-300 hover:shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between">
@@ -192,12 +192,12 @@ export default function ZonesManagementPage() {
 
       {/* Edit Modal */}
       {editingZone && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 backdrop-blur-xs">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="edit-zone-title"
-            className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl space-y-4"
+            className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-2xl space-y-4"
           >
             <h2 id="edit-zone-title" className="text-base font-bold text-slate-900">
               Edit Zone {editingZone.id} Parameters
@@ -333,8 +333,8 @@ export default function ZonesManagementPage() {
       {/* Reference Agronomy & Soil Physics Specifications */}
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-slate-900">Agronomic Soil Hydraulic Reference Table</h2>
-        <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
-          <table className="w-full text-left text-xs text-slate-700 font-mono">
+        <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+          <table className="w-full min-w-[600px] text-left text-xs text-slate-700 font-mono">
             <thead className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-600">
               <tr>
                 <th className="px-4 py-3">Soil Texture</th>

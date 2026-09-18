@@ -8,6 +8,9 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAuthModalOpen: boolean;
+  openAuthModal: () => void;
+  closeAuthModal: () => void;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signUp: (email: string, password: string, name?: string) => Promise<{ success: boolean; error?: string }>;
   demoAccess: () => void;
@@ -23,6 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   // Initialize session from local storage and verify with backend
   useEffect(() => {
@@ -48,12 +52,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 localStorage.setItem(USER_KEY, JSON.stringify(res.user));
               }
             } catch {
-              // If token expired or invalid, clear session
+              // If token expired or invalid, clear session and open login dialog
               localStorage.removeItem(TOKEN_KEY);
               localStorage.removeItem(USER_KEY);
               setToken(null);
               setUser(null);
+              setIsAuthModalOpen(true);
             }
+          } else {
+            // First time accessing the site unauthenticated: open login dialog
+            setIsAuthModalOpen(true);
           }
         }
       } finally {
@@ -64,6 +72,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initializeAuth();
   }, []);
 
+  const openAuthModal = useCallback(() => setIsAuthModalOpen(true), []);
+  const closeAuthModal = useCallback(() => setIsAuthModalOpen(false), []);
+
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
@@ -71,6 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (res && res.token) {
         setToken(res.token);
         setUser(res.user);
+        setIsAuthModalOpen(false);
         if (typeof window !== 'undefined') {
           localStorage.setItem(TOKEN_KEY, res.token);
           localStorage.setItem(USER_KEY, JSON.stringify(res.user));
@@ -92,6 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (res && res.token) {
         setToken(res.token);
         setUser(res.user);
+        setIsAuthModalOpen(false);
         if (typeof window !== 'undefined') {
           localStorage.setItem(TOKEN_KEY, res.token);
           localStorage.setItem(USER_KEY, JSON.stringify(res.user));
@@ -116,6 +129,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const demoToken = 'demo-session-token-local';
     setUser(demoUser);
     setToken(demoToken);
+    setIsAuthModalOpen(false);
     if (typeof window !== 'undefined') {
       localStorage.setItem(TOKEN_KEY, demoToken);
       localStorage.setItem(USER_KEY, JSON.stringify(demoUser));
@@ -130,6 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setUser(null);
       setToken(null);
+      setIsAuthModalOpen(true);
       if (typeof window !== 'undefined') {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
@@ -144,6 +159,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         isLoading,
         isAuthenticated: !!user && !!token,
+        isAuthModalOpen,
+        openAuthModal,
+        closeAuthModal,
         login,
         signUp,
         demoAccess,

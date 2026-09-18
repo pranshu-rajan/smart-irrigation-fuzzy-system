@@ -150,7 +150,7 @@ function SimulationStudioContent() {
       )}
 
       {/* Simulation Control Panel */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-6">
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs space-y-6">
         <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
           <Settings2 className="h-4 w-4 text-emerald-600" />
           <span>Simulation Parameters & Scenario Configuration</span>
@@ -225,7 +225,7 @@ function SimulationStudioContent() {
         </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-slate-100">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-medium text-slate-700">Telemetry Zone:</span>
             {[1, 2, 3].map((z) => (
               <button

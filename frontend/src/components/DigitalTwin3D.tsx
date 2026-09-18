@@ -205,10 +205,42 @@ export default function DigitalTwin3D() {
       isDragging = false;
     };
 
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        prevMouseX = e.touches[0].clientX;
+        prevMouseY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging || e.touches.length !== 1) return;
+      const deltaX = e.touches[0].clientX - prevMouseX;
+      const deltaY = e.touches[0].clientY - prevMouseY;
+      prevMouseX = e.touches[0].clientX;
+      prevMouseY = e.touches[0].clientY;
+
+      rotationY += deltaX * 0.008;
+      rotationX = Math.max(0.1, Math.min(1.0, rotationX + deltaY * 0.005));
+
+      const radius = 28;
+      camera.position.x = Math.sin(rotationY) * radius * Math.cos(rotationX);
+      camera.position.z = Math.cos(rotationY) * radius * Math.cos(rotationX);
+      camera.position.y = radius * Math.sin(rotationX);
+      camera.lookAt(0, 1, 0);
+    };
+
+    const handleTouchEnd = () => {
+      isDragging = false;
+    };
+
     const canvasDom = renderer.domElement;
     canvasDom.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
+    canvasDom.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
 
     // 8. Animation Loop
     let animationFrameId: number;
@@ -271,6 +303,9 @@ export default function DigitalTwin3D() {
       canvasDom.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      canvasDom.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
       }
@@ -322,7 +357,7 @@ export default function DigitalTwin3D() {
         ref={mountRef}
         role="img"
         aria-label="3D interactive visualization of 3 farm zones showing soil strata and active irrigation spray. Use buttons below to inspect individual zones."
-        className="w-full h-[380px] cursor-grab active:cursor-grabbing bg-slate-50"
+        className="w-full h-[280px] sm:h-[360px] lg:h-[420px] cursor-grab active:cursor-grabbing bg-slate-50"
       />
 
       {/* Interactive Zone Selector Pill Bar */}

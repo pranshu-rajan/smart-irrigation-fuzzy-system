@@ -50,11 +50,12 @@ class FuzzyRuleSchema(BaseModel):
 class FuzzyEvaluateRequest(BaseModel):
     controller_name: Optional[str] = None
     controller: Optional[str] = None
+    target_controller: Optional[str] = None
     inputs: Dict[str, float]
 
     @property
-    def target_controller(self) -> str:
-        return self.controller_name or self.controller or "main_irrigation"
+    def resolved_controller(self) -> str:
+        return self.target_controller or self.controller_name or self.controller or "main_irrigation"
 
 
 class RuleActivationDetail(BaseModel):

@@ -94,11 +94,11 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 pb-16">
       {/* Top Header Card */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-3xl border border-emerald-100 bg-gradient-to-r from-white via-emerald-50/30 to-white p-6 shadow-xs">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-3xl border border-emerald-100 bg-gradient-to-r from-white via-emerald-50/30 to-white p-4 sm:p-6 shadow-xs">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Multizone Supervisory Dashboard</h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/80 border border-emerald-300 px-3 py-0.5 text-xs font-semibold text-emerald-900">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Multizone Supervisory Dashboard</h1>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/80 border border-emerald-300 px-2.5 sm:px-3 py-0.5 text-xs font-semibold text-emerald-900">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
               SYSTEM ONLINE
             </span>

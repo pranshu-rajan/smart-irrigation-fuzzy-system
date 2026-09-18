@@ -207,7 +207,7 @@ export default function ScenariosPage() {
         {comparisonData.map((s) => (
           <div
             key={s.name}
-            className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all hover:border-emerald-300 hover:shadow-sm"
+            className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs transition-all hover:border-emerald-300 hover:shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between">

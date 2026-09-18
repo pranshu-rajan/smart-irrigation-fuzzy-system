@@ -66,7 +66,7 @@ def get_controller_rules(controller: str):
 def evaluate_fuzzy_step(req: FuzzyEvaluateRequest):
     """Execute live fuzzy inference step, returning defuzzified output and rule activation weights."""
     try:
-        controller_name = req.target_controller
+        controller_name = req.resolved_controller
         return fuzzy_service.evaluate_controller(controller_name, req.inputs)
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))

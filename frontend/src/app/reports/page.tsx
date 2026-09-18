@@ -102,7 +102,7 @@ function ReportsContent() {
       {/* Generator & Exporter Controls */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* PDF Generator Card */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
             <FileText className="h-4 w-4 text-emerald-600" />
             <span>PDF Report Generator</span>
@@ -179,7 +179,7 @@ function ReportsContent() {
         </div>
 
         {/* CSV Exporter Card */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-emerald-600" />
             <span>Raw Telemetry CSV Dispatch</span>
@@ -224,7 +224,7 @@ function ReportsContent() {
       </div>
 
       {/* PDF Document Structure Blueprint */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs space-y-4">
         <h2 className="text-lg font-bold text-slate-900">Official Audit Report Sections Blueprint</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-700">
           <div className="rounded-xl bg-slate-50/70 p-4 border border-slate-200/80 space-y-1">

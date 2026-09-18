@@ -187,16 +187,16 @@ function AIChatContent() {
         </div>
 
         {/* Chat Messages Container (Right) */}
-        <div className="lg:col-span-3 flex flex-col rounded-2xl border border-slate-200/90 bg-white shadow-xs h-[600px]">
+        <div className="lg:col-span-3 flex flex-col rounded-2xl border border-slate-200/90 bg-white shadow-xs h-[500px] sm:h-[600px]">
           {/* Scrollable Conversation */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4">
             {messages.map((m, idx) => (
               <div
                 key={idx}
                 className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`max-w-2xl rounded-2xl p-4 text-xs leading-relaxed ${
+                  className={`max-w-2xl rounded-2xl p-3.5 sm:p-4 text-xs leading-relaxed ${
                     m.role === 'user'
                       ? 'bg-emerald-600 text-white rounded-br-none shadow-xs'
                       : 'bg-slate-50/90 text-slate-800 border border-slate-200/90 rounded-bl-none shadow-2xs'
@@ -234,7 +234,7 @@ function AIChatContent() {
           </div>
 
           {/* Chat Input Bar */}
-          <div className="border-t border-slate-100 p-4 bg-white rounded-b-2xl flex gap-3">
+          <div className="border-t border-slate-100 p-3 sm:p-4 bg-white rounded-b-2xl flex flex-col sm:flex-row gap-2.5 sm:gap-3">
             <input
               id="ai-prompt-input"
               aria-label="Ask Groq AI advisory prompt"
@@ -250,7 +250,7 @@ function AIChatContent() {
               aria-label="Send advisory inquiry"
               onClick={() => handleSendMessage()}
               disabled={isLoading || !inputPrompt.trim()}
-              className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 transition-all shadow-md shadow-emerald-600/15 cursor-pointer"
+              className="w-full sm:w-auto rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 transition-all shadow-md shadow-emerald-600/15 cursor-pointer text-center"
             >
               Send Inquire
             </button>

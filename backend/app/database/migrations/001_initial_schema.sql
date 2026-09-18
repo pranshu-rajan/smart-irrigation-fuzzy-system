@@ -155,13 +155,28 @@ ALTER TABLE public.ai_conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ai_messages ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies: Users only access their own records
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile" ON public.profiles FOR ALL USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS "Users can view own zones" ON public.zones;
 CREATE POLICY "Users can view own zones" ON public.zones FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can manage own simulation_runs" ON public.simulation_runs;
 CREATE POLICY "Users can manage own simulation_runs" ON public.simulation_runs FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can manage own simulation_results" ON public.simulation_results;
 CREATE POLICY "Users can manage own simulation_results" ON public.simulation_results FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can manage own optimization_runs" ON public.optimization_runs;
 CREATE POLICY "Users can manage own optimization_runs" ON public.optimization_runs FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can manage own reports" ON public.reports;
 CREATE POLICY "Users can manage own reports" ON public.reports FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can manage own ai_conversations" ON public.ai_conversations;
 CREATE POLICY "Users can manage own ai_conversations" ON public.ai_conversations FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can manage own ai_messages" ON public.ai_messages;
 CREATE POLICY "Users can manage own ai_messages" ON public.ai_messages FOR ALL USING (
     EXISTS (SELECT 1 FROM public.ai_conversations WHERE id = ai_messages.conversation_id AND user_id = auth.uid())
 );

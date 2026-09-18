@@ -77,7 +77,7 @@ export default function WaterAllocationPage() {
       </div>
 
       {/* Control Sandbox */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-6">
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs space-y-6">
         <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
           <Droplets className="h-4 w-4 text-emerald-600" />
           <span>Shared Supply & Zone Demand Dispatcher</span>
@@ -140,7 +140,7 @@ export default function WaterAllocationPage() {
             {[1, 2, 3].map((zId) => {
               const cropName = zId === 1 ? 'Tomato (High)' : zId === 2 ? 'Potato (Medium)' : 'Maize (Standard)';
               return (
-                <div key={zId} className="grid grid-cols-3 gap-3 items-center text-xs">
+                <div key={zId} className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 items-center text-xs pb-2 sm:pb-0 border-b sm:border-b-0 border-slate-200/60">
                   <span className="font-medium text-slate-700 truncate">Zone {zId}: {cropName}</span>
                   <div>
                     <label htmlFor={`zone-req-${zId}`} className="text-[10px] text-slate-600 block font-medium">Req (mm)</label>
@@ -238,8 +238,8 @@ export default function WaterAllocationPage() {
       {/* Zone Allocation Breakdown Table */}
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-slate-900">Zone Allocation Breakdown (Layer C Water-Filling)</h2>
-        <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
-          <table className="w-full text-left text-xs text-slate-700">
+        <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+          <table className="w-full min-w-[700px] text-left text-xs text-slate-700">
             <thead className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-600 font-mono">
               <tr>
                 <th className="px-4 py-3">Zone</th>

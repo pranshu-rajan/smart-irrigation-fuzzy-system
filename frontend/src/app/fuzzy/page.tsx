@@ -177,6 +177,33 @@ export default function FuzzyExplorerPage() {
         </Link>
       </div>
 
+      {/* Backend Architecture Callout */}
+      <div className="rounded-2xl border border-slate-200 bg-slate-900 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-white shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 font-bold shadow-xs">
+            &lt;/&gt;
+          </div>
+          <div>
+            <div className="text-xs font-bold text-white flex items-center gap-2">
+              <span>Want to see how this is engineered & executed on the backend?</span>
+              <span className="text-[10px] font-mono bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">
+                Python • NumPy • 5 FIS
+              </span>
+            </div>
+            <div className="text-[11px] text-slate-300">
+              Inspect the Python source classes (<code className="font-mono text-emerald-300">fuzzy_engine/</code>), Gödel t-norm inference, and 501-point centroid defuzzification math.
+            </div>
+          </div>
+        </div>
+        <Link
+          href="/architecture#backend-fuzzy-engine"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs px-4 py-2 shrink-0 transition-colors shadow-2xs"
+        >
+          <span>View Backend Architecture</span>
+          <ArrowRight className="h-3.5 w-3.5 text-emerald-600" />
+        </Link>
+      </div>
+
       {/* Subsystems Navigation Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
         {controllers.map((ctrl) => {
@@ -306,13 +333,13 @@ export default function FuzzyExplorerPage() {
       </div>
 
       {/* Interactive Sandbox & Defuzzifier */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <FlaskConical className="h-5 w-5 text-emerald-600" />
             <span>Live Defuzzification Sandbox</span>
           </h2>
-          <span className="text-xs text-slate-500 font-mono bg-slate-100 px-2.5 py-1 rounded-md">Real-time Mamdani CoA Engine</span>
+          <span className="text-xs text-slate-500 font-mono bg-slate-100 px-2.5 py-1 rounded-md self-start sm:self-auto">Real-time Mamdani CoA Engine</span>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -455,8 +482,8 @@ export default function FuzzyExplorerPage() {
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
-          <div className="max-h-96 overflow-y-auto">
-            <table className="w-full text-left text-xs text-slate-700">
+          <div className="max-h-96 overflow-auto">
+            <table className="w-full min-w-[500px] text-left text-xs text-slate-700">
               <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-600">
                 <tr>
                   <th className="px-4 py-3 w-16">#</th>
