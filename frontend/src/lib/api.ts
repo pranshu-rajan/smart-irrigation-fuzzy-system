@@ -101,12 +101,15 @@ export interface TimeseriesResponse {
 }
 
 export interface ControllerOverview {
+  id?: string;
   name: string;
-  display_name: string;
+  title?: string;
+  display_name?: string;
   description: string;
-  inputs: Array<{ name: string; range: [number, number]; term_count: number }>;
-  outputs: Array<{ name: string; range: [number, number]; term_count: number }>;
-  rule_count: number;
+  inputs?: any;
+  output?: any;
+  outputs?: any;
+  rule_count?: number;
 }
 
 export interface FuzzyVariableSchema {
