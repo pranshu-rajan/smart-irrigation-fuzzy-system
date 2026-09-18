@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { SidebarProvider } from '@/context/SidebarContext';
+import { AuthProvider } from '@/context/AuthContext';
 import AppLayoutClient from '@/components/AppLayoutClient';
 
 const inter = Inter({
@@ -28,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-[#f8faf9] text-slate-900 font-sans selection:bg-emerald-500 selection:text-white antialiased">
-        <SidebarProvider>
-          <AppLayoutClient>{children}</AppLayoutClient>
-        </SidebarProvider>
+        <AuthProvider>
+          <SidebarProvider>
+            <AppLayoutClient>{children}</AppLayoutClient>
+          </SidebarProvider>
+        </AuthProvider>
       </body>
     </html>
   );

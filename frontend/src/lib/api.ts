@@ -229,21 +229,51 @@ export interface ReportResponse {
   created_at: string;
 }
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  token_type: string;
+  user: AuthUser;
+  provider: string;
+}
+
 // --- Fetch Utility ---
 
 export async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
+  let token: string | null = null;
+  if (typeof window !== 'undefined') {
+    try {
+      token = localStorage.getItem('irrigation_auth_token');
+    } catch {
+      // Ignore localStorage security errors
+    }
+  }
+
   try {
     const res = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(options?.headers || {}),
       },
       ...options,
     });
     if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`API Error ${res.status}: ${errorText}`);
+      let errorDetail = '';
+      try {
+        const errJson = await res.json();
+        errorDetail = errJson.detail || errJson.message || JSON.stringify(errJson);
+      } catch {
+        errorDetail = await res.text();
+      }
+      throw new Error(errorDetail || `API Error ${res.status}`);
     }
     return await res.json();
   } catch (err: any) {
@@ -369,4 +399,18 @@ export const api = {
     }),
   getReportDownloadUrl: (reportId: string) => `${API_BASE}/reports/download/${reportId}`,
   getSimulationCsvUrl: (simulationId: string) => `${API_BASE}/reports/csv/${simulationId}`,
+
+  // Authentication & Supabase
+  signUp: (email: string, password: string, name?: string) =>
+    fetchApi<AuthResponse>('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, name }),
+    }),
+  login: (email: string, password: string) =>
+    fetchApi<AuthResponse>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    }),
+  getMe: () => fetchApi<{ status: string; user: AuthUser }>('/auth/me'),
+  logout: () => fetchApi<{ status: string; message: string }>('/auth/logout', { method: 'POST' }),
 };

@@ -2,6 +2,9 @@
 
 import json
 import sqlite3
+import hashlib
+import secrets
+import uuid
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from datetime import datetime
@@ -21,6 +24,28 @@ from backend.app.database.models import (
 from config.defaults import get_default_zones
 
 logger = get_logger(__name__)
+
+
+def hash_password(password: str) -> str:
+    """Hash password using PBKDF2-HMAC-SHA256 with 100,000 iterations and 16-byte random salt."""
+    salt = secrets.token_hex(16)
+    key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), bytes.fromhex(salt), 100_000)
+    return f"pbkdf2_sha256$100000${salt}${key.hex()}"
+
+
+def verify_password(password: str, password_hash: str) -> bool:
+    """Verify password against stored PBKDF2 hash."""
+    try:
+        parts = password_hash.split("$")
+        if len(parts) != 4 or parts[0] != "pbkdf2_sha256":
+            return False
+        iterations = int(parts[1])
+        salt = bytes.fromhex(parts[2])
+        expected_key = parts[3]
+        computed_key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations).hex()
+        return secrets.compare_digest(computed_key, expected_key)
+    except Exception:
+        return False
 
 
 class DatabaseRepository:
@@ -143,6 +168,17 @@ class DatabaseRepository:
                     created_at TEXT NOT NULL
                 )
             """)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id TEXT PRIMARY KEY,
+                    email TEXT UNIQUE NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    role TEXT NOT NULL DEFAULT 'authenticated',
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                )
+            """)
             conn.commit()
 
     def _seed_default_zones(self) -> None:
@@ -169,6 +205,82 @@ class DatabaseRepository:
                     priority=float(z.priority * 25.0),  # Scale priority 1..3 to %
                 )
                 self.save_zone(rec)
+
+        # Seed default developer user
+        with self._lock, self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id FROM users WHERE id = ?", (default_user,))
+            if not cursor.fetchone():
+                now_iso = datetime.utcnow().isoformat()
+                cursor.execute(
+                    """
+                    INSERT OR IGNORE INTO users (id, email, password_hash, name, role, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        default_user,
+                        "operator@fuzzy-irrigation.local",
+                        hash_password("password123"),
+                        "System Operator",
+                        "admin",
+                        now_iso,
+                        now_iso,
+                    ),
+                )
+                conn.commit()
+
+    # --- User / Auth Methods ---
+    def create_user(
+        self,
+        email: str,
+        password_hash: str,
+        name: str,
+        role: str = "authenticated",
+        user_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Create a new user account in local persistence."""
+        uid = user_id or str(uuid.uuid4())
+        now = datetime.utcnow().isoformat()
+        clean_email = email.strip().lower()
+        with self._lock, self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO users (id, email, password_hash, name, role, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (uid, clean_email, password_hash, name.strip(), role, now, now),
+            )
+            conn.commit()
+        return {
+            "id": uid,
+            "email": clean_email,
+            "name": name.strip(),
+            "role": role,
+            "created_at": now,
+            "updated_at": now,
+        }
+
+    def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        """Retrieve user record by email (case-insensitive)."""
+        clean_email = email.strip().lower()
+        with self._lock, self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE LOWER(email) = ?", (clean_email,))
+            row = cursor.fetchone()
+            if not row:
+                return None
+            return dict(row)
+
+    def get_user_by_id(self, user_id: str) -> Optional[Dict[str, Any]]:
+        """Retrieve user record by ID."""
+        with self._lock, self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            row = cursor.fetchone()
+            if not row:
+                return None
+            return dict(row)
 
     # --- Zone Methods ---
     def list_zones(self, user_id: str) -> List[ZoneRecord]:

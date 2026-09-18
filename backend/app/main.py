@@ -30,6 +30,7 @@ from backend.app.api.routes.optimization import router as optimization_router
 from backend.app.api.routes.ai import router as ai_router
 from backend.app.api.routes.reports import router as reports_router
 from backend.app.api.routes.verification import router as verification_router
+from backend.app.api.routes.auth import router as auth_router
 
 logger = get_logger("main")
 settings = get_settings()
@@ -53,6 +54,7 @@ app.add_middleware(
 
 # Register API Routers under /api
 app.include_router(health_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
 app.include_router(zones_router, prefix="/api")
 app.include_router(crops_router, prefix="/api")
 app.include_router(soils_router, prefix="/api")

@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSidebar } from '@/context/SidebarContext';
+import { useAuth } from '@/context/AuthContext';
 import { 
   Menu, 
   PanelLeftClose, 
@@ -20,7 +21,10 @@ import {
   MapPin, 
   Compass,
   Play,
-  Sprout
+  Sprout,
+  LogOut,
+  User,
+  LogIn
 } from 'lucide-react';
 
 const ROUTE_LABELS: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
@@ -40,10 +44,17 @@ const ROUTE_LABELS: Record<string, { label: string; icon: React.ComponentType<{ 
 
 export default function TopHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const { isOpen, toggleSidebar, isCollapsed, toggleCollapse } = useSidebar();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const currentRoute = ROUTE_LABELS[pathname] || { label: 'Irrigation Platform', icon: Sprout };
   const RouteIcon = currentRoute.icon;
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/login');
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/90 bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-2xs">
@@ -67,15 +78,45 @@ export default function TopHeader() {
         </div>
       </div>
 
-      {/* Top Right Live Telemetry Badge & Sim Quick Action */}
+      {/* Top Right Live Telemetry Badge & Operator Session */}
       <div className="flex items-center gap-3">
-        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-xs font-semibold shadow-2xs">
+        <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-xs font-semibold shadow-2xs">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
           </span>
           <span className="font-mono text-[11px]">3-Zone HAFC Active</span>
         </div>
+
+        {/* Operator Account Status */}
+        {isAuthenticated && user ? (
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-2.5 py-1.5 text-xs shadow-2xs">
+            <div className="flex items-center gap-1.5">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white uppercase">
+                {user.email.charAt(0)}
+              </div>
+              <span className="hidden md:inline font-medium text-slate-800 max-w-[140px] truncate" title={user.email}>
+                {user.name || user.email.split('@')[0]}
+              </span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-200/60 hover:text-rose-600 transition-colors cursor-pointer"
+              title="Sign Out Operator"
+              aria-label="Sign Out"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:border-emerald-300 hover:text-emerald-700 transition-colors shadow-2xs"
+          >
+            <LogIn className="h-3.5 w-3.5 text-emerald-600" />
+            <span className="hidden sm:inline">Operator Sign In</span>
+          </Link>
+        )}
 
         <Link
           href="/simulation"
