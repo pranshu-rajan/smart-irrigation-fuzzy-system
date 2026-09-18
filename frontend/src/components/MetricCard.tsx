@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowUpRight, ArrowDownRight, ArrowRight } from 'lucide-react';
 
 export interface MetricCardProps {
   label?: string;
@@ -50,12 +51,6 @@ export default function MetricCard({
     blue: 'bg-sky-100/70 text-sky-800',
   };
 
-  const trendIcons = {
-    up: '↑',
-    down: '↓',
-    neutral: '→',
-  };
-
   return (
     <div
       className={`relative overflow-hidden rounded-2xl border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${
@@ -80,19 +75,9 @@ export default function MetricCard({
 
       {displaySubtext && (
         <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-          {trend && (
-            <span
-              className={`font-bold ${
-                trend === 'up'
-                  ? 'text-emerald-600'
-                  : trend === 'down'
-                  ? 'text-rose-500'
-                  : 'text-slate-400'
-              }`}
-            >
-              {trendIcons[trend]}
-            </span>
-          )}
+          {trend === 'up' && <ArrowUpRight className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
+          {trend === 'down' && <ArrowDownRight className="h-3.5 w-3.5 text-rose-500 shrink-0" />}
+          {trend === 'neutral' && <ArrowRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />}
           <span>{displaySubtext}</span>
         </div>
       )}

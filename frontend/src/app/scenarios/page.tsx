@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import BarChart from '@/components/BarChart';
+import { Zap } from 'lucide-react';
 
 interface ScenarioComparisonItem {
   name: string;
@@ -161,7 +162,10 @@ export default function ScenariosPage() {
               Simulating 6 Scenarios (8,640 Timesteps)...
             </>
           ) : (
-            '⚡ Run All 6 Scenarios Benchmark'
+            <span className="inline-flex items-center gap-1.5">
+              <Zap className="h-3.5 w-3.5" />
+              <span>Run All 6 Scenarios Benchmark</span>
+            </span>
           )}
         </button>
       </div>

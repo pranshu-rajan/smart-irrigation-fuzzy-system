@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { api, OptimizationSummaryResponse, ParameterComparisonItem } from '@/lib/api';
 import MetricCard from '@/components/MetricCard';
 import LineChart from '@/components/LineChart';
+import { Zap, Lock } from 'lucide-react';
 
 export default function OptimizationPage() {
   const [summary, setSummary] = useState<OptimizationSummaryResponse | null>(null);
@@ -91,14 +92,20 @@ export default function OptimizationPage() {
               Optimizing Swarm...
             </>
           ) : (
-            '⚡ Run Offline PSO Calibration'
+            <span className="inline-flex items-center gap-1.5">
+              <Zap className="h-3.5 w-3.5" />
+              <span>Run Offline PSO Calibration</span>
+            </span>
           )}
         </button>
       </div>
 
       {/* Strict Decoupling Advisory Box */}
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4 text-xs text-emerald-900 shadow-2xs">
-        <strong className="text-emerald-950 block mb-1">🔒 Architectural Invariant Guarantee:</strong>
+        <div className="flex items-center gap-1.5 font-bold text-emerald-950 mb-1">
+          <Lock className="h-3.5 w-3.5 text-emerald-700" />
+          <span>Architectural Invariant Guarantee:</span>
+        </div>
         PSO is strictly executed offline during tuning intervals. The tuned parameter vector is committed to MainIrrigationFIS; PSO never acts as an online real-time controller.
       </div>
 

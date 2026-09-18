@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api, SimulationSummaryResponse } from '@/lib/api';
+import { Lock, MessageSquare } from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -116,7 +117,10 @@ function AIChatContent() {
 
       {/* Strict Decoupling Banner */}
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4 text-xs text-emerald-950 shadow-2xs">
-        <strong className="text-emerald-900 block mb-1">🔒 Safety Notice & Operational Boundary:</strong>
+        <div className="flex items-center gap-1.5 font-bold text-emerald-900 mb-1">
+          <Lock className="h-3.5 w-3.5 text-emerald-700" />
+          <span>Safety Notice & Operational Boundary:</span>
+        </div>
         This AI system functions strictly as a diagnostic and analytical advisory copilot. All valve commands and water dispatches are governed exclusively by deterministic Mamdani FIS and bounded water-filling math.
       </div>
 
@@ -167,9 +171,10 @@ function AIChatContent() {
               <button
                 key={idx}
                 onClick={() => handleSendMessage(pq)}
-                className="w-full text-left rounded-xl bg-slate-50/90 hover:bg-emerald-50/80 p-2.5 text-[11px] text-slate-700 hover:text-emerald-900 border border-slate-200/70 transition-colors cursor-pointer"
+                className="w-full text-left rounded-xl bg-slate-50/90 hover:bg-emerald-50/80 p-2.5 text-[11px] text-slate-700 hover:text-emerald-900 border border-slate-200/70 transition-colors cursor-pointer flex items-start gap-2"
               >
-                💬 {pq}
+                <MessageSquare className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-600" />
+                <span>{pq}</span>
               </button>
             ))}
           </div>

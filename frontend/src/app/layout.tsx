@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
-import Sidebar from '@/components/Sidebar';
+import { SidebarProvider } from '@/context/SidebarContext';
+import AppLayoutClient from '@/components/AppLayoutClient';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -27,28 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-[#f8faf9] text-slate-900 font-sans selection:bg-emerald-500 selection:text-white antialiased">
-        <Sidebar />
-        
-        {/* Main Content Area Offset for Left Sidebar */}
-        <div className="flex flex-col min-h-screen lg:pl-64 transition-all duration-300">
-          <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {children}
-          </main>
-
-          <footer className="border-t border-slate-200/90 bg-white py-6 text-center text-xs text-slate-500 shadow-sm mt-auto">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="font-medium text-slate-700">Smart Multizone Irrigation Platform</span>
-                <span>&bull;</span>
-                <span>Hierarchical Adaptive Fuzzy Control</span>
-              </div>
-              <div className="font-mono text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
-                FAO-56 Penman-Monteith &bull; Bounded Water-Filling &bull; 3D Digital Twin
-              </div>
-            </div>
-          </footer>
-        </div>
+        <SidebarProvider>
+          <AppLayoutClient>{children}</AppLayoutClient>
+        </SidebarProvider>
       </body>
     </html>
   );

@@ -5,6 +5,7 @@ import { api, AllocationEvaluateResponse, ZoneAllocationDetail } from '@/lib/api
 import MetricCard from '@/components/MetricCard';
 import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
+import { Droplets, AlertTriangle, Zap, CheckCircle2, RefreshCw, ShieldCheck } from 'lucide-react';
 
 export default function WaterAllocationPage() {
   const [availableSupplyPct, setAvailableSupplyPct] = useState<number>(60);
@@ -78,7 +79,8 @@ export default function WaterAllocationPage() {
       {/* Control Sandbox */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-6">
         <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
-          <span>💧</span> Shared Supply & Zone Demand Dispatcher
+          <Droplets className="h-4 w-4 text-emerald-600" />
+          <span>Shared Supply & Zone Demand Dispatcher</span>
         </h2>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -109,11 +111,20 @@ export default function WaterAllocationPage() {
 
             <div className="pt-2 text-xs">
               {availableSupplyPct < 40 ? (
-                <span className="text-rose-700 font-semibold bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md">⚠️ Critical Scarcity: Strict priority rationing active</span>
+                <span className="inline-flex items-center gap-1.5 text-rose-700 font-semibold bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md">
+                  <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                  <span>Critical Scarcity: Strict priority rationing active</span>
+                </span>
               ) : availableSupplyPct < 80 ? (
-                <span className="text-amber-800 font-semibold bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">⚡ Moderate Scarcity: Proportional deficit scaling active</span>
+                <span className="inline-flex items-center gap-1.5 text-amber-800 font-semibold bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md">
+                  <Zap className="h-3.5 w-3.5 shrink-0" />
+                  <span>Moderate Scarcity: Proportional deficit scaling active</span>
+                </span>
               ) : (
-                <span className="text-emerald-800 font-semibold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">✅ Abundant Supply: 100% demands fulfilled</span>
+                <span className="inline-flex items-center gap-1.5 text-emerald-800 font-semibold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md">
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                  <span>Abundant Supply: 100% demands fulfilled</span>
+                </span>
               )}
             </div>
           </div>
@@ -166,16 +177,18 @@ export default function WaterAllocationPage() {
           <button
             onClick={() => runSweep()}
             disabled={isSweeping}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-emerald-300 transition-colors shadow-2xs cursor-pointer"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-emerald-300 transition-colors shadow-2xs cursor-pointer inline-flex items-center gap-1.5"
           >
-            {isSweeping ? 'Recomputing Sweep...' : '🔄 Recompute Sensitivity Sweep'}
+            <RefreshCw className={`h-3.5 w-3.5 ${isSweeping ? 'animate-spin' : ''}`} />
+            <span>{isSweeping ? 'Recomputing Sweep...' : 'Recompute Sensitivity Sweep'}</span>
           </button>
           <button
             onClick={() => runEvaluation()}
             disabled={isEvaluating}
-            className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/15 cursor-pointer"
+            className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/15 cursor-pointer inline-flex items-center gap-1.5"
           >
-            {isEvaluating ? 'Evaluating...' : '⚡ Evaluate Allocation'}
+            <Zap className="h-3.5 w-3.5" />
+            <span>{isEvaluating ? 'Evaluating...' : 'Evaluate Allocation'}</span>
           </button>
         </div>
       </div>
@@ -328,14 +341,16 @@ export default function WaterAllocationPage() {
       {/* Mathematical Invariant Verification Badges */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
         <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
-          <span>🛡️</span> Mathematical Invariants Verification (Audit Phase 13.1)
+          <ShieldCheck className="h-4 w-4 text-emerald-700" />
+          <span>Mathematical Invariants Verification (Audit Phase 13.1)</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-xl bg-emerald-50/50 p-4 border border-emerald-200/80 space-y-1 shadow-2xs">
             <span className="text-[11px] font-bold text-slate-700 block">Supply-Cap Strictness</span>
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold">
-              <span>✅ VERIFIED</span>
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span>VERIFIED</span>
               <span className="text-[10px] text-slate-500 font-mono">Σ Alloc ≤ Supply</span>
             </div>
             <p className="text-[11px] text-slate-600 mt-1">Zero supply-cap violations under 1,000 randomized property tests.</p>
@@ -344,7 +359,8 @@ export default function WaterAllocationPage() {
           <div className="rounded-xl bg-emerald-50/50 p-4 border border-emerald-200/80 space-y-1 shadow-2xs">
             <span className="text-[11px] font-bold text-slate-700 block">Demand-Ceiling Strictness</span>
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold">
-              <span>✅ VERIFIED</span>
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span>VERIFIED</span>
               <span className="text-[10px] text-slate-500 font-mono">Alloc_z ≤ Req_z</span>
             </div>
             <p className="text-[11px] text-slate-600 mt-1">No zone ever allocated more depth or volume than requested.</p>
@@ -353,7 +369,8 @@ export default function WaterAllocationPage() {
           <div className="rounded-xl bg-emerald-50/50 p-4 border border-emerald-200/80 space-y-1 shadow-2xs">
             <span className="text-[11px] font-bold text-slate-700 block">Zero-Supply Invariant</span>
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold">
-              <span>✅ VERIFIED</span>
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span>VERIFIED</span>
               <span className="text-[10px] text-slate-500 font-mono">Supply=0 → Alloc=0</span>
             </div>
             <p className="text-[11px] text-slate-600 mt-1">Zero water allocated to any zone when shared supply is empty.</p>
@@ -362,7 +379,8 @@ export default function WaterAllocationPage() {
           <div className="rounded-xl bg-emerald-50/50 p-4 border border-emerald-200/80 space-y-1 shadow-2xs">
             <span className="text-[11px] font-bold text-slate-700 block">Zero-Demand Invariant</span>
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold">
-              <span>✅ VERIFIED</span>
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span>VERIFIED</span>
               <span className="text-[10px] text-slate-500 font-mono">Req=0 → Alloc=0</span>
             </div>
             <p className="text-[11px] text-slate-600 mt-1">Zero water allocated to satisfied zones regardless of supply surplus.</p>

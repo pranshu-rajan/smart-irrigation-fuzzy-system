@@ -14,7 +14,8 @@ import {
   CheckCircle, 
   AlertTriangle, 
   ArrowUpRight,
-  ShieldCheck
+  ShieldCheck,
+  Layers
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -291,9 +292,15 @@ export default function DashboardPage() {
 
                   <h3 className="mt-2 text-base font-bold text-slate-900">{z.name}</h3>
                   <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
-                    <span>🌱 {z.crop_type}</span>
+                    <span className="inline-flex items-center gap-1 text-slate-600">
+                      <Sprout className="h-3 w-3 text-emerald-600" />
+                      <span>{z.crop_type}</span>
+                    </span>
                     <span>&bull;</span>
-                    <span>🪨 {z.soil_type}</span>
+                    <span className="inline-flex items-center gap-1 text-slate-600">
+                      <Layers className="h-3 w-3 text-amber-700" />
+                      <span>{z.soil_type}</span>
+                    </span>
                   </div>
 
                   {/* Moisture Progress Bar */}

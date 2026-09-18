@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Sprout, Zap } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,8 +33,8 @@ export default function LoginPage() {
     <div className="flex min-h-[75vh] items-center justify-center">
       <div className="w-full max-w-md space-y-8 rounded-2xl border border-slate-200/90 bg-white p-8 shadow-sm">
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-2xl shadow-2xs">
-            🌱
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+            <Sprout className="h-6 w-6 text-emerald-600" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 font-sans">
             {isSignUp ? 'Create Operator Account' : 'Operator Authentication'}
@@ -83,9 +84,10 @@ export default function LoginPage() {
         <button
           onClick={handleDemoAccess}
           disabled={loading}
-          className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-2.5 text-xs font-semibold text-slate-800 hover:bg-slate-100 hover:border-emerald-300 transition-colors cursor-pointer shadow-2xs"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-2.5 text-xs font-semibold text-slate-800 hover:bg-slate-100 hover:border-emerald-300 transition-colors cursor-pointer shadow-2xs inline-flex items-center justify-center gap-1.5"
         >
-          ⚡ Instant Demo Operator Access
+          <Zap className="h-3.5 w-3.5 text-amber-600" />
+          <span>Instant Demo Operator Access</span>
         </button>
 
         <div className="text-center text-xs text-slate-500">

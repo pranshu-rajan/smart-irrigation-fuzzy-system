@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { api, SimulationSummaryResponse, TimeseriesResponse, TimeseriesRecord } from '@/lib/api';
 import LineChart from '@/components/LineChart';
 import MetricCard from '@/components/MetricCard';
+import { Bot, FileText, AlertTriangle, Settings2, Play } from 'lucide-react';
 
 function SimulationStudioContent() {
   const searchParams = useSearchParams();
@@ -105,28 +106,32 @@ function SimulationStudioContent() {
               href={`/ai?sim_id=${currentRun.id}`}
               className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50/90 px-3.5 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition-colors shadow-2xs"
             >
-              🤖 Analyze with Groq AI
+              <Bot className="h-3.5 w-3.5 text-emerald-700" />
+              <span>Analyze with Groq AI</span>
             </Link>
             <Link
               href={`/reports?sim_id=${currentRun.id}`}
               className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:border-emerald-300 hover:bg-slate-50 transition-colors shadow-2xs"
             >
-              📄 Export PDF Report
+              <FileText className="h-3.5 w-3.5 text-slate-600" />
+              <span>Export PDF Report</span>
             </Link>
           </div>
         )}
       </div>
 
       {errorMsg && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50/90 p-4 text-xs font-medium text-rose-800 shadow-2xs">
-          ⚠️ {errorMsg}
+        <div className="rounded-xl border border-rose-200 bg-rose-50/90 p-4 text-xs font-medium text-rose-800 shadow-2xs flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-rose-700" />
+          <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Simulation Control Panel */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-6">
         <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
-          <span>⚙️</span> Simulation Parameters & Scenario Configuration
+          <Settings2 className="h-4 w-4 text-emerald-600" />
+          <span>Simulation Parameters & Scenario Configuration</span>
         </h2>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -221,7 +226,10 @@ function SimulationStudioContent() {
                 Simulating Multizone Closed-Loop...
               </>
             ) : (
-              '▶ Run Multizone Simulation'
+              <span className="inline-flex items-center gap-1.5">
+                <Play className="h-3.5 w-3.5 fill-current" />
+                <span>Run Multizone Simulation</span>
+              </span>
             )}
           </button>
         </div>
@@ -275,7 +283,7 @@ function SimulationStudioContent() {
 
         {zoneRecords.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center text-slate-500">
-            No simulation data loaded. Click <strong>▶ Run Multizone Simulation</strong> above to execute.
+            No simulation data loaded. Click <strong>Run Multizone Simulation</strong> above to execute.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

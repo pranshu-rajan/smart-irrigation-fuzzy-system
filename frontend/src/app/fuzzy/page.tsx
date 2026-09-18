@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { api, ControllerOverview, FuzzyVariableSchema, FuzzyRuleSchema, FuzzyEvaluateResponse } from '@/lib/api';
+import { TrendingUp, FlaskConical, Zap, ScrollText } from 'lucide-react';
 
 export default function FuzzyExplorerPage() {
   const [controllers, setControllers] = useState<ControllerOverview[]>([]);
@@ -141,7 +142,8 @@ export default function FuzzyExplorerPage() {
       {/* Membership Functions Visualizer */}
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <span>📈</span> Membership Function Curves (MF Universe)
+          <TrendingUp className="h-5 w-5 text-emerald-600" />
+          <span>Membership Function Curves (MF Universe)</span>
         </h2>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -222,7 +224,8 @@ export default function FuzzyExplorerPage() {
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>🧪</span> Live Defuzzification Sandbox
+            <FlaskConical className="h-5 w-5 text-emerald-600" />
+            <span>Live Defuzzification Sandbox</span>
           </h2>
           <span className="text-xs text-slate-500 font-mono bg-slate-100 px-2.5 py-1 rounded-md">Real-time Mamdani CoA Engine</span>
         </div>
@@ -262,9 +265,16 @@ export default function FuzzyExplorerPage() {
             <button
               onClick={handleEvaluate}
               disabled={isEvaluating}
-              className="mt-4 w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer"
+              className="mt-4 w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer flex items-center justify-center gap-1.5"
             >
-              {isEvaluating ? 'Evaluating Defuzzification...' : '⚡ Compute Fuzzy Inference Step'}
+              {isEvaluating ? (
+                'Evaluating Defuzzification...'
+              ) : (
+                <>
+                  <Zap className="h-3.5 w-3.5" />
+                  <span>Compute Fuzzy Inference Step</span>
+                </>
+              )}
             </button>
           </div>
 
@@ -306,7 +316,8 @@ export default function FuzzyExplorerPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <span>📜</span> Linguistic Rule Base Matrix ({rules.length} Rules)
+              <ScrollText className="h-5 w-5 text-emerald-600" />
+              <span>Linguistic Rule Base Matrix ({rules.length} Rules)</span>
             </h2>
             <p className="text-xs text-slate-500">Mamdani inference rules governing controller decisions.</p>
           </div>

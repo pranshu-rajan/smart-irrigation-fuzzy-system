@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api, SimulationSummaryResponse, ReportResponse, API_BASE } from '@/lib/api';
+import { FileText, Zap, CheckCircle2, Download, BarChart3 } from 'lucide-react';
 
 function ReportsContent() {
   const searchParams = useSearchParams();
@@ -73,7 +74,8 @@ function ReportsContent() {
         {/* PDF Generator Card */}
         <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
-            <span>📄</span> PDF Report Generator
+            <FileText className="h-4 w-4 text-emerald-600" />
+            <span>PDF Report Generator</span>
           </h2>
 
           <div className="space-y-3 text-xs">
@@ -106,15 +108,25 @@ function ReportsContent() {
           <button
             onClick={handleGenerateReport}
             disabled={isGenerating || !selectedSimId}
-            className="w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer"
+            className="w-full rounded-xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50 transition-all shadow-md shadow-emerald-600/15 cursor-pointer flex items-center justify-center gap-1.5"
           >
-            {isGenerating ? 'Synthesizing PDF Report with ReportLab...' : '⚡ Generate Engineering Audit PDF'}
+            {isGenerating ? (
+              'Synthesizing PDF Report with ReportLab...'
+            ) : (
+              <>
+                <Zap className="h-3.5 w-3.5" />
+                <span>Generate Engineering Audit PDF</span>
+              </>
+            )}
           </button>
 
           {generatedReport && (
             <div className="mt-4 rounded-xl bg-emerald-50/80 border border-emerald-200 p-4 space-y-2 text-xs shadow-2xs">
               <div className="flex items-center justify-between text-emerald-900 font-bold">
-                <span>✅ Report Ready: {generatedReport.filename}</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <span>Report Ready: {generatedReport.filename}</span>
+                </span>
                 <span className="font-mono text-[11px] text-emerald-700">{generatedReport.created_at.substring(0, 10)}</span>
               </div>
               <p className="text-slate-600 text-[11px]">{generatedReport.title}</p>
@@ -124,7 +136,8 @@ function ReportsContent() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg transition-colors shadow-xs"
               >
-                ⬇️ Download Official PDF Report
+                <Download className="h-3.5 w-3.5" />
+                <span>Download Official PDF Report</span>
               </a>
             </div>
           )}
@@ -133,7 +146,8 @@ function ReportsContent() {
         {/* CSV Exporter Card */}
         <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
-            <span>📊</span> Raw Telemetry CSV Dispatch
+            <BarChart3 className="h-4 w-4 text-emerald-600" />
+            <span>Raw Telemetry CSV Dispatch</span>
           </h2>
 
           <p className="text-xs text-slate-600 leading-relaxed">
@@ -163,7 +177,8 @@ function ReportsContent() {
                   download
                   className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 py-2.5 text-xs font-semibold text-slate-800 transition-colors shadow-2xs"
                 >
-                  📥 Export 1440-Step Telemetry CSV
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Export 1440-Step Telemetry CSV</span>
                 </a>
               </div>
             </div>

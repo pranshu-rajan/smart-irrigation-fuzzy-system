@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { api, ZoneConfig } from '@/lib/api';
+import { Sprout, Layers, Pencil } from 'lucide-react';
 
 export default function ZonesManagementPage() {
   const [zones, setZones] = useState<ZoneConfig[]>([]);
@@ -83,11 +84,17 @@ export default function ZonesManagementPage() {
               <div className="mt-3 space-y-2 text-xs text-slate-700">
                 <div className="flex justify-between py-1.5 border-b border-slate-100">
                   <span className="text-slate-500">Crop Cultivar:</span>
-                  <span className="font-semibold text-slate-900">🌱 {z.crop_type}</span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-slate-900">
+                    <Sprout className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>{z.crop_type}</span>
+                  </span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-slate-100">
                   <span className="text-slate-500">Soil Texture:</span>
-                  <span className="font-semibold text-slate-900">🪨 {z.soil_type}</span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-slate-900">
+                    <Layers className="h-3.5 w-3.5 text-amber-700" />
+                    <span>{z.soil_type}</span>
+                  </span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-slate-100">
                   <span className="text-slate-500">Cultivated Area:</span>
@@ -115,9 +122,10 @@ export default function ZonesManagementPage() {
             <div className="mt-6 pt-4 border-t border-slate-100">
               <button
                 onClick={() => setEditingZone(z)}
-                className="w-full rounded-xl bg-slate-100 hover:bg-slate-200/80 py-2.5 text-xs font-semibold text-slate-800 transition-colors cursor-pointer"
+                className="w-full rounded-xl bg-slate-100 hover:bg-slate-200/80 py-2.5 text-xs font-semibold text-slate-800 transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5"
               >
-                ✏️ Edit Zone Properties
+                <Pencil className="h-3.5 w-3.5" />
+                <span>Edit Zone Properties</span>
               </button>
             </div>
           </div>

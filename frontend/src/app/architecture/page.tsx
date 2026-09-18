@@ -1,4 +1,5 @@
 import React from 'react';
+import { Network, Scale } from 'lucide-react';
 
 export default function ArchitecturePage() {
   return (
@@ -23,7 +24,8 @@ export default function ArchitecturePage() {
       {/* High-Level Architecture Flowchart */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-8 shadow-xs space-y-6">
         <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-          <span>🏛️</span> Hierarchical Control Topology
+          <Network className="h-5 w-5 text-emerald-600" />
+          <span>Hierarchical Control Topology</span>
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono">
@@ -135,7 +137,8 @@ export default function ArchitecturePage() {
       {/* Mathematical Invariant Proofs */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-8 shadow-xs space-y-6">
         <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-          <span>⚖️</span> The 5 Supervisory Water Allocation Invariants
+          <Scale className="h-5 w-5 text-emerald-600" />
+          <span>The 5 Supervisory Water Allocation Invariants</span>
         </h2>
 
         <div className="space-y-4 text-xs text-slate-700">
