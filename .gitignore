@@ -97,7 +97,6 @@ data/app.db
 *.sqlite
 *.sqlite3
 
-# Local test scratch
-scratch/*.png
-scratch/*.csv
-scratch/*.json
+# Local test scratch & reports
+scratch/
+reports/generated/*.pdf
