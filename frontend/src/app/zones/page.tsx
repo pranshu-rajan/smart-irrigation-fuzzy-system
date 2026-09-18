@@ -18,9 +18,37 @@ export default function ZonesManagementPage() {
         api.getCrops(),
         api.getSoils(),
       ]);
-      setZones(zonesData);
-      setCrops(cropsData);
-      setSoils(soilsData);
+
+      const normalized = (zonesData || []).map((z: any, idx: number) => {
+        const zoneNum = z.zone_id !== undefined ? Number(z.zone_id) : idx + 1;
+        const targetMoistFrac = z.target_moisture_fraction !== undefined
+          ? Number(z.target_moisture_fraction)
+          : z.target_moisture !== undefined
+          ? Number(z.target_moisture) > 1 ? Number(z.target_moisture) / 100 : Number(z.target_moisture)
+          : 0.28;
+
+        const priorityWt = z.priority_weight !== undefined
+          ? Number(z.priority_weight)
+          : z.priority !== undefined
+          ? Number(z.priority) > 1 ? Number(z.priority) / 100 : Number(z.priority)
+          : 0.8;
+
+        return {
+          id: zoneNum,
+          name: z.name || `Zone ${zoneNum} - ${z.crop || 'Crop'} / ${z.soil || 'Soil'}`,
+          crop_type: z.crop_type || z.crop || (zoneNum === 1 ? 'Tomato' : zoneNum === 2 ? 'Wheat' : 'Maize'),
+          soil_type: z.soil_type || z.soil || (zoneNum === 1 ? 'Loam' : zoneNum === 2 ? 'Sandy Loam' : 'Clay Loam'),
+          area_m2: Number(z.area_m2 || (zoneNum === 1 ? 100 : zoneNum === 2 ? 120 : 80)),
+          target_moisture_fraction: targetMoistFrac,
+          flow_rate_lpm: Number(z.flow_rate_lpm || 15.0),
+          priority_weight: priorityWt,
+          is_active: z.is_active !== undefined ? Boolean(z.is_active) : true,
+        };
+      });
+
+      setZones(normalized);
+      setCrops(cropsData || []);
+      setSoils(soilsData || []);
     } catch (err) {
       console.error('Failed to load zones data:', err);
     } finally {
