@@ -49,8 +49,15 @@ export default function ZonesManagementPage() {
     <div className="space-y-8 pb-16">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Zone Configuration & Agronomy Management</h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200/80">
+            Agronomic Management
+          </span>
+          <span className="text-xs text-slate-400">•</span>
+          <span className="text-xs text-slate-500 font-medium">Multi-Crop Soil Hydraulics & Flow Rates</span>
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Zone Configuration & Agronomy Management</h1>
+        <p className="mt-1 text-sm text-slate-600">
           Configure crop agronomic parameters, soil hydraulic properties, surface areas, and priority weights across all irrigation zones.
         </p>
       </div>
@@ -60,55 +67,55 @@ export default function ZonesManagementPage() {
         {zones.map((z) => (
           <div
             key={z.id}
-            className="flex flex-col justify-between rounded-xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur transition-all hover:border-slate-700"
+            className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all hover:border-emerald-300 hover:shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-semibold text-emerald-400">ZONE 0{z.id}</span>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                  z.is_active ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-400'
+                <span className="text-xs font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">ZONE 0{z.id}</span>
+                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                  z.is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'
                 }`}>
                   {z.is_active ? 'ACTIVE' : 'INACTIVE'}
                 </span>
               </div>
 
-              <h2 className="mt-2 text-xl font-bold text-white">{z.name}</h2>
-              <div className="mt-2 space-y-2 text-xs text-slate-300">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Crop Cultivar:</span>
-                  <span className="font-semibold text-white">🌱 {z.crop_type}</span>
+              <h2 className="mt-3 text-lg font-bold text-slate-900">{z.name}</h2>
+              <div className="mt-3 space-y-2 text-xs text-slate-700">
+                <div className="flex justify-between py-1.5 border-b border-slate-100">
+                  <span className="text-slate-500">Crop Cultivar:</span>
+                  <span className="font-semibold text-slate-900">🌱 {z.crop_type}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Soil Texture:</span>
-                  <span className="font-semibold text-white">🪨 {z.soil_type}</span>
+                <div className="flex justify-between py-1.5 border-b border-slate-100">
+                  <span className="text-slate-500">Soil Texture:</span>
+                  <span className="font-semibold text-slate-900">🪨 {z.soil_type}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Cultivated Area:</span>
-                  <span className="font-mono text-white">{z.area_m2} m²</span>
+                <div className="flex justify-between py-1.5 border-b border-slate-100">
+                  <span className="text-slate-500">Cultivated Area:</span>
+                  <span className="font-mono font-bold text-slate-900">{z.area_m2} m²</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Target Moisture:</span>
-                  <span className="font-mono text-cyan-400 font-bold">
+                <div className="flex justify-between py-1.5 border-b border-slate-100">
+                  <span className="text-slate-500">Target Moisture:</span>
+                  <span className="font-mono text-sky-700 font-bold bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200">
                     {(z.target_moisture_fraction * 100).toFixed(1)}% vol
                   </span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Valve Flow Rate:</span>
-                  <span className="font-mono text-white">{z.flow_rate_lpm} L/min</span>
+                <div className="flex justify-between py-1.5 border-b border-slate-100">
+                  <span className="text-slate-500">Valve Flow Rate:</span>
+                  <span className="font-mono font-bold text-slate-900">{z.flow_rate_lpm} L/min</span>
                 </div>
-                <div className="flex justify-between py-1">
-                  <span className="text-slate-400">Supervisory Priority:</span>
-                  <span className="font-mono text-amber-400 font-bold">
+                <div className="flex justify-between py-1.5">
+                  <span className="text-slate-500">Supervisory Priority:</span>
+                  <span className="font-mono text-amber-800 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
                     {(z.priority_weight * 100).toFixed(0)}%
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-800">
+            <div className="mt-6 pt-4 border-t border-slate-100">
               <button
                 onClick={() => setEditingZone(z)}
-                className="w-full rounded-lg bg-slate-800 hover:bg-slate-700 py-2 text-xs font-semibold text-white transition-colors"
+                className="w-full rounded-xl bg-slate-100 hover:bg-slate-200/80 py-2.5 text-xs font-semibold text-slate-800 transition-colors cursor-pointer"
               >
                 ✏️ Edit Zone Properties
               </button>
@@ -119,28 +126,28 @@ export default function ZonesManagementPage() {
 
       {/* Edit Modal */}
       {editingZone && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-xl border border-slate-700 bg-slate-900 p-6 shadow-2xl space-y-4">
-            <h2 className="text-lg font-bold text-white">Edit Zone {editingZone.id} Parameters</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl space-y-4">
+            <h2 className="text-base font-bold text-slate-900">Edit Zone {editingZone.id} Parameters</h2>
             <form onSubmit={handleSaveZone} className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-400 mb-1">Zone Name</label>
+                <label className="block text-slate-700 font-semibold mb-1">Zone Name</label>
                 <input
                   type="text"
                   value={editingZone.name}
                   onChange={(e) => setEditingZone({ ...editingZone, name: e.target.value })}
-                  className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus:outline-none"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Crop Type</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Crop Type</label>
                   <select
                     value={editingZone.crop_type}
                     onChange={(e) => setEditingZone({ ...editingZone, crop_type: e.target.value })}
-                    className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white"
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus:outline-none"
                   >
                     <option value="Tomato">Tomato</option>
                     <option value="Potato">Potato</option>
@@ -151,11 +158,11 @@ export default function ZonesManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">Soil Type</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Soil Type</label>
                   <select
                     value={editingZone.soil_type}
                     onChange={(e) => setEditingZone({ ...editingZone, soil_type: e.target.value })}
-                    className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white"
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-medium focus:bg-white focus:border-emerald-500 focus:outline-none"
                   >
                     <option value="Loam">Loam</option>
                     <option value="Sandy Loam">Sandy Loam</option>
@@ -168,29 +175,29 @@ export default function ZonesManagementPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Area (m²)</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Area (m²)</label>
                   <input
                     type="number"
                     value={editingZone.area_m2}
                     onChange={(e) => setEditingZone({ ...editingZone, area_m2: parseFloat(e.target.value) || 0 })}
-                    className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white font-mono"
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">Flow Rate (L/min)</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Flow Rate (L/min)</label>
                   <input
                     type="number"
                     value={editingZone.flow_rate_lpm}
                     onChange={(e) => setEditingZone({ ...editingZone, flow_rate_lpm: parseFloat(e.target.value) || 0 })}
-                    className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white font-mono"
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Target Moisture (0.1–0.5)</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Target Moisture (0.1–0.5)</label>
                   <input
                     type="number"
                     step={0.01}
@@ -198,12 +205,12 @@ export default function ZonesManagementPage() {
                     max={0.5}
                     value={editingZone.target_moisture_fraction}
                     onChange={(e) => setEditingZone({ ...editingZone, target_moisture_fraction: parseFloat(e.target.value) || 0.28 })}
-                    className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white font-mono"
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">Priority Weight (0.1–1.0)</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Priority Weight (0.1–1.0)</label>
                   <input
                     type="number"
                     step={0.1}
@@ -211,22 +218,22 @@ export default function ZonesManagementPage() {
                     max={1.0}
                     value={editingZone.priority_weight}
                     onChange={(e) => setEditingZone({ ...editingZone, priority_weight: parseFloat(e.target.value) || 1.0 })}
-                    className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-white font-mono"
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-slate-900 font-mono focus:bg-white focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setEditingZone(null)}
-                  className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700"
+                  className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-emerald-500 px-5 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-400"
+                  className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-md shadow-emerald-600/15 transition-all cursor-pointer"
                 >
                   Save Changes
                 </button>
@@ -238,10 +245,10 @@ export default function ZonesManagementPage() {
 
       {/* Reference Agronomy & Soil Physics Specifications */}
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-white">Agronomic Soil Hydraulic Reference Table</h2>
-        <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
-          <table className="w-full text-left text-xs text-slate-300 font-mono">
-            <thead className="border-b border-slate-800 bg-slate-900 text-[11px] uppercase tracking-wider text-slate-400">
+        <h2 className="text-lg font-bold text-slate-900">Agronomic Soil Hydraulic Reference Table</h2>
+        <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+          <table className="w-full text-left text-xs text-slate-700 font-mono">
+            <thead className="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-600">
               <tr>
                 <th className="px-4 py-3">Soil Texture</th>
                 <th className="px-4 py-3">Field Capacity (θ_FC)</th>
@@ -250,26 +257,26 @@ export default function ZonesManagementPage() {
                 <th className="px-4 py-3">Infiltration Rate</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-[11px]">
-              <tr className="hover:bg-slate-800/30">
-                <td className="px-4 py-2.5 font-bold text-white">Loam (Zone 1)</td>
+            <tbody className="divide-y divide-slate-100 text-[11px]">
+              <tr className="hover:bg-emerald-50/40 transition-colors">
+                <td className="px-4 py-2.5 font-bold text-slate-900">Loam (Zone 1)</td>
                 <td className="px-4 py-2.5">0.27 vol fraction</td>
                 <td className="px-4 py-2.5">0.12 vol fraction</td>
-                <td className="px-4 py-2.5 text-cyan-400">0.15 vol fraction</td>
+                <td className="px-4 py-2.5 text-emerald-700 font-bold">0.15 vol fraction</td>
                 <td className="px-4 py-2.5">13.0 mm/hr</td>
               </tr>
-              <tr className="hover:bg-slate-800/30">
-                <td className="px-4 py-2.5 font-bold text-white">Sandy Loam (Zone 2)</td>
+              <tr className="hover:bg-emerald-50/40 transition-colors">
+                <td className="px-4 py-2.5 font-bold text-slate-900">Sandy Loam (Zone 2)</td>
                 <td className="px-4 py-2.5">0.18 vol fraction</td>
                 <td className="px-4 py-2.5">0.08 vol fraction</td>
-                <td className="px-4 py-2.5 text-cyan-400">0.10 vol fraction</td>
+                <td className="px-4 py-2.5 text-emerald-700 font-bold">0.10 vol fraction</td>
                 <td className="px-4 py-2.5">25.0 mm/hr</td>
               </tr>
-              <tr className="hover:bg-slate-800/30">
-                <td className="px-4 py-2.5 font-bold text-white">Clay Loam (Zone 3)</td>
+              <tr className="hover:bg-emerald-50/40 transition-colors">
+                <td className="px-4 py-2.5 font-bold text-slate-900">Clay Loam (Zone 3)</td>
                 <td className="px-4 py-2.5">0.32 vol fraction</td>
                 <td className="px-4 py-2.5">0.18 vol fraction</td>
-                <td className="px-4 py-2.5 text-cyan-400">0.14 vol fraction</td>
+                <td className="px-4 py-2.5 text-emerald-700 font-bold">0.14 vol fraction</td>
                 <td className="px-4 py-2.5">8.0 mm/hr</td>
               </tr>
             </tbody>

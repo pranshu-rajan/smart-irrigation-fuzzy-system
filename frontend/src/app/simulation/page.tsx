@@ -86,9 +86,16 @@ function SimulationStudioContent() {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Closed-Loop Simulation Studio</h1>
-          <p className="mt-1 text-sm text-slate-400">
-            Execute 24-hour closed-loop multizone simulations (1440 timesteps) across 6 environmental scenarios with supervisory water allocation.
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200/80">
+              Closed-Loop Engine
+            </span>
+            <span className="text-xs text-slate-400">•</span>
+            <span className="text-xs text-slate-500 font-medium">1440 Timesteps @ 1-min dt</span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Closed-Loop Simulation Studio</h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Execute 24-hour closed-loop multizone simulations across 6 environmental scenarios with supervisory water allocation.
           </p>
         </div>
 
@@ -96,13 +103,13 @@ function SimulationStudioContent() {
           <div className="flex items-center gap-3">
             <Link
               href={`/ai?sim_id=${currentRun.id}`}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-950/40 px-3 py-2 text-xs font-semibold text-indigo-300 hover:bg-indigo-900/50 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50/90 px-3.5 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition-colors shadow-2xs"
             >
               🤖 Analyze with Groq AI
             </Link>
             <Link
               href={`/reports?sim_id=${currentRun.id}`}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-teal-500/30 bg-teal-950/40 px-3 py-2 text-xs font-semibold text-teal-300 hover:bg-teal-900/50 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:border-emerald-300 hover:bg-slate-50 transition-colors shadow-2xs"
             >
               📄 Export PDF Report
             </Link>
@@ -111,24 +118,24 @@ function SimulationStudioContent() {
       </div>
 
       {errorMsg && (
-        <div className="rounded-lg border border-rose-500/30 bg-rose-950/20 p-4 text-xs text-rose-300">
+        <div className="rounded-xl border border-rose-200 bg-rose-50/90 p-4 text-xs font-medium text-rose-800 shadow-2xs">
           ⚠️ {errorMsg}
         </div>
       )}
 
       {/* Simulation Control Panel */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur space-y-6">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-          <span>⚙️</span> Simulation Parameters
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs space-y-6">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
+          <span>⚙️</span> Simulation Parameters & Scenario Configuration
         </h2>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Environmental Scenario</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Environmental Scenario</label>
             <select
               value={scenario}
               onChange={(e) => setScenario(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus:outline-none transition-colors"
             >
               <option value="Normal">Normal</option>
               <option value="Hot & Dry">Hot & Dry</option>
@@ -140,11 +147,11 @@ function SimulationStudioContent() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Shared Supply Scenario</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Shared Supply Scenario</label>
             <select
               value={supplyScenario}
               onChange={(e) => setSupplyScenario(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus:outline-none transition-colors"
             >
               <option value="Abundant">Abundant (100% capacity)</option>
               <option value="Normal Supply">Normal Supply (100% standard)</option>
@@ -156,11 +163,11 @@ function SimulationStudioContent() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Controller Type</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Controller Type</label>
             <select
               value={controllerType}
               onChange={(e) => setControllerType(e.target.value)}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus:outline-none transition-colors"
             >
               <option value="fuzzy">Hierarchical Adaptive Fuzzy (Default)</option>
               <option value="pso_tuned">PSO-Tuned Fuzzy Parameters</option>
@@ -169,11 +176,11 @@ function SimulationStudioContent() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Duration & Resolution</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Duration & Resolution</label>
             <select
               value={durationHours}
               onChange={(e) => setDurationHours(Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-900 font-medium focus:border-emerald-500 focus:bg-white focus:outline-none transition-colors"
             >
               <option value={24}>24 Hours (1440 timesteps @ 1 min)</option>
               <option value={48}>48 Hours (2880 timesteps)</option>
@@ -182,17 +189,17 @@ function SimulationStudioContent() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-slate-800">
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400">Target Zone Filter:</span>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-slate-100">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-slate-600">Telemetry Zone:</span>
             {[1, 2, 3].map((z) => (
               <button
                 key={z}
                 onClick={() => setSelectedZone(z)}
-                className={`rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
+                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                   selectedZone === z
-                    ? 'bg-emerald-500 text-slate-950'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'
                 }`}
               >
                 Zone {z} ({z === 1 ? 'Tomato' : z === 2 ? 'Potato' : 'Maize'})
@@ -203,7 +210,7 @@ function SimulationStudioContent() {
           <button
             onClick={handleRunSimulation}
             disabled={isRunning}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-6 py-2.5 text-xs font-bold text-slate-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 disabled:opacity-50 transition-colors"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/15 hover:bg-emerald-700 disabled:opacity-50 transition-all cursor-pointer"
           >
             {isRunning ? (
               <>
@@ -255,35 +262,38 @@ function SimulationStudioContent() {
       {/* 10 Time-Series Plots Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white">
-            Simulation Telemetry Plots — Zone {selectedZone}
-          </h2>
-          <span className="text-xs text-slate-400 font-mono">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">
+              Simulation Telemetry Plots — Zone {selectedZone}
+            </h2>
+            <p className="text-xs text-slate-500">Live dynamic trajectory tracking and mass balance verification</p>
+          </div>
+          <span className="text-xs text-slate-500 font-mono bg-white border border-slate-200 px-2.5 py-1 rounded-md">
             {zoneRecords.length} records • Stride {downsampleStride}
           </span>
         </div>
 
         {zoneRecords.length === 0 ? (
-          <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-12 text-center text-slate-400">
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center text-slate-500">
             No simulation data loaded. Click <strong>▶ Run Multizone Simulation</strong> above to execute.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Plot 1: Soil Moisture vs Target */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">1. Soil Moisture Dynamics vs Target</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">1. Soil Moisture Dynamics vs Target</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
                   {
                     name: 'Soil Moisture (vol %)',
                     data: zoneRecords.map((r) => r.soil_moisture * 100),
-                    color: '#10b981',
+                    color: '#059669',
                   },
                   {
                     name: 'Target Moisture (vol %)',
                     data: zoneRecords.map((r) => r.target_moisture * 100),
-                    color: '#06b6d4',
+                    color: '#0284c7',
                   },
                 ]}
                 unit="%"
@@ -292,20 +302,20 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 2: Evapotranspiration Rates */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">2. Evapotranspiration (FAO-56 ET0 vs ETc)</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">2. Evapotranspiration (FAO-56 ET0 vs ETc)</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
                   {
                     name: 'Reference ET0 (mm)',
                     data: zoneRecords.map((r) => r.et0_mm),
-                    color: '#f59e0b',
+                    color: '#d97706',
                   },
                   {
                     name: 'Crop ETc (mm)',
                     data: zoneRecords.map((r) => r.etc_mm),
-                    color: '#ef4444',
+                    color: '#e11d48',
                   },
                 ]}
                 unit="mm"
@@ -314,20 +324,20 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 3: Fuzzy Stress Indices */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">3. Fuzzy Stress Indices (Soil vs Weather)</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">3. Fuzzy Stress Indices (Soil vs Weather)</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
                   {
                     name: 'Soil Stress Index',
                     data: zoneRecords.map((r) => r.soil_stress),
-                    color: '#ec4899',
+                    color: '#db2777',
                   },
                   {
                     name: 'Weather Stress Index',
                     data: zoneRecords.map((r) => r.weather_stress),
-                    color: '#8b5cf6',
+                    color: '#7c3aed',
                   },
                 ]}
                 unit=""
@@ -336,15 +346,15 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 4: Fuzzy Water Demand */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">4. Water Demand FIS Output</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">4. Water Demand FIS Output</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
                   {
                     name: 'Water Demand Index (0-100)',
                     data: zoneRecords.map((r) => r.water_demand),
-                    color: '#3b82f6',
+                    color: '#2563eb',
                   },
                 ]}
                 unit=""
@@ -353,8 +363,8 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 5: Raw Request vs Final Allocated Depth */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">5. Irrigation Depths (Request vs Allocation)</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">5. Irrigation Depths (Request vs Allocation)</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
@@ -366,7 +376,7 @@ function SimulationStudioContent() {
                   {
                     name: 'Final Allocated (mm)',
                     data: zoneRecords.map((r) => r.allocated_irrigation_mm),
-                    color: '#10b981',
+                    color: '#059669',
                   },
                 ]}
                 unit="mm"
@@ -375,20 +385,20 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 6: Water Volume Dispatched */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">6. Water Volumes (Allocated vs Unmet)</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">6. Water Volumes (Allocated vs Unmet)</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
                   {
                     name: 'Volume Allocated (L)',
                     data: zoneRecords.map((r) => r.water_volume_allocated_l),
-                    color: '#06b6d4',
+                    color: '#0891b2',
                   },
                   {
                     name: 'Volume Unmet (L)',
                     data: zoneRecords.map((r) => r.water_volume_unmet_l),
-                    color: '#f43f5e',
+                    color: '#e11d48',
                   },
                 ]}
                 unit="L"
@@ -397,20 +407,20 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 7: Effective Rainfall */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">7. Rainfall & Effective Infiltration</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">7. Rainfall & Effective Infiltration</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
                   {
                     name: 'Total Rainfall (mm)',
                     data: zoneRecords.map((r) => r.rainfall_mm),
-                    color: '#3b82f6',
+                    color: '#2563eb',
                   },
                   {
                     name: 'Effective Infiltration (mm)',
                     data: zoneRecords.map((r) => r.effective_rainfall_mm),
-                    color: '#14b8a6',
+                    color: '#0d9488',
                   },
                 ]}
                 unit="mm"
@@ -419,15 +429,15 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 8: Moisture Error */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">8. Moisture Tracking Error (θ - θ_target)</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">8. Moisture Tracking Error (θ - θ_target)</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
                   {
                     name: 'Error (vol %)',
                     data: zoneRecords.map((r) => r.moisture_error * 100),
-                    color: '#a855f7',
+                    color: '#9333ea',
                   },
                 ]}
                 unit="%"
@@ -436,15 +446,15 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 9: Relative Soil Moisture (RSM) */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">9. Relative Soil Moisture (RSM)</h3>
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">9. Relative Soil Moisture (RSM)</h3>
               <LineChart
                 labels={steps.map((s) => `${Math.floor(s / 60)}h`)}
                 datasets={[
                   {
                     name: 'RSM Ratio [0, 1]',
                     data: zoneRecords.map((r) => r.rsm),
-                    color: '#eab308',
+                    color: '#ca8a04',
                   },
                 ]}
                 unit=""
@@ -453,8 +463,8 @@ function SimulationStudioContent() {
             </div>
 
             {/* Plot 10: Conservation Invariant Residual */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">
                 10. Water-Balance Mass Closure Residual
               </h3>
               <LineChart
@@ -463,7 +473,7 @@ function SimulationStudioContent() {
                   {
                     name: 'Closure Residual (mm)',
                     data: zoneRecords.map((r) => r.water_balance_residual),
-                    color: '#10b981',
+                    color: '#059669',
                   },
                 ]}
                 unit="mm"

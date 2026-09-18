@@ -132,10 +132,17 @@ export default function ScenariosPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200/80">
+              Meteorological Benchmarks
+            </span>
+            <span className="text-xs text-slate-400">•</span>
+            <span className="text-xs text-slate-500 font-medium">6 Validated FAO-56 Climates</span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             6-Scenario Environmental Benchmark Matrix
           </h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-600">
             Side-by-side comparative analysis of closed-loop fuzzy control and supervisory allocation across verified meteorological regimes.
           </p>
         </div>
@@ -143,7 +150,7 @@ export default function ScenariosPage() {
         <button
           onClick={handleRunAllScenarios}
           disabled={isRunningAll}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-5 py-2.5 text-xs font-bold text-slate-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 disabled:opacity-50 transition-colors"
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-emerald-600/15 hover:bg-emerald-700 disabled:opacity-50 transition-all cursor-pointer"
         >
           {isRunningAll ? (
             <>
@@ -164,50 +171,50 @@ export default function ScenariosPage() {
         {comparisonData.map((s) => (
           <div
             key={s.name}
-            className="flex flex-col justify-between rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur transition-all hover:border-slate-700"
+            className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all hover:border-emerald-300 hover:shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white">{s.name}</h3>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                <h3 className="text-base font-bold text-slate-900">{s.name}</h3>
+                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
                   s.fulfillment_pct >= 99
-                    ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30'
-                    : 'bg-amber-950 text-amber-400 border border-amber-500/30'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-amber-50 text-amber-800 border border-amber-200'
                 }`}>
                   {s.fulfillment_pct.toFixed(0)}% FULFILLED
                 </span>
               </div>
 
-              <p className="mt-2 text-xs text-slate-400 leading-relaxed">{s.description}</p>
-              <div className="mt-3 font-mono text-[11px] text-cyan-400 bg-slate-950 p-2 rounded border border-slate-800">
+              <p className="mt-2 text-xs text-slate-600 leading-relaxed">{s.description}</p>
+              <div className="mt-3 font-mono text-[11px] text-slate-800 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
                 {s.weather}
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-2 text-xs border-t border-slate-800 pt-3">
+              <div className="mt-4 grid grid-cols-2 gap-2 text-xs border-t border-slate-100 pt-3">
                 <div>
-                  <span className="text-slate-500 block text-[10px]">Reference ET0</span>
-                  <span className="font-semibold text-slate-200">{s.et0_mm.toFixed(2)} mm</span>
+                  <span className="text-slate-400 block text-[10px] font-medium">Reference ET0</span>
+                  <span className="font-semibold text-slate-800">{s.et0_mm.toFixed(2)} mm</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">Crop ETc</span>
-                  <span className="font-semibold text-slate-200">{s.etc_mm.toFixed(2)} mm</span>
+                  <span className="text-slate-400 block text-[10px] font-medium">Crop ETc</span>
+                  <span className="font-semibold text-slate-800">{s.etc_mm.toFixed(2)} mm</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">Water Requested</span>
-                  <span className="font-semibold text-slate-200">{s.requested_l.toFixed(1)} L</span>
+                  <span className="text-slate-400 block text-[10px] font-medium">Water Requested</span>
+                  <span className="font-semibold text-slate-800">{s.requested_l.toFixed(1)} L</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">Water Allocated</span>
-                  <span className="font-semibold text-emerald-400">{s.allocated_l.toFixed(1)} L</span>
+                  <span className="text-slate-400 block text-[10px] font-medium">Water Allocated</span>
+                  <span className="font-semibold text-emerald-700">{s.allocated_l.toFixed(1)} L</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 flex items-center justify-between pt-4 border-t border-slate-800 text-xs">
-              <span className="text-slate-400">Tracking MAE: <strong className="text-white">{s.mae_pct}%</strong></span>
+            <div className="mt-6 flex items-center justify-between pt-4 border-t border-slate-100 text-xs">
+              <span className="text-slate-500 font-medium">Tracking MAE: <strong className="text-slate-900">{s.mae_pct}%</strong></span>
               <Link
                 href={`/simulation?scenario=${encodeURIComponent(s.name)}`}
-                className="font-semibold text-emerald-400 hover:text-emerald-300"
+                className="font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
               >
                 Simulate →
               </Link>
@@ -218,35 +225,37 @@ export default function ScenariosPage() {
 
       {/* Comparative Visual Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5 space-y-3">
-          <h3 className="text-sm font-semibold text-white">Water Requested vs Allocated across Scenarios (L)</h3>
+        <div className="space-y-3">
           <BarChart
+            title="Water Requested vs Allocated across Scenarios (L)"
+            subtitle="Closed-loop supervisory dispatch performance"
             labels={comparisonData.map((s) => s.name)}
             datasets={[
               {
                 name: 'Requested (L)',
                 data: comparisonData.map((s) => s.requested_l),
-                color: '#6366f1',
+                color: '#2563eb',
               },
               {
                 name: 'Allocated (L)',
                 data: comparisonData.map((s) => s.allocated_l),
-                color: '#10b981',
+                color: '#059669',
               },
             ]}
             height={240}
           />
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5 space-y-3">
-          <h3 className="text-sm font-semibold text-white">Tracking Mean Absolute Error (MAE %)</h3>
+        <div className="space-y-3">
           <BarChart
+            title="Tracking Mean Absolute Error (MAE %)"
+            subtitle="Soil moisture deviation from crop target setpoint"
             labels={comparisonData.map((s) => s.name)}
             datasets={[
               {
                 name: 'MAE (%)',
                 data: comparisonData.map((s) => s.mae_pct),
-                color: '#ec4899',
+                color: '#db2777',
               },
             ]}
             height={240}

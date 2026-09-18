@@ -127,7 +127,7 @@ export default function LineChart({
     return (
       <div
         style={{ height }}
-        className="flex items-center justify-center rounded-lg border border-slate-800 bg-slate-950 text-xs text-slate-500 font-mono"
+        className="flex items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-xs text-slate-400 font-mono"
       >
         No telemetry data available
       </div>
@@ -138,13 +138,13 @@ export default function LineChart({
     <div className="w-full space-y-2">
       {(title || subtitle) && (
         <div className="flex justify-between items-center text-xs">
-          {title && <span className="font-semibold text-white">{title}</span>}
-          {subtitle && <span className="text-slate-400">{subtitle}</span>}
+          {title && <span className="font-semibold text-slate-800">{title}</span>}
+          {subtitle && <span className="text-slate-500">{subtitle}</span>}
         </div>
       )}
 
       {/* SVG Canvas */}
-      <div className="relative w-full overflow-hidden rounded-lg bg-slate-950/80 border border-slate-800/80 p-1">
+      <div className="relative w-full overflow-hidden rounded-xl bg-white border border-slate-200/90 shadow-2xs p-2">
         <svg
           className="w-full"
           style={{ height }}
@@ -163,9 +163,17 @@ export default function LineChart({
                   y1={y}
                   x2={chartWidth - padding.right}
                   y2={y}
-                  stroke="#334155"
-                  strokeWidth="0.5"
-                  strokeDasharray="2 2"
+                  stroke="#f1f5f9"
+                  strokeWidth="1"
+                />
+                <line
+                  x1={padding.left}
+                  y1={y}
+                  x2={chartWidth - padding.right}
+                  y2={y}
+                  stroke="#e2e8f0"
+                  strokeWidth="0.75"
+                  strokeDasharray="3 3"
                 />
                 <text
                   x={padding.left - 6}
@@ -190,7 +198,7 @@ export default function LineChart({
               x2={chartWidth - padding.right}
               y2={getY(ref.y)}
               stroke={ref.color}
-              strokeWidth="1"
+              strokeWidth="1.5"
               strokeDasharray={ref.dashed ? '4 4' : undefined}
             />
           ))}
@@ -225,8 +233,8 @@ export default function LineChart({
               y1={padding.top}
               x2={getX(hoverIndex)}
               y2={padding.top + plotHeight}
-              stroke="#94a3b8"
-              strokeWidth="1"
+              stroke="#059669"
+              strokeWidth="1.5"
               strokeDasharray="3 3"
             />
           )}
@@ -246,16 +254,16 @@ export default function LineChart({
         </svg>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-2 border-t border-slate-900 text-xs">
+        <div className="flex flex-wrap items-center justify-center gap-4 pt-2 mt-1 border-t border-slate-100 text-xs">
           {normalizedSeries.map((s) => (
-            <div key={s.key} className="flex items-center gap-1.5 font-mono text-[11px] text-slate-300">
+            <div key={s.key} className="flex items-center gap-1.5 font-mono text-[11px] text-slate-700">
               <span
                 className="h-2 w-4 rounded-full"
                 style={{ backgroundColor: s.color }}
               />
-              <span>{s.label}</span>
+              <span className="font-sans font-medium text-slate-700">{s.label}</span>
               {hoverIndex !== null && normalizedData[hoverIndex] && (
-                <span className="font-bold text-white ml-1">
+                <span className="font-bold text-slate-900 ml-1">
                   : {Number(normalizedData[hoverIndex][s.key] ?? 0).toFixed(2)} {s.unit || ''}
                 </span>
               )}
