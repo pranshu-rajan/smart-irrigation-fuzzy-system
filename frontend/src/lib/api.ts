@@ -238,6 +238,13 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
     }
     return await res.json();
   } catch (err: any) {
+    if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
+      const friendlyErr = new Error(
+        `FastAPI backend is offline at ${API_BASE}. Ensure the backend server is running via 'python -m uvicorn backend.app.main:app --port 8000'.`
+      );
+      console.warn(`Connection to backend failed:`, friendlyErr.message);
+      throw friendlyErr;
+    }
     console.error(`Failed to fetch ${url}:`, err);
     throw err;
   }
