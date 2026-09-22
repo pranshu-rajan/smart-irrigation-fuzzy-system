@@ -18,6 +18,7 @@ from optimization.parameter_space import FuzzyParameterSpace, PARAM_SPECS
 from optimization.fitness import FitnessWeights, CompositeFitnessResult
 from optimization.evaluation import ClosedLoopEvaluator, TRAINING_SCENARIOS, VALIDATION_SCENARIOS, ALL_SCENARIOS
 from optimization.pso import PSOConfig, PSOSolver
+from optimization.active_parameters import save_active_parameters
 from backend.app.schemas.allocation import (
     OptimizationRunRequest,
     OptimizationSummaryResponse,
@@ -206,6 +207,10 @@ class OptimizationService:
                 rec.convergence_history = history
                 rec.parameters_optimized = opt_theta_dict
                 rec.completed_at = datetime.utcnow().isoformat()
+
+                # Promote the validated optimizer result to the active production
+                # controller. The simulator will use it on the next run.
+                save_active_parameters(opt_theta_dict, source="PSO", run_id=job_id)
 
                 if db:
                     db.save_optimization_run(rec)

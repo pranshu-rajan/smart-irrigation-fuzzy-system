@@ -224,7 +224,7 @@ export default function FuzzyExplorerPage() {
               <span className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-medium ${
                 isActive ? 'bg-emerald-800 text-emerald-100' : 'bg-slate-100 text-slate-600'
               }`}>
-                {ctrl.rule_count || 25} rules
+                {ctrl.rule_count ?? rules.length} rules
               </span>
             </button>
           );
@@ -242,7 +242,7 @@ export default function FuzzyExplorerPage() {
           <div className="flex flex-wrap gap-4 font-mono text-[11px] text-slate-600">
             <span>Inputs: <strong className="text-slate-900">{Array.isArray(activeCtrl.inputs) ? activeCtrl.inputs.length : 2}</strong></span>
             <span>Outputs: <strong className="text-slate-900">{Array.isArray(activeCtrl.outputs) ? activeCtrl.outputs.length : 1}</strong></span>
-            <span>Rules: <strong className="text-slate-900">{activeCtrl.rule_count || rules.length}</strong></span>
+            <span>Rules: <strong className="text-slate-900">{activeCtrl.rule_count ?? rules.length}</strong></span>
             <span>Defuzzifier: <strong className="text-emerald-700 font-bold">Centroid (CoA)</strong></span>
           </div>
         </div>

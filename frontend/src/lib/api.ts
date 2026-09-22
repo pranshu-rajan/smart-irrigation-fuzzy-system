@@ -289,6 +289,53 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
   }
 }
 
+// --- Backend response normalizers ---
+
+function normalizeFuzzyVariables(raw: any[]): FuzzyVariableSchema[] {
+  return (raw || []).map((v: any) => {
+    const sets = v.sets || {};
+    const terms = v.terms || Object.entries(sets).map(([term, set]: [string, any]) => ({
+      term,
+      mf_type: set.type || set.mf_type || 'unknown',
+      params: set.parameters || set.params || [],
+      points: (v.curve_points?.[term] || []).map((pt: any[]) => ({ x: Number(pt[0]), y: Number(pt[1]) })),
+    }));
+    return {
+      name: v.name,
+      universe_min: Number(v.universe_min ?? v.min ?? 0),
+      universe_max: Number(v.universe_max ?? v.max ?? 0),
+      unit: v.unit || '',
+      is_output: Boolean(v.is_output ?? (v.fis_role === 'output')),
+      terms,
+    };
+  });
+}
+
+function normalizeFuzzyRules(raw: any[]): FuzzyRuleSchema[] {
+  return (raw || []).map((r: any, idx: number) => ({
+    rule_index: Number(r.rule_index ?? ((r.id ?? idx + 1) - 1)),
+    antecedent: r.antecedent || r.conditions_text || r.description || '',
+    consequent: r.consequent || '',
+    weight: Number(r.weight ?? 1),
+  }));
+}
+
+function normalizeFuzzyEvaluation(res: any): FuzzyEvaluateResponse {
+  const activeRules = res.active_rules || res.fired_rules || [];
+  return {
+    controller: res.controller || res.controller_name || '',
+    inputs: res.inputs || {},
+    output_value: Number(res.output_value ?? res.crisp_output ?? 0),
+    linguistic_summary: res.linguistic_summary || res.aggregated_output_name || '',
+    fired_rules: activeRules.map((r: any, idx: number) => ({
+      rule_index: Number(r.rule_index ?? ((r.rule_id ?? idx + 1) - 1)),
+      antecedent: r.antecedent || r.conditions || '',
+      consequent: r.consequent || '',
+      firing_strength: Number(r.firing_strength ?? r.weight ?? 0),
+    })),
+  };
+}
+
 // --- API Service Methods ---
 
 export const api = {
@@ -332,15 +379,19 @@ export const api = {
 
   // Fuzzy Inference Subsystems
   getFuzzyOverview: () => fetchApi<ControllerOverview[]>('/fuzzy/overview'),
-  getFuzzyVariables: (controller: string) =>
-    fetchApi<FuzzyVariableSchema[]>(`/fuzzy/${controller}/variables`),
-  getFuzzyRules: (controller: string) =>
-    fetchApi<FuzzyRuleSchema[]>(`/fuzzy/${controller}/rules`),
+  getFuzzyVariables: async (controller: string) =>
+    normalizeFuzzyVariables(await fetchApi<any[]>(`/fuzzy/${controller}/variables`)),
+  getFuzzyRules: async (controller: string) => {
+    const primary = await fetchApi<any[]>(`/fuzzy/${controller}/rules`);
+    if (primary?.length) return normalizeFuzzyRules(primary);
+    // Compatibility route for older Render deployments.
+    return normalizeFuzzyRules(await fetchApi<any[]>(`/fuzzy/controllers/${controller}/rules`));
+  },
   evaluateFuzzy: (targetController: string, inputs: Record<string, number>) =>
-    fetchApi<FuzzyEvaluateResponse>('/fuzzy/evaluate', {
+    fetchApi<any>('/fuzzy/evaluate', {
       method: 'POST',
       body: JSON.stringify({ target_controller: targetController, inputs }),
-    }),
+    }).then(normalizeFuzzyEvaluation),
 
   // Supervisory Water Allocation
   getAllocationConfig: () => fetchApi<any>('/allocation/config'),

@@ -44,6 +44,7 @@ from fuzzy_engine.weather_stress import WeatherStressFIS
 from fuzzy_engine.water_demand import WaterDemandFIS
 from fuzzy_engine.main_irrigation import MainIrrigationFIS
 from fuzzy_engine.water_allocation import WaterAllocationFIS
+from optimization.active_parameters import build_active_main_irrigation_fis
 
 
 class AllocationResult(BaseModel):
@@ -386,7 +387,9 @@ class MultizoneAllocationSimulator:
         self.soil_stress_fis = SoilStressFIS()
         self.weather_stress_fis = WeatherStressFIS()
         self.water_demand_fis = WaterDemandFIS()
-        self.main_irrigation_fis = MainIrrigationFIS()
+        # Production controller: use the validated active PSO calibration when available.
+        # If no calibration has been activated, fall back to the expert baseline FIS.
+        self.main_irrigation_fis = build_active_main_irrigation_fis() or MainIrrigationFIS()
         self.water_allocation_fis = WaterAllocationFIS()
 
         # Zone metadata maps
@@ -586,14 +589,15 @@ class MultizoneAllocationSimulator:
                 s_state = soil_states[z_id]
 
                 # Update root zone water balance
+                zp_zone = zone_params[z_id]
                 next_state = update_water_balance(
                     current_state=s_state,
                     irrigation_mm=actual_app_mm,
                     effective_rainfall_mm=peff_step_mm,
                     etc_mm=step_state_data[z_id]["etc_mm"],
                     timestep_minutes=self.config.timestep_minutes,
-                    infiltration_rate_mm_h=zp["infilt_cap"],
-                    drainage_parameter=zp["drain_param"],
+                    infiltration_rate_mm_h=zp_zone["infilt_cap"],
+                    drainage_parameter=zp_zone["drain_param"],
                     timestamp=ts,
                 )
                 residual = next_state.water_balance_residual
@@ -635,7 +639,7 @@ class MultizoneAllocationSimulator:
                     "water_volume_unmet_L": round(alloc_res.unmet_volumes_l[z_id], 4),
                     "rainfall_mm": p_val,
                     "effective_rainfall_mm": round(step_state_data[z_id]["pe_mm"], 4),
-                    "soil_moisture": round(s_state.soil_moisture, 4),
+                    "soil_moisture": round(next_state.soil_moisture, 4),
                     "moisture_error": round(step_state_data[z_id]["err_t"], 4),
                     "et0_mm_day": round(et0_val, 4),
                     "etc_mm_step": round(step_state_data[z_id]["etc_mm"], 4),

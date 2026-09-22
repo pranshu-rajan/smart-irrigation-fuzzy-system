@@ -311,6 +311,19 @@ class FuzzyParameterSpace:
         repaired = np.clip(repaired, self.lower_bounds, self.upper_bounds)
         return repaired
 
+    def vector_to_dict(self, theta: np.ndarray) -> Dict[str, float]:
+        """Convert a physical parameter vector into a named parameter dictionary."""
+        repaired = self.repair_and_validate(np.asarray(theta, dtype=float))
+        return {spec.name: float(value) for spec, value in zip(self.specs, repaired)}
+
+    def dict_to_vector(self, values: Dict[str, float]) -> np.ndarray:
+        """Convert a named parameter dictionary into a repaired physical vector."""
+        theta = self.baseline_values.copy()
+        for i, spec in enumerate(self.specs):
+            if spec.name in values:
+                theta[i] = float(values[spec.name])
+        return self.repair_and_validate(theta)
+
     def build_fis(self, theta: np.ndarray, resolution: int = 501) -> MainIrrigationFIS:
         """
         Construct a fully configured MainIrrigationFIS instance with membership functions

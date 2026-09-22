@@ -18,6 +18,7 @@ from fuzzy_engine.weather_stress import WeatherStressFIS
 from fuzzy_engine.water_demand import WaterDemandFIS
 from fuzzy_engine.irrigation import MainIrrigationFIS
 from fuzzy_engine.water_allocation import WaterAllocationFIS
+from optimization.active_parameters import build_active_main_irrigation_fis
 from fuzzy_engine.universes import get_fuzzy_variable
 
 
@@ -82,7 +83,7 @@ class FuzzyService:
             "soil_stress": SoilStressFIS(),
             "weather_stress": WeatherStressFIS(),
             "water_demand": WaterDemandFIS(),
-            "main_irrigation": MainIrrigationFIS(),
+            "main_irrigation": build_active_main_irrigation_fis() or MainIrrigationFIS(),
             "water_allocation": WaterAllocationFIS(),
         }
 
@@ -170,9 +171,14 @@ class FuzzyService:
             )
         return var_schemas
 
+    def _canonical_controller(self, name: str) -> str:
+        key = str(name or "").strip().lower().replace("-", "_").replace(" ", "_")
+        return key.removeprefix("controllers_")
+
     def get_rules_for_controller(self, name: str) -> List[FuzzyRuleSchema]:
         """Extract all explicit linguistic rules for a controller."""
-        meta = self.CONTROLLERS.get(name.lower())
+        name = self._canonical_controller(name)
+        meta = self.CONTROLLERS.get(name)
         if not meta:
             return []
 
@@ -220,11 +226,12 @@ class FuzzyService:
         inputs: Dict[str, float],
     ) -> FuzzyEvaluateResponse:
         """Execute real Python Mamdani inference with detailed activation telemetry."""
-        meta = self.CONTROLLERS.get(name.lower())
+        name = self._canonical_controller(name)
+        meta = self.CONTROLLERS.get(name)
         if not meta:
             raise ValueError(f"Unknown controller '{name}'")
 
-        fis_inst = self.instances[name.lower()]
+        fis_inst = self.instances[name]
 
         # 1. Compute crisp evaluation
         if name.lower() == "soil_stress":
