@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import Link from 'next/link';
 import { Network, Scale, ArrowDown, CheckCircle2, Settings2, PlayCircle, GitBranch, FlaskConical, FileCheck2, ChevronLeft, ChevronRight, Play, Save, SlidersHorizontal } from 'lucide-react';
 import BackendFuzzyArchitectureInspector from '@/components/BackendFuzzyArchitectureInspector';
+import EndToEndArchitectureEvaluator from '@/components/EndToEndArchitectureEvaluator';
 
 export default function ArchitecturePage() {
   return (
@@ -601,6 +602,11 @@ function PredefinedFISLibrary() {
           </div>
         )}
       </div>
+      {/* Live End-to-End Architecture Evaluator (Matching MATLAB evaluate_fuzzy_architecture) */}
+      <EndToEndArchitectureEvaluator />
+
+      {/* Live System Verification Console */}
+      <LiveVerificationConsole />
     </div>
   );
 }

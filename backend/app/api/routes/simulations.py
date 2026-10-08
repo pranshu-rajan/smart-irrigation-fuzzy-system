@@ -98,6 +98,22 @@ def run_all_scenarios_comparison(
     }
 
 
+@router.post("/benchmark")
+def run_controller_benchmark(
+    scenario: str = Query(default="Normal", description="Scenario name e.g. Normal, Heatwave"),
+    duration_hours: int = Query(default=24, ge=1, le=168, description="Duration in hours"),
+    timestep_minutes: int = Query(default=60, ge=1, le=60, description="Timestep in minutes"),
+):
+    """Execute rigorous benchmark comparison: Fuzzy vs PID vs On-Off matching MATLAB run_benchmark_comparison."""
+    try:
+        from simulation.benchmark import run_benchmark_comparison
+        res = run_benchmark_comparison(scenario_name=scenario, duration_hours=duration_hours, dt_minutes=timestep_minutes)
+        return res.model_dump()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Benchmark error: {str(e)}")
+
+
+
 
 @router.get("", response_model=List[SimulationSummaryResponse])
 def list_simulations(

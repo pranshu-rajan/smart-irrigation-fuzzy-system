@@ -76,3 +76,48 @@ class FuzzyEvaluateResponse(BaseModel):
     outputs: Optional[Dict[str, float]] = None
     firing_weights: Optional[List[float]] = None
     unit: str
+
+
+class EndToEndArchitectureRequest(BaseModel):
+    """Input payload to evaluate all 5 stages of the fuzzy system in unified cascade."""
+    soil_moisture: float = Field(default=45.0, ge=0.0, le=100.0, description="Current soil moisture (%)")
+    target_moisture: float = Field(default=60.0, ge=0.0, le=100.0, description="Target soil moisture (%)")
+    temperature: float = Field(default=32.0, ge=-20.0, le=60.0, description="Air temperature (°C)")
+    humidity: float = Field(default=38.0, ge=0.0, le=100.0, description="Relative humidity (%)")
+    solar_radiation: float = Field(default=820.0, ge=0.0, le=1500.0, description="Solar radiation (W/m²)")
+    wind_speed: float = Field(default=3.2, ge=0.0, le=50.0, description="Wind speed (m/s)")
+    rainfall: float = Field(default=0.0, ge=0.0, le=100.0, description="Rainfall depth (mm)")
+    reservoir_storage_pct: float = Field(default=50.0, ge=0.0, le=100.0, description="Shared reservoir water storage (%)")
+
+
+class ZoneAllocationOutput(BaseModel):
+    zone_id: int
+    name: str
+    crop: str
+    priority_pct: float
+    fis_alloc_factor: float
+    requested_l: float
+    allocated_l: float
+    fulfillment_ratio: float
+    status: str
+
+
+class EndToEndArchitectureResponse(BaseModel):
+    """Complete diagnostic cascade across all 5 FIS stages, exactly matching MATLAB evaluate_fuzzy_architecture."""
+    inputs: Dict[str, float]
+    soil_stress: float
+    soil_stress_level: str
+    weather_stress: float
+    weather_stress_level: str
+    water_demand: float
+    water_demand_level: str
+    etc_mm_day: float
+    main_command: float
+    main_command_level: str
+    zone_allocations: List[ZoneAllocationOutput]
+    total_requested_l: float
+    total_allocated_l: float
+    available_supply_l: float
+    is_constrained: bool
+    decision_summary: str
+

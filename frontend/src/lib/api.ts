@@ -451,6 +451,31 @@ export const api = {
   getReportDownloadUrl: (reportId: string) => `${API_BASE}/reports/download/${reportId}`,
   getSimulationCsvUrl: (simulationId: string) => `${API_BASE}/reports/csv/${simulationId}`,
 
+  // End-to-End Fuzzy Architecture Live Evaluation (Matching MATLAB evaluate_fuzzy_architecture)
+  evaluateArchitecture: (params: {
+    soil_moisture?: number;
+    target_moisture?: number;
+    temperature?: number;
+    humidity?: number;
+    solar_radiation?: number;
+    wind_speed?: number;
+    rainfall?: number;
+    reservoir_storage_pct?: number;
+  }) =>
+    fetchApi<any>('/fuzzy/evaluate-architecture', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    }),
+
+  // Controller Benchmark Comparison (Fuzzy vs PID vs On-Off)
+  runBenchmarkComparison: (params: { scenario?: string; duration_hours?: number; timestep_minutes?: number } = {}) =>
+    fetchApi<any>(
+      `/simulations/benchmark?scenario=${encodeURIComponent(params.scenario || 'Normal')}&duration_hours=${params.duration_hours || 24}&timestep_minutes=${params.timestep_minutes || 60}`,
+      {
+        method: 'POST',
+      }
+    ),
+
   // Authentication & Supabase
   signUp: (email: string, password: string, name?: string) =>
     fetchApi<AuthResponse>('/auth/signup', {
@@ -465,3 +490,4 @@ export const api = {
   getMe: () => fetchApi<{ status: string; user: AuthUser }>('/auth/me'),
   logout: () => fetchApi<{ status: string; message: string }>('/auth/logout', { method: 'POST' }),
 };
+

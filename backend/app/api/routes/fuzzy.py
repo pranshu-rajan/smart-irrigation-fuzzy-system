@@ -9,6 +9,8 @@ from backend.app.schemas.fuzzy import (
     FuzzyRuleSchema,
     FuzzyEvaluateRequest,
     FuzzyEvaluateResponse,
+    EndToEndArchitectureRequest,
+    EndToEndArchitectureResponse,
 )
 from backend.app.services.fuzzy_service import FuzzyService
 
@@ -83,4 +85,14 @@ def evaluate_named_controller(controller: str, inputs: Dict[str, float] = Body(.
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Inference error: {str(e)}")
+
+
+@router.post("/evaluate-architecture")
+def evaluate_end_to_end_architecture(req: EndToEndArchitectureRequest = Body(...)):
+    """Execute live unified 5-stage fuzzy architecture evaluation matching MATLAB evaluate_fuzzy_architecture."""
+    try:
+        return fuzzy_service.evaluate_architecture(req)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Architecture evaluation error: {str(e)}")
+
 

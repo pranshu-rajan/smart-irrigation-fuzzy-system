@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { api, SimulationSummaryResponse, TimeseriesResponse, TimeseriesRecord } from '@/lib/api';
 import LineChart from '@/components/LineChart';
 import MetricCard from '@/components/MetricCard';
+import EndToEndArchitectureEvaluator from '@/components/EndToEndArchitectureEvaluator';
 import { Bot, FileText, AlertTriangle, Settings2, Play, Sparkles, ArrowRight } from 'lucide-react';
 
 function SimulationStudioContent() {
@@ -524,6 +525,11 @@ function SimulationStudioContent() {
             </div>
           </div>
         )}
+
+        {/* End-to-End Cascaded Fuzzy Architecture Evaluator & Live Benchmark */}
+        <div className="mt-12 pt-8 border-t border-slate-200">
+          <EndToEndArchitectureEvaluator />
+        </div>
       </div>
     </div>
   );
