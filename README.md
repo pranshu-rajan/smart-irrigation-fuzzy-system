@@ -257,9 +257,9 @@ pytest -v
 2. Set the **Root Directory** to `frontend`.
 3. Vercel automatically detects Next.js.
 4. Add Environment Variables in Vercel:
-   - `NEXT_PUBLIC_API_BASE`: `https://your-backend.onrender.com/api/v1`
-   - `NEXT_PUBLIC_SUPABASE_URL`: `https://your-project.supabase.co`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: `your_supabase_anon_key`
+   - `NEXT_PUBLIC_API_URL`: `https://your-backend.onrender.com` (or `NEXT_PUBLIC_API_BASE`: `https://your-backend.onrender.com/api`)
+   - `NEXT_PUBLIC_SUPABASE_URL`: `https://your-project.supabase.co` (optional, sqlite works out of the box)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: `your_supabase_anon_key` (optional)
 5. Click **Deploy**.
 
 ---

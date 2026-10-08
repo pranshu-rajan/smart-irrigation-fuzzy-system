@@ -3,13 +3,22 @@
  * Connects Next.js frontend to FastAPI backend.
  */
 
-const DEFAULT_API_BASE =
-  typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:8000/api'
-    : 'https://smart-irrigation-fuzzy-system.onrender.com/api';
+function resolveApiBase(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_BASE || process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && envUrl.trim() !== '') {
+    let base = envUrl.trim().replace(/\/+$/, '');
+    if (!base.endsWith('/api')) {
+      base = `${base}/api`;
+    }
+    return base;
+  }
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:8000/api';
+  }
+  return 'https://smart-irrigation-fuzzy-system.onrender.com/api';
+}
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || DEFAULT_API_BASE;
+export const API_BASE = resolveApiBase();
 
 // --- Interfaces ---
 
