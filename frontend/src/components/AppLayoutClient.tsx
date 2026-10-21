@@ -4,14 +4,11 @@ import React from 'react';
 import { useSidebar } from '@/context/SidebarContext';
 import Sidebar from '@/components/Sidebar';
 import TopHeader from '@/components/TopHeader';
-import LoginModal from '@/components/LoginModal';
-
 export default function AppLayoutClient({ children }: { children: React.ReactNode }) {
   const { isCollapsed } = useSidebar();
 
   return (
     <div className="min-h-screen bg-[#f8faf9] text-slate-900 font-sans selection:bg-emerald-500 selection:text-white antialiased max-w-full overflow-x-hidden">
-      <LoginModal />
       <Sidebar />
 
       {/* Dynamic left margin based on desktop collapse state */}

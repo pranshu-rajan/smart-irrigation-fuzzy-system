@@ -160,3 +160,24 @@ class TestIndiaAPIRoutes:
         assert len(data["zone_allocations"]) == 3
         assert len(data["hourly_telemetry"]) == 24
         assert "decision_summary" in data
+
+    def test_evaluate_with_climate_and_crop_overrides(self, client):
+        payload = {
+            "location_query": "Ludhiana",
+            "reservoir_storage_pct": 45.0,
+            "temperature_override": 42.0,
+            "humidity_override": 20.0,
+            "solar_radiation_override": 950.0,
+            "rainfall_override": 0.0,
+            "zone1_crop_override": "Sugarcane",
+            "zone2_crop_override": "Cotton",
+        }
+        r = client.post("/api/india/evaluate", json=payload)
+        assert r.status_code == 200
+        data = r.json()
+        assert data["weather"]["temperature_c"] == 42.0
+        assert data["weather"]["humidity_percent"] == 20.0
+        assert data["zone_allocations"][0]["crop"] == "Sugarcane"
+        assert data["zone_allocations"][1]["crop"] == "Cotton"
+        # Under heatwave stress, weather stress FIS should be high
+        assert data["fuzzy_stages"]["stage2_weather_stress_pct"] >= 50.0

@@ -94,6 +94,16 @@ class IndiaIrrigationService:
             elevation_m=elev,
         )
 
+        # Apply optional climate overrides for interactive stress simulation
+        if request.temperature_override is not None:
+            weather.temperature_c = float(request.temperature_override)
+        if request.humidity_override is not None:
+            weather.humidity_percent = float(request.humidity_override)
+        if request.solar_radiation_override is not None:
+            weather.solar_radiation_w_m2 = float(request.solar_radiation_override)
+        if request.rainfall_override is not None:
+            weather.rainfall_mm = float(request.rainfall_override)
+
         # 3. Physics & FAO-56 Penman-Monteith Evapotranspiration
         doy = datetime.now().timetuple().tm_yday
         et0_val = float(calculate_et0_fao56(
@@ -127,6 +137,14 @@ class IndiaIrrigationService:
             crop2_name = location_info.primary_rabi_crop
 
         crop3_name = "Tomato"  # Standard high-value reference vegetable
+
+        # Allow operator crop overrides per zone
+        if request.zone1_crop_override:
+            crop1_name = request.zone1_crop_override
+        if request.zone2_crop_override:
+            crop2_name = request.zone2_crop_override
+        if request.zone3_crop_override:
+            crop3_name = request.zone3_crop_override
 
         fc = location_info.field_capacity_pct
         wp = location_info.wilting_point_pct

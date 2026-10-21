@@ -44,24 +44,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               // Ignore parse error
             }
 
-            // Verify token validity with backend
-            try {
-              const res = await api.getMe();
-              if (res && res.user) {
-                setUser(res.user);
-                localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+            // Verify token validity with backend if not local session
+            if (storedToken !== 'local-operator-session') {
+              try {
+                const res = await api.getMe();
+                if (res && res.user) {
+                  setUser(res.user);
+                  localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+                }
+              } catch {
+                // If token expired, clear session smoothly without popup
+                localStorage.removeItem(TOKEN_KEY);
+                localStorage.removeItem(USER_KEY);
+                setToken(null);
+                setUser(null);
               }
-            } catch {
-              // If token expired or invalid, clear session and open login dialog
-              localStorage.removeItem(TOKEN_KEY);
-              localStorage.removeItem(USER_KEY);
-              setToken(null);
-              setUser(null);
-              setIsAuthModalOpen(true);
             }
           } else {
-            // First time accessing the site unauthenticated: open login dialog
-            setIsAuthModalOpen(true);
+            // Default seamless operator mode - no intrusive modal popup
+            const defaultOperator: AuthUser = {
+              id: '00000000-0000-0000-0000-000000000001',
+              email: 'operator@agri-fuzzy.io',
+              name: 'Field Agronomist',
+              role: 'admin',
+            };
+            const defaultToken = 'local-operator-session';
+            setUser(defaultOperator);
+            setToken(defaultToken);
+            localStorage.setItem(TOKEN_KEY, defaultToken);
+            localStorage.setItem(USER_KEY, JSON.stringify(defaultOperator));
           }
         }
       } finally {
@@ -144,7 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setUser(null);
       setToken(null);
-      setIsAuthModalOpen(true);
+      setIsAuthModalOpen(false);
       if (typeof window !== 'undefined') {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);

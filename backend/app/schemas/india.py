@@ -95,6 +95,13 @@ class IndiaEvaluationRequest(BaseModel):
     soil_moisture_override: Optional[float] = Field(None, description="Override initial soil moisture (%)")
     target_moisture_override: Optional[float] = Field(None, description="Override target setpoint (%)")
     reservoir_storage_pct: Optional[float] = Field(65.0, description="Available farm pond / reservoir capacity (%)")
+    temperature_override: Optional[float] = Field(None, description="Override atmospheric temperature (°C)")
+    humidity_override: Optional[float] = Field(None, description="Override relative humidity (%)")
+    solar_radiation_override: Optional[float] = Field(None, description="Override solar irradiance (W/m²)")
+    rainfall_override: Optional[float] = Field(None, description="Override rainfall (mm)")
+    zone1_crop_override: Optional[str] = Field(None, description="Override primary Zone 1 crop")
+    zone2_crop_override: Optional[str] = Field(None, description="Override Zone 2 crop")
+    zone3_crop_override: Optional[str] = Field(None, description="Override Zone 3 crop")
 
 
 class IndiaEvaluationResponse(BaseModel):

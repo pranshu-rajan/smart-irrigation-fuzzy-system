@@ -528,6 +528,13 @@ export const api = {
     soil_moisture_override?: number;
     target_moisture_override?: number;
     reservoir_storage_pct?: number;
+    temperature_override?: number;
+    humidity_override?: number;
+    solar_radiation_override?: number;
+    rainfall_override?: number;
+    zone1_crop_override?: string;
+    zone2_crop_override?: string;
+    zone3_crop_override?: string;
   }) =>
     fetchApi<any>('/india/evaluate', {
       method: 'POST',

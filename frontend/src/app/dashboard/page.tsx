@@ -9,6 +9,8 @@ import SoilHydrologyProfile from '@/components/SoilHydrologyProfile';
 import FuzzyStageDeepInspector from '@/components/FuzzyStageDeepInspector';
 import PredictiveMoistureGraph from '@/components/PredictiveMoistureGraph';
 import WaterConservationLedger from '@/components/WaterConservationLedger';
+import ActuatorDigitalFlowStation from '@/components/ActuatorDigitalFlowStation';
+import DistrictComparisonMatrix from '@/components/DistrictComparisonMatrix';
 import { 
   Activity, 
   Droplets, 
@@ -35,7 +37,11 @@ import {
   ChevronRight,
   RotateCw,
   Gauge,
-  Award
+  Award,
+  Zap,
+  Flame,
+  Scale,
+  Umbrella
 } from 'lucide-react';
 
 const DEFAULT_LOCATION: SelectedLocation = {
@@ -45,6 +51,23 @@ const DEFAULT_LOCATION: SelectedLocation = {
   latitude: 30.9010,
   longitude: 75.8573,
 };
+
+const AVAILABLE_CROPS = [
+  'Wheat',
+  'Basmati Rice',
+  'Paddy',
+  'Sugarcane',
+  'Cotton',
+  'Tomato',
+  'Potato',
+  'Mustard',
+  'Maize',
+  'Soybean',
+  'Groundnut',
+  'Chilli',
+  'Gram / Chickpea',
+  'Bajra',
+];
 
 export default function DashboardPage() {
   const [selectedLoc, setSelectedLoc] = useState<SelectedLocation>(DEFAULT_LOCATION);
@@ -56,16 +79,60 @@ export default function DashboardPage() {
   const [evalHistory, setEvalHistory] = useState<Array<{ district: string; state: string; timestamp: string; et0: number; allocated: number }>>([]);
   const [reservoirStoragePct, setReservoirStoragePct] = useState<number>(75);
 
-  // Evaluate fuzzy system architecture for selected location
-  const evaluateLocation = useCallback(async (loc: SelectedLocation, resStorage: number = 75) => {
+  // 2026 Interactive Features State
+  const [climateScenario, setClimateScenario] = useState<'live' | 'heatwave' | 'monsoon' | 'drought' | 'windy'>('live');
+  const [zoneCropOverrides, setZoneCropOverrides] = useState<{ zone1?: string; zone2?: string; zone3?: string }>({});
+
+  // Evaluate fuzzy system architecture for selected location with climate & crop overrides
+  const evaluateLocation = useCallback(async (
+    loc: SelectedLocation, 
+    resStorage: number = 75,
+    scenario: 'live' | 'heatwave' | 'monsoon' | 'drought' | 'windy' = 'live',
+    crops: { zone1?: string; zone2?: string; zone3?: string } = {}
+  ) => {
     setIsEvaluating(true);
     setErrorMsg(null);
+
+    let tempOverride: number | undefined;
+    let humOverride: number | undefined;
+    let solarOverride: number | undefined;
+    let rainOverride: number | undefined;
+    let effectiveRes = resStorage;
+
+    if (scenario === 'heatwave') {
+      tempOverride = 42.0;
+      humOverride = 20.0;
+      solarOverride = 950.0;
+      rainOverride = 0.0;
+    } else if (scenario === 'monsoon') {
+      tempOverride = 23.5;
+      humOverride = 96.0;
+      solarOverride = 180.0;
+      rainOverride = 35.0;
+    } else if (scenario === 'drought') {
+      effectiveRes = 22.0;
+      tempOverride = 39.0;
+      humOverride = 25.0;
+      rainOverride = 0.0;
+    } else if (scenario === 'windy') {
+      tempOverride = 33.0;
+      humOverride = 35.0;
+      solarOverride = 750.0;
+    }
+
     try {
       const data = await api.evaluateIndiaLocation({
         location_query: loc.district,
         latitude: loc.latitude,
         longitude: loc.longitude,
-        reservoir_storage_pct: resStorage,
+        reservoir_storage_pct: effectiveRes,
+        temperature_override: tempOverride,
+        humidity_override: humOverride,
+        solar_radiation_override: solarOverride,
+        rainfall_override: rainOverride,
+        zone1_crop_override: crops.zone1,
+        zone2_crop_override: crops.zone2,
+        zone3_crop_override: crops.zone3,
       });
 
       setEvalData(data);
@@ -183,13 +250,29 @@ export default function DashboardPage() {
 
   // Initial load on mount
   useEffect(() => {
-    evaluateLocation(DEFAULT_LOCATION, reservoirStoragePct);
+    evaluateLocation(DEFAULT_LOCATION, reservoirStoragePct, climateScenario, zoneCropOverrides);
   }, [evaluateLocation]);
 
   // Handle map selection
   const handleLocationSelect = (loc: SelectedLocation) => {
     setSelectedLoc(loc);
-    evaluateLocation(loc, reservoirStoragePct);
+    evaluateLocation(loc, reservoirStoragePct, climateScenario, zoneCropOverrides);
+  };
+
+  // Climate Scenario Switcher
+  const handleClimateChange = (scenario: 'live' | 'heatwave' | 'monsoon' | 'drought' | 'windy') => {
+    setClimateScenario(scenario);
+    evaluateLocation(selectedLoc, reservoirStoragePct, scenario, zoneCropOverrides);
+  };
+
+  // Crop Selector per Zone
+  const handleCropChange = (zoneId: number, cropName: string) => {
+    const updated = {
+      ...zoneCropOverrides,
+      [`zone${zoneId}`]: cropName,
+    };
+    setZoneCropOverrides(updated);
+    evaluateLocation(selectedLoc, reservoirStoragePct, climateScenario, updated);
   };
 
   // Derived Telemetry Values
@@ -236,7 +319,7 @@ export default function DashboardPage() {
               onChange={(e) => {
                 const val = Number(e.target.value);
                 setReservoirStoragePct(val);
-                evaluateLocation(selectedLoc, val);
+                evaluateLocation(selectedLoc, val, climateScenario, zoneCropOverrides);
               }}
               className="h-1.5 w-24 accent-emerald-500 cursor-pointer"
               title={`Reservoir Storage: ${reservoirStoragePct}%`}
@@ -246,12 +329,87 @@ export default function DashboardPage() {
 
           {/* Re-Evaluate Trigger Button */}
           <button
-            onClick={() => evaluateLocation(selectedLoc, reservoirStoragePct)}
+            onClick={() => evaluateLocation(selectedLoc, reservoirStoragePct, climateScenario, zoneCropOverrides)}
             disabled={isEvaluating}
             className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-xs font-semibold text-white shadow-lg transition disabled:opacity-50 cursor-pointer"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isEvaluating ? 'animate-spin' : ''}`} />
             <span>{isEvaluating ? 'Evaluating FIS...' : 'Re-Evaluate Farm'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Real-Time Environmental Climate Stress Simulation Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-700/60 bg-slate-900/90 backdrop-blur-xl px-5 py-3.5 shadow-xl">
+        <div className="flex items-center gap-2">
+          <Activity className="h-4 w-4 text-emerald-400 animate-spin-slow" />
+          <span className="text-xs font-bold text-white uppercase tracking-wider">
+            Atmospheric Forcing Engine:
+          </span>
+          <span className="text-[11px] text-slate-400 hidden sm:inline">
+            Inject real-time climate stresses to evaluate dynamic fuzzy responses
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-1.5">
+          <button
+            onClick={() => handleClimateChange('live')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              climateScenario === 'live'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30 font-bold'
+                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+            }`}
+          >
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Live Open-Meteo</span>
+          </button>
+
+          <button
+            onClick={() => handleClimateChange('heatwave')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              climateScenario === 'heatwave'
+                ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30 font-bold'
+                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+            }`}
+          >
+            <Sun className="h-3.5 w-3.5 text-amber-300" />
+            <span>Heatwave (42°C)</span>
+          </button>
+
+          <button
+            onClick={() => handleClimateChange('monsoon')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              climateScenario === 'monsoon'
+                ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30 font-bold'
+                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+            }`}
+          >
+            <CloudRain className="h-3.5 w-3.5 text-cyan-300" />
+            <span>Monsoon Deluge (35mm)</span>
+          </button>
+
+          <button
+            onClick={() => handleClimateChange('drought')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              climateScenario === 'drought'
+                ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30 font-bold'
+                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+            }`}
+          >
+            <AlertTriangle className="h-3.5 w-3.5 text-rose-300" />
+            <span>Drought Scarcity (22% Pond)</span>
+          </button>
+
+          <button
+            onClick={() => handleClimateChange('windy')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+              climateScenario === 'windy'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
+                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+            }`}
+          >
+            <Wind className="h-3.5 w-3.5 text-indigo-300" />
+            <span>High Wind Deficit</span>
           </button>
         </div>
       </div>
@@ -416,7 +574,24 @@ export default function DashboardPage() {
                     </span>
                   </div>
 
-                  <h3 className="mt-2 text-sm font-bold text-slate-900">{z.name}</h3>
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    <h3 className="text-sm font-bold text-slate-900 truncate">{z.name}</h3>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="text-[10px] text-slate-400 font-mono">Crop:</span>
+                      <select
+                        value={zoneCropOverrides[`zone${z.zone_id}` as keyof typeof zoneCropOverrides] || z.crop}
+                        onChange={(e) => handleCropChange(z.zone_id, e.target.value)}
+                        className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-semibold text-slate-800 hover:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer shadow-2xs"
+                        title="Change crop for this zone"
+                      >
+                        {AVAILABLE_CROPS.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                   <div className="mt-1 flex items-center gap-2 text-xs text-slate-600">
                     <span className="inline-flex items-center gap-1 font-semibold text-emerald-700">
                       <Sprout className="h-3.5 w-3.5" />
@@ -481,7 +656,14 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 8. Advanced Feature D & E: Supervisory Water Balance & Mass Conservation Ledger */}
+      {/* 8. Real-Time Actuator & Solenoid Telemetry Station (New 2026 Supervisory Feature) */}
+      <ActuatorDigitalFlowStation
+        zones={zones}
+        isSupplyConstrained={evalData?.is_supply_constrained}
+        totalAllocatedLiters={evalData?.total_allocated_liters || 0}
+      />
+
+      {/* 9. Advanced Feature D & E: Supervisory Water Balance & Mass Conservation Ledger */}
       <WaterConservationLedger
         totalRequested={evalData?.total_requested_liters || 420.0}
         totalAllocated={evalData?.total_allocated_liters || 384.2}
@@ -489,6 +671,22 @@ export default function DashboardPage() {
         district={locInfo?.district || selectedLoc.district}
         state={locInfo?.state || selectedLoc.state}
         crop={zones[0]?.crop || 'Wheat'}
+      />
+
+      {/* 10. Multi-District National Fuzzy Comparative Matrix (New 2026 GIS Benchmark Feature) */}
+      <DistrictComparisonMatrix
+        currentDistrict={locInfo?.district || selectedLoc.district}
+        currentState={locInfo?.state || selectedLoc.state}
+        currentEvaluation={evalData}
+        onSelectDistrict={(districtName) => {
+          const loc: SelectedLocation = {
+            district: districtName,
+            state: 'India',
+            latitude: selectedLoc.latitude,
+            longitude: selectedLoc.longitude,
+          };
+          evaluateLocation(loc, reservoirStoragePct, climateScenario, zoneCropOverrides);
+        }}
       />
 
       {/* 9. AI Agronomist Copilot (Groq Llama 3.3 70B & Tavily Live Knowledge) */}
