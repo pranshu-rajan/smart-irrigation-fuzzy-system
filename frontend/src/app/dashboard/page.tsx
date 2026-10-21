@@ -5,6 +5,10 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import IndiaInteractiveMap, { SelectedLocation } from '@/components/IndiaInteractiveMap';
 import MetricCard from '@/components/MetricCard';
+import SoilHydrologyProfile from '@/components/SoilHydrologyProfile';
+import FuzzyStageDeepInspector from '@/components/FuzzyStageDeepInspector';
+import PredictiveMoistureGraph from '@/components/PredictiveMoistureGraph';
+import WaterConservationLedger from '@/components/WaterConservationLedger';
 import { 
   Activity, 
   Droplets, 
@@ -30,7 +34,8 @@ import {
   Globe,
   ChevronRight,
   RotateCw,
-  Gauge
+  Gauge,
+  Award
 } from 'lucide-react';
 
 const DEFAULT_LOCATION: SelectedLocation = {
@@ -127,15 +132,16 @@ export default function DashboardPage() {
   const stages = evalData?.fuzzy_stages;
   const zones = evalData?.zone_allocations || [];
   const locInfo = evalData?.location;
+  const hourlyTelemetry = evalData?.hourly_telemetry || [];
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-6 pb-20">
       {/* 1. Header Command Ribbon */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-2xl border border-slate-700/60 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 p-5 shadow-xl text-white">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-3xl border border-slate-700/60 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-6 shadow-2xl text-white">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-              <Globe className="h-4.5 w-4.5 animate-pulse" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+              <Globe className="h-5 w-5 animate-pulse" />
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
               National Precision Irrigation Command Hub
@@ -145,15 +151,15 @@ export default function DashboardPage() {
               5-STAGE FUZZY PIPELINE ACTIVE
             </span>
           </div>
-          <p className="mt-1 text-xs text-slate-400 max-w-2xl">
-            Real-time geospatial intelligence, live Open-Meteo & Tavily atmospheric forcing, ICAR agro-climatic soil physics, and closed-loop supervisory fuzzy valve control.
+          <p className="mt-1 text-xs text-slate-400 max-w-3xl">
+            Real-time geospatial intelligence across India, live Open-Meteo & Tavily atmospheric forcing, ICAR agro-climatic soil physics, and closed-loop supervisory fuzzy valve control.
           </p>
         </div>
 
         {/* Quick Location Action Controls */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Reservoir Storage Slider */}
-          <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-1.5 text-xs text-slate-300">
+          <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs text-slate-300">
             <Droplets className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
             <span className="text-[11px] text-slate-400 font-medium">Reservoir:</span>
             <input
@@ -166,7 +172,7 @@ export default function DashboardPage() {
                 setReservoirStoragePct(val);
                 evaluateLocation(selectedLoc, val);
               }}
-              className="h-1.5 w-20 accent-emerald-500 cursor-pointer"
+              className="h-1.5 w-24 accent-emerald-500 cursor-pointer"
               title={`Reservoir Storage: ${reservoirStoragePct}%`}
             />
             <span className="font-mono text-emerald-400 font-semibold">{reservoirStoragePct}%</span>
@@ -230,161 +236,34 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* 4. Live 5-Stage Cascaded Fuzzy Inference System (FIS) Pipeline */}
-      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/90 backdrop-blur-md p-5 shadow-xl text-white">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
-          <div className="flex items-center gap-2">
-            <Cpu className="h-4.5 w-4.5 text-emerald-400" />
-            <h2 className="text-sm sm:text-base font-bold text-white">
-              Cascaded 5-Stage Fuzzy Inference Pipeline
-            </h2>
-            <span className="text-[11px] text-slate-500">•</span>
-            <span className="text-[11px] text-slate-400 font-mono">
-              Target: {locInfo?.district || selectedLoc.district}, {locInfo?.state || selectedLoc.state}
-            </span>
-          </div>
-          <Link
-            href="/fuzzy"
-            className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition"
-          >
-            <span>Inspect 5 FIS Surface Curves</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
+      {/* 4. Advanced Feature B: 24-Hour Predictive Closed-Loop Soil Moisture Forecast */}
+      <PredictiveMoistureGraph
+        hourlyTelemetry={hourlyTelemetry}
+        fieldCapacity={locInfo?.field_capacity_pct || 28.0}
+        wiltingPoint={locInfo?.wilting_point_pct || 12.0}
+        crop1Name={zones[0]?.crop || 'Kharif Crop'}
+        crop2Name={zones[1]?.crop || 'Rabi Crop'}
+        crop3Name={zones[2]?.crop || 'Zaid Crop'}
+      />
 
-        {/* 5 Stages Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-          {/* Stage 1 */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                <span className="font-bold text-slate-300">STAGE 1</span>
-                <span className="font-mono text-[10px] text-emerald-400">Root-Zone</span>
-              </div>
-              <h3 className="text-xs font-semibold text-white">Soil Stress FIS</h3>
-              <p className="text-[10px] text-slate-500 mt-0.5">Moisture error & depletion rate</p>
-            </div>
-            <div className="mt-4">
-              <div className="flex items-baseline justify-between text-xs font-mono">
-                <span className="text-slate-400">Stress:</span>
-                <span className="text-base font-bold text-emerald-400">
-                  {stages?.stage1_soil_stress_pct ? `${stages.stage1_soil_stress_pct.toFixed(1)}%` : '42.0%'}
-                </span>
-              </div>
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-emerald-500 transition-all duration-500"
-                  style={{ width: `${stages?.stage1_soil_stress_pct || 42}%` }}
-                />
-              </div>
-            </div>
-          </div>
+      {/* 5. Advanced Feature A: Deep 5-Stage FIS Subsystem Inspector for Every Zone */}
+      <FuzzyStageDeepInspector
+        zones={zones}
+        weatherStress={stages?.stage2_weather_stress_pct || 48.0}
+        et0Val={physics?.et0_fao56_mm_day || 4.5}
+        reservoirStorage={reservoirStoragePct}
+      />
 
-          {/* Stage 2 */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                <span className="font-bold text-slate-300">STAGE 2</span>
-                <span className="font-mono text-[10px] text-amber-400">Atmosphere</span>
-              </div>
-              <h3 className="text-xs font-semibold text-white">Weather Stress FIS</h3>
-              <p className="text-[10px] text-slate-500 mt-0.5">ET₀, solar irradiance & VPD</p>
-            </div>
-            <div className="mt-4">
-              <div className="flex items-baseline justify-between text-xs font-mono">
-                <span className="text-slate-400">Stress:</span>
-                <span className="text-base font-bold text-amber-400">
-                  {stages?.stage2_weather_stress_pct ? `${stages.stage2_weather_stress_pct.toFixed(1)}%` : '58.5%'}
-                </span>
-              </div>
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-amber-500 transition-all duration-500"
-                  style={{ width: `${stages?.stage2_weather_stress_pct || 58.5}%` }}
-                />
-              </div>
-            </div>
-          </div>
+      {/* 6. Advanced Feature C: Real-Time Soil Hydrology & Hydraulic Horizon Profile */}
+      <SoilHydrologyProfile
+        soilType={locInfo?.dominant_soil || 'Alluvial (Inceptisol)'}
+        currentMoisture={zones[0]?.current_moisture_pct || 24.5}
+        fieldCapacity={locInfo?.field_capacity_pct || 28.0}
+        wiltingPoint={locInfo?.wilting_point_pct || 12.0}
+        saturation={locInfo?.saturation_pct || 45.0}
+      />
 
-          {/* Stage 3 */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                <span className="font-bold text-slate-300">STAGE 3</span>
-                <span className="font-mono text-[10px] text-cyan-400">Demand</span>
-              </div>
-              <h3 className="text-xs font-semibold text-white">Water Demand FIS</h3>
-              <p className="text-[10px] text-slate-500 mt-0.5">Stage 1 & Stage 2 fusion</p>
-            </div>
-            <div className="mt-4">
-              <div className="flex items-baseline justify-between text-xs font-mono">
-                <span className="text-slate-400">Demand:</span>
-                <span className="text-base font-bold text-cyan-400">
-                  {stages?.stage3_water_demand_pct ? `${stages.stage3_water_demand_pct.toFixed(1)}%` : '51.2%'}
-                </span>
-              </div>
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-cyan-500 transition-all duration-500"
-                  style={{ width: `${stages?.stage3_water_demand_pct || 51.2}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Stage 4 */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                <span className="font-bold text-slate-300">STAGE 4</span>
-                <span className="font-mono text-[10px] text-indigo-400">Actuation</span>
-              </div>
-              <h3 className="text-xs font-semibold text-white">Main Command FIS</h3>
-              <p className="text-[10px] text-slate-500 mt-0.5">Precipitation & storage clamp</p>
-            </div>
-            <div className="mt-4">
-              <div className="flex items-baseline justify-between text-xs font-mono">
-                <span className="text-slate-400">Command:</span>
-                <span className="text-base font-bold text-indigo-400">
-                  {stages?.stage4_main_command_pct ? `${stages.stage4_main_command_pct.toFixed(1)}%` : '64.0%'}
-                </span>
-              </div>
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-indigo-500 transition-all duration-500"
-                  style={{ width: `${stages?.stage4_main_command_pct || 64.0}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Stage 5 */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                <span className="font-bold text-slate-300">STAGE 5</span>
-                <span className="font-mono text-[10px] text-emerald-400">Supervisory</span>
-              </div>
-              <h3 className="text-xs font-semibold text-white">Multizone Allocation</h3>
-              <p className="text-[10px] text-slate-500 mt-0.5">Priority & mass conservation</p>
-            </div>
-            <div className="mt-4">
-              <div className="flex items-baseline justify-between text-xs font-mono">
-                <span className="text-slate-400">Status:</span>
-                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                  CONSERVED
-                </span>
-              </div>
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-emerald-500/20 overflow-hidden">
-                <div className="h-full rounded-full bg-emerald-400 w-full animate-pulse" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 5. Dynamic ICAR Agricultural Zones (Location-Tailored Crops & Valves) */}
+      {/* 7. Dynamic ICAR Agricultural Zones (Location-Tailored Crops & Actuators) */}
       <div className="space-y-3.5">
         <div className="flex items-center justify-between">
           <div>
@@ -536,12 +415,22 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 6. AI Agronomist Copilot (Groq Llama 3.3 70B & Tavily Live Knowledge) */}
-      <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 via-slate-900 to-slate-950 p-5 shadow-xl text-white">
+      {/* 8. Advanced Feature D & E: Supervisory Water Balance & Mass Conservation Ledger */}
+      <WaterConservationLedger
+        totalRequested={evalData?.total_requested_liters || 420.0}
+        totalAllocated={evalData?.total_allocated_liters || 384.2}
+        availableSupply={evalData?.available_supply_liters || 6000.0}
+        district={locInfo?.district || selectedLoc.district}
+        state={locInfo?.state || selectedLoc.state}
+        crop={zones[0]?.crop || 'Wheat'}
+      />
+
+      {/* 9. AI Agronomist Copilot (Groq Llama 3.3 70B & Tavily Live Knowledge) */}
+      <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 via-slate-900 to-slate-950 p-6 shadow-xl text-white">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
-              <Bot className="h-4 w-4" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+              <Bot className="h-4.5 w-4.5" />
             </div>
             <div>
               <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
@@ -594,7 +483,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* 7. Recent National Evaluations Feed (Interactive History) */}
+      {/* 10. Recent National Evaluations Feed (Interactive History) */}
       {evalHistory.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
