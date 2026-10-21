@@ -22,6 +22,11 @@ import {
   Compass,
   Sprout,
   TrendingDown,
+  Globe,
+  Brain,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 interface IndiaDistrict {
@@ -130,6 +135,18 @@ export default function IndiaPrecisionIrrigationHub() {
   const [evalData, setEvalData] = useState<IndiaEvaluationData | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [districtsList, setDistrictsList] = useState<IndiaDistrict[]>([]);
+  const [advisoryLoading, setAdvisoryLoading] = useState(false);
+  const [advisoryData, setAdvisoryData] = useState<{
+    district: string;
+    state: string;
+    crop: string;
+    advisory_summary: string;
+    critical_farming_tips: string[];
+    model_name: string;
+    reasoning?: string;
+    web_sources: Array<{ title: string; url: string; content: string }>;
+  } | null>(null);
+  const [showReasoning, setShowReasoning] = useState(false);
 
   // Load districts list on mount
   useEffect(() => {
@@ -151,6 +168,7 @@ export default function IndiaPrecisionIrrigationHub() {
 
     setLoading(true);
     setErrorMsg(null);
+    setAdvisoryData(null);
     try {
       const resp = await api.evaluateIndiaLocation({
         location_query: q,
@@ -161,6 +179,29 @@ export default function IndiaPrecisionIrrigationHub() {
       setErrorMsg(err.message || 'Failed to evaluate national fuzzy architecture for this location.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFetchAgrometAdvisory = async () => {
+    if (!evalData) return;
+    setAdvisoryLoading(true);
+    try {
+      const crop = evalData.location.primary_rabi_crop || evalData.location.primary_kharif_crop || 'Wheat';
+      const res = await api.getIndiaAgrometAdvisory({
+        district: evalData.location.district,
+        state: evalData.location.state,
+        crop: crop,
+        soil_type: evalData.location.dominant_soil,
+        irrigation_depth_mm: evalData.fuzzy_stages.stage3_water_demand_pct || 0,
+        et0_mm_day: evalData.physics_agronomy.et0_fao56_mm_day,
+        current_temp_c: evalData.weather.temperature_c,
+        current_humidity_pct: evalData.weather.humidity_percent,
+      });
+      setAdvisoryData(res);
+    } catch (err: any) {
+      console.error('Failed to fetch agromet advisory:', err);
+    } finally {
+      setAdvisoryLoading(false);
     }
   };
 
@@ -545,6 +586,137 @@ export default function IndiaPrecisionIrrigationHub() {
               <span className="font-semibold text-white block mb-0.5">Automated Agronomic Decision Rationale:</span>
               <p className="leading-relaxed">{evalData.decision_summary}</p>
             </div>
+          </div>
+
+          {/* LIVE ICAR AGROMET ADVISORY COPILOT (GPT-OSS-120B & TAVILY) */}
+          <div className="rounded-2xl border border-sky-900/60 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950/40 p-5 sm:p-6 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="inline-flex items-center gap-1 rounded-md bg-sky-950/80 px-2.5 py-0.5 text-[10px] font-bold text-sky-400 border border-sky-800/60 uppercase">
+                    <Globe className="h-3 w-3" /> Tavily Web Search Live
+                  </span>
+                  <span className="text-xs text-slate-600">•</span>
+                  <span className="inline-flex items-center gap-1 rounded-md bg-purple-950/80 px-2.5 py-0.5 text-[10px] font-bold text-purple-400 border border-purple-800/60 uppercase">
+                    <Brain className="h-3 w-3" /> Groq: openai/gpt-oss-120b
+                  </span>
+                  <span className="text-xs text-slate-600">•</span>
+                  <span className="text-[10px] text-emerald-400 font-semibold">ICAR / IMD Agromet Service</span>
+                </div>
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <span>🇮🇳 Live Regional ICAR Agromet Intelligence</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Synthesize real-time agricultural advisories for {evalData.location.district}, {evalData.location.state} with 120B reasoning grounded in live web bulletins.
+                </p>
+              </div>
+
+              {!advisoryData && (
+                <button
+                  onClick={handleFetchAgrometAdvisory}
+                  disabled={advisoryLoading}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 text-white font-bold text-xs transition shadow-lg shadow-sky-950/50 cursor-pointer disabled:opacity-50 shrink-0"
+                >
+                  {advisoryLoading ? (
+                    <>
+                      <Activity className="h-4 w-4 animate-spin" />
+                      <span>Retrieving ICAR Bulletins...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      <span>Consult Live ICAR AI Advisor</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+
+            {advisoryLoading && (
+              <div className="p-4 rounded-xl border border-sky-800/50 bg-sky-950/30 text-xs text-sky-200 flex items-center gap-3 animate-pulse">
+                <Globe className="h-5 w-5 text-sky-400 animate-spin" />
+                <div>
+                  <span className="font-semibold block">Querying Tavily for {evalData.location.district} Agromet Bulletins...</span>
+                  <span className="text-[11px] text-sky-300/80">Synthesizing with Groq openai/gpt-oss-120b reasoning model...</span>
+                </div>
+              </div>
+            )}
+
+            {advisoryData && (
+              <div className="space-y-4">
+                {/* Executive Summary */}
+                <div className="rounded-xl border border-slate-800 bg-slate-900/90 p-4 space-y-2">
+                  <span className="text-[10px] font-mono uppercase text-sky-400 font-bold tracking-wider block">
+                    Agrometeorological Synthesis ({advisoryData.crop} • {evalData.location.dominant_soil})
+                  </span>
+                  <p className="text-xs text-slate-200 leading-relaxed font-sans whitespace-pre-line">
+                    {advisoryData.advisory_summary}
+                  </p>
+                </div>
+
+                {/* Critical Farming Tips */}
+                {advisoryData.critical_farming_tips && advisoryData.critical_farming_tips.length > 0 && (
+                  <div className="rounded-xl border border-emerald-900/50 bg-emerald-950/20 p-4 space-y-2">
+                    <span className="text-[10px] font-mono uppercase text-emerald-400 font-bold tracking-wider block">
+                      Field Management Checklist (ICAR Best Practices)
+                    </span>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+                      {advisoryData.critical_farming_tips.map((tip, tIdx) => (
+                        <li key={tIdx} className="flex items-start gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                          <span className="leading-snug">{tip}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* 120B Chain-of-Thought Reasoning */}
+                {advisoryData.reasoning && (
+                  <div className="rounded-xl border border-purple-900/40 bg-purple-950/20 p-3">
+                    <button
+                      onClick={() => setShowReasoning(!showReasoning)}
+                      className="flex items-center justify-between w-full text-xs font-semibold text-purple-300 hover:text-purple-200 transition cursor-pointer"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Brain className="h-4 w-4 text-purple-400" />
+                        <span>120B Chain-of-Thought Reasoning Trace</span>
+                      </span>
+                      {showReasoning ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </button>
+                    {showReasoning && (
+                      <div className="mt-2.5 p-3 rounded-lg bg-black/40 border border-purple-900/60 text-[10px] font-mono text-purple-200 leading-relaxed whitespace-pre-wrap max-h-52 overflow-y-auto">
+                        {advisoryData.reasoning}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Tavily Verified Web Sources */}
+                {advisoryData.web_sources && advisoryData.web_sources.length > 0 && (
+                  <div className="pt-2 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                      <Globe className="h-3.5 w-3.5 text-sky-400" />
+                      <span>Live Agricultural Sources:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {advisoryData.web_sources.map((src, sIdx) => (
+                        <a
+                          key={sIdx}
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-sky-400 hover:text-sky-300 hover:border-sky-700 transition"
+                        >
+                          <span className="truncate max-w-[220px]">{src.title}</span>
+                          <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

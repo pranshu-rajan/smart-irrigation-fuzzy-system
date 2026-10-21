@@ -7,6 +7,8 @@ from backend.app.schemas.india import (
     IndiaEvaluationRequest,
     IndiaEvaluationResponse,
     IndiaLocationLookupResponse,
+    IndiaAgrometAdvisoryRequest,
+    IndiaAgrometAdvisoryResponse,
 )
 from backend.app.services.india_location_service import india_location_service
 from backend.app.services.india_irrigation_service import india_irrigation_service
@@ -45,4 +47,17 @@ async def evaluate_india_location(request: IndiaEvaluationRequest) -> IndiaEvalu
         raise HTTPException(
             status_code=500,
             detail=f"Error evaluating national precision irrigation for '{request.location_query}': {str(e)}"
+        )
+
+
+@router.post("/agromet-advisory", response_model=IndiaAgrometAdvisoryResponse)
+def get_agromet_advisory(request: IndiaAgrometAdvisoryRequest) -> IndiaAgrometAdvisoryResponse:
+    """Generate live ICAR/IMD Agromet Advisory using Tavily live search and Groq GPT-OSS-120B."""
+    from backend.app.services.ai_service import ai_service
+    try:
+        return ai_service.generate_india_agromet_advisory(request)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error generating agromet advisory for '{request.district}': {str(e)}"
         )

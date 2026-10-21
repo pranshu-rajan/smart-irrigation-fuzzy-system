@@ -105,6 +105,8 @@ class IndiaIrrigationService:
             latitude_deg=lat,
             day_of_year=doy,
         ))
+        # Ensure physical non-zero daily baseline (nocturnal transpiration & vapor deficit)
+        et0_val = max(0.2, et0_val)
 
         p_eff = float(calculate_effective_rainfall(weather.rainfall_mm))
 

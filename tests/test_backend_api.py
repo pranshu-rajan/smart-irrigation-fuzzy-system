@@ -210,7 +210,7 @@ def test_simulation_run_timeseries_and_report():
     # 3. Generate PDF Report
     rep_payload = {"simulation_id": sim_id, "include_ai_summary": True}
     rep_res = client.post("/api/reports/generate", json=rep_payload)
-    assert rep_res.status_code == 200
+    assert rep_res.status_code == 200, f"Generate report failed: {rep_res.status_code} - {rep_res.text}"
     rep_data = rep_res.json()
     assert rep_data["filename"].endswith(".pdf")
     report_id = rep_data["id"]

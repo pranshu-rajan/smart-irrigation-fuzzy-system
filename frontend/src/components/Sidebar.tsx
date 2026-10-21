@@ -21,7 +21,8 @@ import {
   MapPin,
   Sparkles,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Globe
 } from 'lucide-react';
 
 interface NavGroup {
@@ -46,7 +47,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: '/fuzzy', label: '5 Fuzzy Engines', icon: Sliders, badge: '5 FIS' },
       { href: '/simulation', label: 'Simulation Studio', icon: Cpu, badge: '1440m' },
-      { href: '/dashboard', label: 'Dashboard & 3D Twin', icon: Activity, badge: 'WebGL' },
+      { href: '/dashboard', label: 'National Map & FIS Dashboard', icon: Globe, badge: 'Live GIS' },
       { href: '/allocation', label: 'Supervisory Allocation', icon: Layers },
       { href: '/optimization', label: 'PSO Parameter Tuning', icon: TrendingUp },
       { href: '/scenarios', label: '6 Climate Scenarios', icon: GitFork },

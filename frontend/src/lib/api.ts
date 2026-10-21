@@ -226,6 +226,9 @@ export interface AIChatResponse {
   conversation_id: string;
   grounded_context_summary?: Record<string, any>;
   source: string;
+  model_name?: string;
+  reasoning?: string;
+  web_sources?: Array<{ title: string; url: string; content: string }>;
 }
 
 export interface ReportResponse {
@@ -436,7 +439,14 @@ export const api = {
     }),
 
   // Advisory AI & RAG
-  chatAI: (params: { prompt: string; simulation_id?: string; zone_id?: number; conversation_id?: string }) =>
+  chatAI: (params: {
+    prompt: string;
+    simulation_id?: string;
+    zone_id?: number;
+    conversation_id?: string;
+    use_web_search?: boolean;
+    location?: string;
+  }) =>
     fetchApi<AIChatResponse>('/ai/chat', {
       method: 'POST',
       body: JSON.stringify(params),
@@ -520,6 +530,29 @@ export const api = {
     reservoir_storage_pct?: number;
   }) =>
     fetchApi<any>('/india/evaluate', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    }),
+  getIndiaAgrometAdvisory: (params: {
+    district: string;
+    state: string;
+    crop?: string;
+    soil_type?: string;
+    irrigation_depth_mm?: number;
+    et0_mm_day?: number;
+    current_temp_c?: number;
+    current_humidity_pct?: number;
+  }) =>
+    fetchApi<{
+      district: string;
+      state: string;
+      crop: string;
+      advisory_summary: string;
+      critical_farming_tips: string[];
+      model_name: string;
+      reasoning?: string;
+      web_sources: Array<{ title: string; url: string; content: string }>;
+    }>('/india/agromet-advisory', {
       method: 'POST',
       body: JSON.stringify(params),
     }),

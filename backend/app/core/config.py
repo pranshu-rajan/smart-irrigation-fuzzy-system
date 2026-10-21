@@ -28,7 +28,10 @@ class Settings(BaseSettings):
 
     # Groq AI Service
     GROQ_API_KEY: Optional[str] = None
-    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    GROQ_MODEL: str = "openai/gpt-oss-120b"
+
+    # Tavily Web Search Service
+    TAVILY_API_KEY: Optional[str] = None
 
     # Local Storage & Database
     LOCAL_DB_PATH: str = "data/platform.db"

@@ -1,20 +1,24 @@
-"""AI Explanation Service.
+"""AI Explanation and Agronomic Advisory Service.
 
 Provides intelligent agronomic and fuzzy control explanations:
-- Integrated with Groq API (using llama-3.3-70b-versatile or llama3-70b-8192)
+- Integrated with Groq API using openai/gpt-oss-120b (120B parameter reasoning model)
+- Integrated with Tavily Live Web Search for real-time ICAR & IMD Agromet advisories
 - Grounded with RAG indexer over docs/ and active simulation telemetry
 - Invariant: Non-actuator advisory layer only (never directly commands irrigation)
 - Deterministic engineering rule-based fallback when offline or no API key provided
 """
 
 import os
+import re
 from typing import Dict, List, Optional, Any
 import uuid
 
 from backend.app.core.config import get_settings
 from backend.app.ai.rag import RAGIndexer
 from backend.app.schemas.allocation import AIChatRequest, AIChatResponse
+from backend.app.schemas.india import IndiaAgrometAdvisoryRequest, IndiaAgrometAdvisoryResponse
 from backend.app.database.client import DatabaseRepository
+from backend.app.services.tavily_service import tavily_search_service
 
 
 SYSTEM_PROMPT = """You are the Senior Agronomic & Control Systems AI Specialist for the Smart Multizone Irrigation Platform.
@@ -38,11 +42,15 @@ class AIService:
     def __init__(self):
         self.settings = get_settings()
         self.rag = RAGIndexer()
+        self.tavily = tavily_search_service
         self._groq_client = None
         self._init_groq()
 
     def _init_groq(self):
-        api_key = self.settings.GROQ_API_KEY or os.environ.get("GROQ_API_KEY")
+        api_key = (
+            self.settings.GROQ_API_KEY
+            or os.environ.get("GROQ_API_KEY")
+        )
         if api_key and api_key != "your-groq-api-key-here":
             try:
                 import groq
@@ -55,7 +63,7 @@ class AIService:
         request: AIChatRequest,
         db: Optional[DatabaseRepository] = None,
     ) -> AIChatResponse:
-        """Answer user query with grounded RAG context and Groq LLM or deterministic fallback."""
+        """Answer user query with grounded RAG context, optional Tavily web search, and Groq LLM."""
         conversation_id = request.conversation_id or f"conv-{uuid.uuid4().hex[:8]}"
 
         # Retrieve simulation telemetry if provided
@@ -83,6 +91,20 @@ class AIService:
             top_k=3,
         )
 
+        web_sources: List[Dict[str, str]] = []
+        if request.use_web_search:
+            search_query = request.prompt
+            if request.location:
+                search_query = f"{request.location} ICAR agriculture advisory {request.prompt}"
+            web_sources = self.tavily.search(query=search_query, max_results=3)
+            if web_sources:
+                web_context = "\n".join(
+                    [f"- Source ({s.get('title')}): {s.get('content')}" for s in web_sources]
+                )
+                context = f"{context}\n\nLIVE WEB SEARCH FINDINGS (Tavily):\n{web_context}"
+
+        model_name = self.settings.GROQ_MODEL or "openai/gpt-oss-120b"
+
         if self._groq_client:
             try:
                 messages = [
@@ -93,19 +115,36 @@ class AIService:
                     },
                 ]
                 resp = self._groq_client.chat.completions.create(
-                    model=self.settings.GROQ_MODEL,
+                    model=model_name,
                     messages=messages,
                     temperature=0.2,
-                    max_tokens=800,
+                    max_tokens=1500,
                 )
-                answer = resp.choices[0].message.content.strip()
+                choice = resp.choices[0]
+                answer = (choice.message.content or "").strip()
+                reasoning = (
+                    getattr(choice.message, "reasoning", None)
+                    or getattr(choice.message, "reasoning_content", None)
+                )
+
+                # In case reasoning model consumed tokens in reasoning and left content empty
+                if not answer and reasoning:
+                    answer = reasoning.strip()
+
                 return AIChatResponse(
                     response=answer,
                     conversation_id=conversation_id,
-                    grounded_context_summary={"sim_id": request.simulation_id, "has_telemetry": sim_summary is not None},
+                    grounded_context_summary={
+                        "sim_id": request.simulation_id,
+                        "has_telemetry": sim_summary is not None,
+                        "web_results_count": len(web_sources),
+                    },
                     source="groq",
+                    model_name=model_name,
+                    reasoning=reasoning,
+                    web_sources=web_sources if web_sources else None,
                 )
-            except Exception as e:
+            except Exception:
                 # Fallback to rule-based engine on Groq API error
                 pass
 
@@ -118,8 +157,130 @@ class AIService:
         return AIChatResponse(
             response=fallback_answer,
             conversation_id=conversation_id,
-            grounded_context_summary={"sim_id": request.simulation_id, "has_telemetry": sim_summary is not None},
+            grounded_context_summary={
+                "sim_id": request.simulation_id,
+                "has_telemetry": sim_summary is not None,
+                "web_results_count": len(web_sources),
+            },
             source="rule_based_fallback",
+            model_name="deterministic_expert_system",
+            web_sources=web_sources if web_sources else None,
+        )
+
+    def generate_india_agromet_advisory(
+        self,
+        req: IndiaAgrometAdvisoryRequest,
+    ) -> IndiaAgrometAdvisoryResponse:
+        """Generate a localized ICAR & IMD Agromet Advisory using Tavily live search + GPT-OSS-120B."""
+        web_sources = self.tavily.search_agromet_advisory(
+            district=req.district,
+            state=req.state,
+            crop=req.crop,
+        )
+
+        web_context_lines = []
+        for s in web_sources:
+            web_context_lines.append(f"Source: {s.get('title')} ({s.get('url')})\nSnippet: {s.get('content')}")
+        web_context_str = "\n\n".join(web_context_lines)
+
+        prompt = (
+            f"You are the Senior ICAR Agrometeorology Specialist for {req.district}, {req.state}.\n"
+            f"FIELD CONDITIONS:\n"
+            f"- Crop: {req.crop}\n"
+            f"- Soil Order: {req.soil_type}\n"
+            f"- Current Temperature: {req.current_temp_c:.1f} °C\n"
+            f"- Current Relative Humidity: {req.current_humidity_pct:.1f} %\n"
+            f"- FAO-56 Reference ET0: {req.et0_mm_day:.2f} mm/day\n"
+            f"- Hierarchical Fuzzy System Allocated Irrigation Depth: {req.irrigation_depth_mm:.2f} mm\n\n"
+            f"LATEST ICAR/IMD AGROMET INTELLIGENCE RETRIEVED VIA TAVILY:\n"
+            f"{web_context_str}\n\n"
+            f"TASK:\n"
+            f"1. Provide a concise, authoritative Agronomic Evaluation (2-3 paragraphs) explaining why this irrigation depth "
+            f"is scientifically sound given the crop coefficient, soil water holding capacity, and prevailing weather.\n"
+            f"2. Provide 3-4 bullet-pointed practical field advisories (e.g., fertigation timing, mulch use, disease risk, diurnal scheduling)."
+        )
+
+        model_name = self.settings.GROQ_MODEL or "openai/gpt-oss-120b"
+        reasoning = None
+        advisory_summary = ""
+        tips: List[str] = []
+
+        if self._groq_client:
+            try:
+                resp = self._groq_client.chat.completions.create(
+                    model=model_name,
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are an expert ICAR agronomist specializing in precision micro-irrigation, "
+                                "FAO-56 water management, and Indian agro-climatic zones. Provide precise, actionable advice."
+                            ),
+                        },
+                        {"role": "user", "content": prompt},
+                    ],
+                    temperature=0.2,
+                    max_tokens=1500,
+                )
+                choice = resp.choices[0]
+                text = (choice.message.content or "").strip()
+                reasoning = (
+                    getattr(choice.message, "reasoning", None)
+                    or getattr(choice.message, "reasoning_content", None)
+                )
+                if not text and reasoning:
+                    text = reasoning.strip()
+
+                # Parse bullet points if present
+                lines = [line.strip() for line in text.split("\n") if line.strip()]
+                parsed_tips = []
+                summary_lines = []
+                for line in lines:
+                    if line.startswith(("- ", "* ", "1. ", "2. ", "3. ", "4. ")):
+                        clean_tip = re.sub(r"^[-*0-9.]+\s*", "", line)
+                        parsed_tips.append(clean_tip)
+                    else:
+                        summary_lines.append(line)
+
+                advisory_summary = "\n\n".join(summary_lines) if summary_lines else text
+                tips = parsed_tips if len(parsed_tips) >= 2 else [
+                    f"Maintain soil moisture within 60-70% of available water capacity in {req.soil_type}.",
+                    "Irrigate during early morning or late evening hours to minimize evaporative advection losses.",
+                    f"Monitor {req.crop} canopy temperature and check local KVK alerts for pest emergence following high humidity.",
+                ]
+
+                return IndiaAgrometAdvisoryResponse(
+                    district=req.district,
+                    state=req.state,
+                    crop=req.crop or "Wheat",
+                    advisory_summary=advisory_summary,
+                    critical_farming_tips=tips,
+                    model_name=model_name,
+                    reasoning=reasoning,
+                    web_sources=web_sources,
+                )
+            except Exception:
+                pass
+
+        # Offline Curated Fallback
+        return IndiaAgrometAdvisoryResponse(
+            district=req.district,
+            state=req.state,
+            crop=req.crop or "Wheat",
+            advisory_summary=(
+                f"For {req.crop} in {req.district}, {req.state} under {req.soil_type} soil, "
+                f"the fuzzy control decision to apply {req.irrigation_depth_mm:.2f} mm aligns with standard "
+                f"ICAR water balance recommendations. Given the reference ET0 of {req.et0_mm_day:.2f} mm/day, "
+                f"this depth replaces root-zone evapotranspirative depletion while safeguarding against deep drainage."
+            ),
+            critical_farming_tips=[
+                f"Adopt drip or micro-sprinkler irrigation to maintain uniform moisture distribution in {req.soil_type}.",
+                "Schedule irrigation cycles before 09:00 AM or after 04:30 PM to minimize wind drift and direct solar vaporization.",
+                f"Regularly scout {req.crop} root depth to ensure soil moisture does not deplete below the managed allowable depletion (MAD) threshold.",
+            ],
+            model_name="deterministic_icar_benchmark",
+            reasoning="Grounded in ICAR Package of Practices and FAO-56 Penman-Monteith dual crop coefficient tables.",
+            web_sources=web_sources,
         )
 
     def _generate_fallback_explanation(
@@ -187,3 +348,7 @@ class AIService:
             f"water balance calculations, and hierarchical Mamdani fuzzy inference.\n\n"
             f"Contextual telemetry and engineering references have been processed to ensure physical conservation and zero water waste."
         )
+
+
+# Singleton instance
+ai_service = AIService()

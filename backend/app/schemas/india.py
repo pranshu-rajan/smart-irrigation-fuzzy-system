@@ -115,3 +115,28 @@ class IndiaEvaluationResponse(BaseModel):
 
     class Config:
         populate_by_name = True
+
+
+class IndiaAgrometAdvisoryRequest(BaseModel):
+    """Request for live ICAR/IMD Agromet Advisory synthesized by GPT-OSS-120B with Tavily."""
+    district: str
+    state: str
+    crop: Optional[str] = "Wheat"
+    soil_type: Optional[str] = "Alluvial Loam"
+    irrigation_depth_mm: Optional[float] = 0.0
+    et0_mm_day: Optional[float] = 4.5
+    current_temp_c: Optional[float] = 28.0
+    current_humidity_pct: Optional[float] = 50.0
+
+
+class IndiaAgrometAdvisoryResponse(BaseModel):
+    """Response containing live ICAR advisory, GPT-OSS-120B analysis, reasoning, and citations."""
+    district: str
+    state: str
+    crop: str
+    advisory_summary: str
+    critical_farming_tips: List[str]
+    model_name: str = "openai/gpt-oss-120b"
+    reasoning: Optional[str] = None
+    web_sources: List[Dict[str, str]] = []
+

@@ -92,6 +92,8 @@ class AIChatRequest(BaseModel):
     simulation_id: Optional[str] = Field(default=None, description="Optional simulation ID for grounded telemetry")
     zone_id: Optional[int] = Field(default=None, description="Optional zone ID")
     conversation_id: Optional[str] = Field(default=None)
+    use_web_search: bool = Field(default=False, description="Search web via Tavily for live ICAR/IMD advisories")
+    location: Optional[str] = Field(default=None, description="Optional Indian location context")
 
 
 class AIChatResponse(BaseModel):
@@ -99,6 +101,9 @@ class AIChatResponse(BaseModel):
     conversation_id: str
     grounded_context_summary: Optional[Dict[str, Any]] = None
     source: str = "groq"  # groq or rule_based_fallback
+    model_name: str = "openai/gpt-oss-120b"
+    reasoning: Optional[str] = None
+    web_sources: Optional[List[Dict[str, str]]] = None
 
 
 # --- Report Schemas ---

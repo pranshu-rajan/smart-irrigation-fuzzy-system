@@ -42,6 +42,22 @@ GENERATED_REPORTS_DIR = ROOT_DIR / "reports" / "generated"
 GENERATED_REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def _clean_markdown_for_reportlab(text: str) -> str:
+    """Sanitize raw markdown or LLM output into valid ReportLab XML markup."""
+    import re
+    # Remove raw HTML tags
+    clean = re.sub(r"<br\s*/?>", "\n", text, flags=re.IGNORECASE)
+    clean = re.sub(r"<[^>]+>", "", clean)
+    # XML escape special characters
+    clean = clean.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    # Convert markdown bold and italic
+    clean = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", clean)
+    clean = re.sub(r"\*(.+?)\*", r"<i>\1</i>", clean)
+    # Convert newlines to ReportLab line breaks
+    clean = clean.replace("\n", "<br/>")
+    return clean
+
+
 class ReportService:
     def __init__(self):
         self.ai_service = AIService()
@@ -152,8 +168,12 @@ class ReportService:
         story.append(Spacer(1, 6))
 
         if ai_summary_text:
-            cleaned_ai = ai_summary_text.replace("\n", "<br/>")
-            story.append(Paragraph(f"<b>Agronomic AI Advisor Diagnostic:</b><br/>{cleaned_ai}", body_style))
+            try:
+                cleaned_ai = _clean_markdown_for_reportlab(ai_summary_text)
+                story.append(Paragraph(f"<b>Agronomic AI Advisor Diagnostic:</b><br/>{cleaned_ai}", body_style))
+            except Exception:
+                safe_ai = ai_summary_text.replace("<", "").replace(">", "").replace("&", "")[:500]
+                story.append(Paragraph(f"<b>Agronomic AI Advisor Diagnostic:</b><br/>{safe_ai}", body_style))
             story.append(Spacer(1, 10))
 
         # 2. Fuzzy System Architecture (HAFC)
