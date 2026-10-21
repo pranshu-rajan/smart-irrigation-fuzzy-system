@@ -498,5 +498,30 @@ export const api = {
     }),
   getMe: () => fetchApi<{ status: string; user: AuthUser }>('/auth/me'),
   logout: () => fetchApi<{ status: string; message: string }>('/auth/logout', { method: 'POST' }),
+
+  // India National-Level Precision Irrigation
+  getIndiaDistricts: () => fetchApi<Array<{ district: string; state: string; agro_climatic_zone: string; latitude: number; longitude: number }>>('/india/districts'),
+  lookupIndiaLocation: (params: { query?: string; pincode?: string; latitude?: number; longitude?: number }) => {
+    const q = new URLSearchParams();
+    if (params.query) q.append('query', params.query);
+    if (params.pincode) q.append('pincode', params.pincode);
+    if (params.latitude !== undefined) q.append('latitude', params.latitude.toString());
+    if (params.longitude !== undefined) q.append('longitude', params.longitude.toString());
+    return fetchApi<any>(`/india/lookup?${q.toString()}`);
+  },
+  evaluateIndiaLocation: (params: {
+    location_query?: string;
+    pincode?: string;
+    latitude?: number;
+    longitude?: number;
+    elevation_m?: number;
+    soil_moisture_override?: number;
+    target_moisture_override?: number;
+    reservoir_storage_pct?: number;
+  }) =>
+    fetchApi<any>('/india/evaluate', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    }),
 };
 

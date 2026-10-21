@@ -61,11 +61,10 @@ ENV/
 env.bak/
 venv.bak/
 
-# MATLAB / Simulink cache
-*.asv
-*.slxc
-slprj/
-*.autosave
+# Build artifacts & Archives
+*.tsbuildinfo
+*.zip
+*.tar.gz
 
 # Data files (keep raw schemas, ignore large simulation dumps if needed)
 data/simulation/*.csv

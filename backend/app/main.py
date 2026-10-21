@@ -31,6 +31,7 @@ from backend.app.api.routes.ai import router as ai_router
 from backend.app.api.routes.reports import router as reports_router
 from backend.app.api.routes.verification import router as verification_router
 from backend.app.api.routes.auth import router as auth_router
+from backend.app.api.routes.india import router as india_router
 
 logger = get_logger("main")
 settings = get_settings()
@@ -67,6 +68,7 @@ app.include_router(optimization_router, prefix="/api")
 app.include_router(ai_router, prefix="/api")
 app.include_router(reports_router, prefix="/api")
 app.include_router(verification_router, prefix="/api")
+app.include_router(india_router, prefix="/api")
 
 
 # Backward compatibility root health check

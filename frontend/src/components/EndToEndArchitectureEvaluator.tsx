@@ -64,7 +64,10 @@ interface BenchmarkResponse {
   savings_vs_pid_pct: number;
 }
 
+import IndiaPrecisionIrrigationHub from '@/components/IndiaPrecisionIrrigationHub';
+
 export default function EndToEndArchitectureEvaluator() {
+  const [viewMode, setViewMode] = useState<'india' | 'manual'>('india');
   // Input parameters
   const [sm, setSm] = useState(45.0);
   const [target, setTarget] = useState(60.0);
@@ -152,25 +155,61 @@ export default function EndToEndArchitectureEvaluator() {
   };
 
   return (
-    <div className="rounded-2xl border border-emerald-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-8">
-      {/* Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-800 border border-emerald-200">
-              MATLAB & Full-Stack 100% Parity
-            </span>
-            <span className="text-xs text-slate-400">•</span>
-            <span className="text-xs text-slate-500 font-medium">Closed-Loop 5-Stage Hierarchy</span>
-          </div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <Zap className="h-5 w-5 text-emerald-600" />
-            Live Fuzzy System Architecture Evaluator
-          </h2>
-          <p className="mt-1 text-xs text-slate-600">
-            Feed any arbitrary sensor inputs to instantaneously evaluate the entire 5-FIS inference cascade in &lt; 50ms.
-          </p>
+    <div className="space-y-6">
+      {/* Top Tab Mode Switcher */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 rounded-2xl border border-slate-800 bg-slate-900 shadow-md">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800">
+          <button
+            onClick={() => setViewMode('india')}
+            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+              viewMode === 'india'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950/50'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <span className="text-base">🇮🇳</span> India Real-Time National Hub
+          </button>
+          <button
+            onClick={() => setViewMode('manual')}
+            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+              viewMode === 'manual'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-950/50'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Zap className="h-4 w-4" /> Custom Parameter Sandbox
+          </button>
         </div>
+
+        <div className="text-xs text-slate-400 px-3 hidden md:block">
+          {viewMode === 'india'
+            ? 'Live weather ingestion via Open-Meteo • 15 ICAR Agro-Climatic Zones • FAO-56 Penman-Monteith'
+            : 'Interactive manual sensor perturbation • Fast diagnostic sweep (< 50ms)'}
+        </div>
+      </div>
+
+      {viewMode === 'india' ? (
+        <IndiaPrecisionIrrigationHub />
+      ) : (
+        <div className="rounded-2xl border border-emerald-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-8">
+          {/* Title */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-800 border border-emerald-200">
+                  Pure Python & Next.js Control Platform
+                </span>
+                <span className="text-xs text-slate-400">•</span>
+                <span className="text-xs text-slate-500 font-medium">Closed-Loop 5-Stage Hierarchy</span>
+              </div>
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Zap className="h-5 w-5 text-emerald-600" />
+                Live Fuzzy System Architecture Evaluator
+              </h2>
+              <p className="mt-1 text-xs text-slate-600">
+                Feed any arbitrary sensor inputs to instantaneously evaluate the entire 5-FIS inference cascade in &lt; 50ms.
+              </p>
+            </div>
 
         {/* Presets */}
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -523,6 +562,8 @@ export default function EndToEndArchitectureEvaluator() {
           </div>
         )}
       </div>
+    </div>
+      )}
     </div>
   );
 }

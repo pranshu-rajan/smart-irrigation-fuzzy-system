@@ -15,8 +15,6 @@ from pathlib import Path
 
 REQUIRED_DIRS = [
     "config",
-    "engineering/matlab",
-    "engineering/simulink",
     "data/raw",
     "data/processed",
     "data/simulation",

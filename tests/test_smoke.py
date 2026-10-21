@@ -37,8 +37,6 @@ from models import (
 def test_directory_structure_exists(project_root: Path):
     """Verify that all architectural directories required by Section 14 exist."""
     required_dirs = [
-        "engineering/matlab",
-        "engineering/simulink",
         "data/raw",
         "data/processed",
         "data/simulation",
