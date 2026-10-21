@@ -24,12 +24,13 @@ import {
   Sprout,
   LogOut,
   User,
-  LogIn
+  LogIn,
+  Globe
 } from 'lucide-react';
 
 const ROUTE_LABELS: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
   '/': { label: 'End-to-End Fuzzy Architecture Studio', icon: Sliders },
-  '/dashboard': { label: 'Telemetry & Supervisory Dashboard', icon: Activity },
+  '/dashboard': { label: 'National GIS Map & FIS Command Center', icon: Globe },
   '/simulation': { label: 'Closed-Loop Simulation Studio', icon: Cpu },
   '/fuzzy': { label: 'Fuzzy Logic Diagnostics', icon: Sliders },
   '/allocation': { label: 'Hierarchical Water Allocation', icon: Layers },
@@ -117,6 +118,15 @@ export default function TopHeader() {
             <span className="hidden sm:inline">Sign In</span>
           </button>
         )}
+
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 px-3 sm:px-3.5 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition-all shadow-2xs cursor-pointer shrink-0"
+        >
+          <Globe className="h-3.5 w-3.5 text-emerald-600 animate-pulse" />
+          <span className="hidden sm:inline">India GIS Map</span>
+          <span className="sm:hidden">Map</span>
+        </Link>
 
         <Link
           href="/simulation"

@@ -41,7 +41,8 @@ import {
   HelpCircle,
   TrendingUp,
   RefreshCw,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Globe
 } from 'lucide-react';
 
 // Preset configurations for beginners
@@ -350,6 +351,35 @@ export default function EndToEndStudioPage() {
 
   return (
     <div className="space-y-8 pb-20 max-w-7xl mx-auto">
+      {/* Featured National India GIS Map & Live Location Evaluator Hero Banner */}
+      <div className="rounded-3xl border border-emerald-500/40 bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950 p-5 sm:p-6 shadow-xl text-white flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+        <div className="flex items-start sm:items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 shrink-0 shadow-lg">
+            <Globe className="h-6 w-6 animate-pulse" />
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-white">
+                National India Precision Irrigation & Real-Time GIS Map
+              </h2>
+              <span className="rounded-full bg-emerald-500/20 border border-emerald-400/40 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                LIVE GOOGLE & SATELLITE TILES
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+              Hover over real satellite maps across India, click any farm coordinate, and run the real-time 5-stage Fuzzy Inference System with live Open-Meteo weather and ICAR soil physics.
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-2.5 text-xs shadow-lg transition-all shrink-0 cursor-pointer"
+        >
+          <span>Launch Interactive Map</span>
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+
       {/* Top Welcome & Value Proposition */}
       <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/50 p-4 sm:p-6 md:p-8 shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
