@@ -195,9 +195,13 @@ class AIService:
             f"LATEST ICAR/IMD AGROMET INTELLIGENCE RETRIEVED VIA TAVILY:\n"
             f"{web_context_str}\n\n"
             f"TASK:\n"
-            f"1. Provide a concise, authoritative Agronomic Evaluation (2-3 paragraphs) explaining why this irrigation depth "
+            f"1. Provide a concise, authoritative Agronomic Evaluation (2 paragraphs) explaining why this irrigation depth "
             f"is scientifically sound given the crop coefficient, soil water holding capacity, and prevailing weather.\n"
-            f"2. Provide 3-4 bullet-pointed practical field advisories (e.g., fertigation timing, mulch use, disease risk, diurnal scheduling)."
+            f"2. Provide 3-4 bullet-pointed practical field advisories (e.g., fertigation timing, mulch use, disease risk, diurnal scheduling).\n\n"
+            f"STRICT FORMATTING REQUIREMENTS:\n"
+            f"- NEVER use LaTeX math tags like \\[ or \\] or \\approx or \\times. Use clean standard symbols (e.g., ETc = Kc × ET0 ≈ 11.2 mm/day).\n"
+            f"- NEVER output raw markdown dividers (---) or section hashes (###).\n"
+            f"- Each bullet point MUST be on its own line formatted as '- **Title**: Complete actionable recommendation.' (Do not put the title on a separate line)."
         )
 
         model_name = self.settings.GROQ_MODEL or "openai/gpt-oss-120b"
@@ -214,7 +218,7 @@ class AIService:
                             "role": "system",
                             "content": (
                                 "You are an expert ICAR agronomist specializing in precision micro-irrigation, "
-                                "FAO-56 water management, and Indian agro-climatic zones. Provide precise, actionable advice."
+                                "FAO-56 water management, and Indian agro-climatic zones. Provide precise, actionable advice with clean plain text formatting."
                             ),
                         },
                         {"role": "user", "content": prompt},
@@ -231,22 +235,38 @@ class AIService:
                 if not text and reasoning:
                     text = reasoning.strip()
 
-                # Parse bullet points if present
-                lines = [line.strip() for line in text.split("\n") if line.strip()]
+                # Robust post-processing for LaTeX and markdown artifacts
+                def sanitize_text(s: str) -> str:
+                    s = re.sub(r'\\\[\s*', '', s)
+                    s = re.sub(r'\s*\\\]', '', s)
+                    s = s.replace(r'\times', '×').replace(r'\approx', '≈')
+                    s = re.sub(r'\\text\{([^}]+)\}', r'\1', s)
+                    s = s.replace(r'\;', ' ').replace(r'\,', ' ')
+                    s = re.sub(r'---+\s*', '', s)
+                    s = re.sub(r'###+\s*', '', s)
+                    return s.strip()
+
+                text = sanitize_text(text)
+
+                # Parse bullet points and body paragraphs
+                raw_lines = [line.strip() for line in text.split("\n") if line.strip()]
                 parsed_tips = []
                 summary_lines = []
-                for line in lines:
+
+                for line in raw_lines:
                     if line.startswith(("- ", "* ", "1. ", "2. ", "3. ", "4. ")):
-                        clean_tip = re.sub(r"^[-*0-9.]+\s*", "", line)
-                        parsed_tips.append(clean_tip)
-                    else:
+                        clean_line = re.sub(r"^[-*0-9.]+\s*", "", line).strip()
+                        # Only accept well-formed tips (at least 20 chars, not just a standalone header)
+                        if len(clean_line) >= 20:
+                            parsed_tips.append(clean_line)
+                    elif not line.startswith(("#", "---")):
                         summary_lines.append(line)
 
                 advisory_summary = "\n\n".join(summary_lines) if summary_lines else text
                 tips = parsed_tips if len(parsed_tips) >= 2 else [
-                    f"Maintain soil moisture within 60-70% of available water capacity in {req.soil_type}.",
-                    "Irrigate during early morning or late evening hours to minimize evaporative advection losses.",
-                    f"Monitor {req.crop} canopy temperature and check local KVK alerts for pest emergence following high humidity.",
+                    f"**Moisture Management**: Maintain soil moisture within 60-70% of available water capacity in {req.soil_type}.",
+                    "**Diurnal Timing**: Irrigate during early morning or late evening hours to minimize evaporative advection losses.",
+                    f"**Pest Monitoring**: Monitor {req.crop} canopy temperature and check local KVK alerts for pest emergence following high humidity.",
                 ]
 
                 return IndiaAgrometAdvisoryResponse(

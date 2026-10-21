@@ -115,6 +115,72 @@ export default function DashboardPage() {
     }
   };
 
+  // Helper to format AI advisory text with clean typography, bold highlights, and sanitized formulas
+  const renderFormattedSummary = (rawText: string) => {
+    if (!rawText) return null;
+
+    // Sanitize any residual LaTeX or raw markdown delimiters
+    let clean = rawText
+      .replace(/\\\[/g, '')
+      .replace(/\\\]/g, '')
+      .replace(/\\approx/g, '≈')
+      .replace(/\\times/g, '×')
+      .replace(/\\text\{([^}]+)\}/g, '$1')
+      .replace(/\\;/g, ' ')
+      .replace(/---/g, '')
+      .replace(/###\s*[^\n]+/g, '');
+
+    const paragraphs = clean.split('\n\n').filter((p) => p.trim().length > 0);
+
+    return (
+      <div className="space-y-3">
+        {paragraphs.map((para, pIdx) => {
+          // Parse **bold** markers
+          const parts = para.split(/(\*\*.*?\*\*)/g);
+          return (
+            <p key={pIdx} className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {parts.map((part, idx) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                  return (
+                    <strong key={idx} className="font-semibold text-emerald-300">
+                      {part.slice(2, -2)}
+                    </strong>
+                  );
+                }
+                return part;
+              })}
+            </p>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // Helper to parse each critical farming tip into a category title and actionable description
+  const parseTip = (rawTip: string) => {
+    let clean = rawTip.trim();
+    // Check for **Title** - Body or **Title**: Body or Title: Body
+    const match = clean.match(/^\*\*([^*]+)\*\*[:\s–—-]+(.+)$/) || clean.match(/^([A-Za-z\s]+)[:–—-]+(.+)$/);
+    if (match) {
+      return {
+        title: match[1].trim(),
+        body: match[2].trim().replace(/\*\*/g, ''),
+      };
+    }
+    // If it's just **Title** without body, clean it
+    const titleOnly = clean.match(/^\*\*([^*]+)\*\*$/);
+    if (titleOnly) {
+      return {
+        title: titleOnly[1].trim(),
+        body: `Follow regional ICAR package of practices to optimize ${titleOnly[1].toLowerCase()}.`,
+      };
+    }
+    return {
+      title: 'Practical Field Advisory',
+      body: clean.replace(/\*\*/g, ''),
+    };
+  };
+
   // Initial load on mount
   useEffect(() => {
     evaluateLocation(DEFAULT_LOCATION, reservoirStoragePct);
@@ -457,22 +523,42 @@ export default function DashboardPage() {
             <span>Consulting Groq agronomy knowledge base & real-time crop advisory...</span>
           </div>
         ) : advisory ? (
-          <div className="space-y-3.5">
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              {advisory.advisory_summary}
-            </p>
+          <div className="space-y-4">
+            {/* Rich Formatted Summary Paragraphs */}
+            <div className="rounded-2xl border border-slate-800/80 bg-slate-950/70 p-4 sm:p-5 shadow-inner">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 font-mono block mb-2">
+                Grounded Agronomic Evaluation
+              </span>
+              {renderFormattedSummary(advisory.advisory_summary)}
+            </div>
 
+            {/* Structured High-Aesthetic Advisory Cards */}
             {advisory.critical_farming_tips && advisory.critical_farming_tips.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
-                {advisory.critical_farming_tips.slice(0, 4).map((tip: string, idx: number) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-2 rounded-xl bg-slate-900/80 border border-slate-800 p-2.5 text-xs text-slate-300"
-                  >
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>{tip}</span>
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                {advisory.critical_farming_tips
+                  .filter((t: string) => t && t.trim().length > 10)
+                  .slice(0, 4)
+                  .map((tip: string, idx: number) => {
+                    const parsed = parseTip(tip);
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 rounded-2xl bg-slate-950/80 border border-slate-800/90 p-4 text-xs text-slate-200 shadow-sm hover:border-emerald-500/40 hover:bg-slate-950 transition-all"
+                      >
+                        <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0 mt-0.5 border border-emerald-500/20">
+                          <CheckCircle2 className="h-4 w-4" />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-400 font-mono">
+                            {parsed.title}
+                          </span>
+                          <p className="text-xs text-slate-300 leading-relaxed">
+                            {parsed.body}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </div>
