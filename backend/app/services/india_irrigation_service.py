@@ -70,6 +70,7 @@ class IndiaIrrigationService:
         elev = request.elevation_m or lookup_resp.elevation_m
         district_name = lookup_resp.matched_district
 
+        field_label = request.field_name or f"Field Parcel ({lat:.4f}°N, {lon:.4f}°E)"
         location_info = IndiaDistrictInfo(
             district=district_name,
             state=lookup_resp.state,
@@ -85,6 +86,8 @@ class IndiaIrrigationService:
             primary_kharif_crop=lookup_resp.recommended_crops["Kharif (Monsoon)"],
             primary_rabi_crop=lookup_resp.recommended_crops["Rabi (Winter)"],
             primary_zaid_crop=lookup_resp.recommended_crops["Zaid (Summer)"],
+            field_name=field_label,
+            sub_district=f"{district_name} Agricultural Basin",
         )
 
         # 2. Ingest Live Meteorology

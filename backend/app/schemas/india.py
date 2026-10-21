@@ -20,6 +20,8 @@ class IndiaDistrictInfo(BaseModel):
     primary_kharif_crop: str
     primary_rabi_crop: str
     primary_zaid_crop: str
+    field_name: Optional[str] = None
+    sub_district: Optional[str] = None
 
 
 class IndiaLocationLookupResponse(BaseModel):
@@ -102,6 +104,8 @@ class IndiaEvaluationRequest(BaseModel):
     zone1_crop_override: Optional[str] = Field(None, description="Override primary Zone 1 crop")
     zone2_crop_override: Optional[str] = Field(None, description="Override Zone 2 crop")
     zone3_crop_override: Optional[str] = Field(None, description="Override Zone 3 crop")
+    field_name: Optional[str] = Field(None, description="Field or farm parcel label (e.g. 'Field Block A - Khasra 42')")
+    field_area_m2: Optional[float] = Field(None, description="Exact field boundary area in square meters")
 
 
 class IndiaEvaluationResponse(BaseModel):

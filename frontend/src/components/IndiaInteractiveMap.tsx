@@ -24,6 +24,9 @@ export interface SelectedLocation {
   longitude: number;
   elevation_m?: number;
   soil_type?: string;
+  fieldName?: string;
+  fieldAreaAcres?: number;
+  tehsilVillage?: string;
 }
 
 interface IndiaInteractiveMapProps {
@@ -77,6 +80,7 @@ export default function IndiaInteractiveMap({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
+  const parcelCircleRef = useRef<any>(null);
   const tileLayerRef = useRef<any>(null);
   const overlayLayerRef = useRef<any>(null);
 
@@ -208,18 +212,55 @@ export default function IndiaInteractiveMap({
         }
       });
 
-      // Click to select location
-      map.on('click', (e: any) => {
+      // Click to select location and lock exact agricultural field parcel
+      map.on('click', async (e: any) => {
         const { lat, lng } = e.latlng;
         marker.setLatLng([lat, lng]);
+
+        // Render glowing agricultural field parcel boundary footprint (radius 180m ≈ 10 Hectares / 25 Acres)
+        if (parcelCircleRef.current) {
+          map.removeLayer(parcelCircleRef.current);
+        }
+        const parcel = L.circle([lat, lng], {
+          radius: 180,
+          color: '#10b981',
+          fillColor: '#059669',
+          fillOpacity: 0.22,
+          weight: 2,
+          dashArray: '5, 5',
+        }).addTo(map);
+        parcelCircleRef.current = parcel;
         
         const nearest = findNearestDistrict(lat, lng);
+        let ruralName = nearest ? `${nearest.district} Farmland Basin` : 'Rural Agricultural Field';
+
+        // Fast client reverse geocode for rural village/tehsil
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14`,
+            { headers: { 'Accept-Language': 'en' } }
+          );
+          if (res.ok) {
+            const data = await res.json();
+            const addr = data.address || {};
+            const localUnit = addr.village || addr.hamlet || addr.suburb || addr.town || addr.county;
+            if (localUnit) {
+              ruralName = `${localUnit}, ${addr.state_district || nearest?.district || 'Agricultural Region'}`;
+            }
+          }
+        } catch {
+          // Fallback to regional basin label
+        }
+
         const resolvedLocation: SelectedLocation = {
-          district: nearest ? nearest.district : 'Custom Coordinates',
+          district: nearest ? nearest.district : 'Custom Field',
           state: nearest ? nearest.state : 'India',
           agro_climatic_zone: nearest?.agro_climatic_zone,
           latitude: Number(lat.toFixed(4)),
           longitude: Number(lng.toFixed(4)),
+          fieldName: ruralName,
+          tehsilVillage: ruralName,
+          fieldAreaAcres: 25.0,
         };
 
         onLocationSelect(resolvedLocation);
@@ -423,24 +464,27 @@ export default function IndiaInteractiveMap({
           </div>
         )}
 
-        {/* Selected Location Pill (Bottom-Left of Map) */}
+        {/* Selected Agricultural Field Parcel Pill (Bottom-Left of Map) */}
         {selectedLocation && (
-          <div className="absolute bottom-3 left-3 z-20 rounded-xl border border-emerald-500/40 bg-slate-900/90 backdrop-blur-md px-4 py-2.5 shadow-2xl">
-            <div className="flex items-center gap-2">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
-                <Check className="h-3.5 w-3.5" />
+          <div className="absolute bottom-3 left-3 z-20 rounded-2xl border border-emerald-500/40 bg-slate-900/95 backdrop-blur-md px-4 py-3 shadow-2xl max-w-sm">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">
+                <Check className="h-4 w-4" />
               </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold text-emerald-400 block tracking-wider">
-                  Target Location Locked
+              <div className="min-w-0">
+                <span className="text-[10px] uppercase font-bold text-emerald-400 block tracking-wider font-mono">
+                  🌾 Farm Parcel Locked
                 </span>
-                <span className="text-xs font-bold text-white block">
-                  {selectedLocation.district}, {selectedLocation.state}
+                <span className="text-xs font-bold text-white block truncate">
+                  {selectedLocation.fieldName || `${selectedLocation.district}, ${selectedLocation.state}`}
+                </span>
+                <span className="text-[10px] text-slate-400 block truncate font-mono">
+                  {selectedLocation.agro_climatic_zone || 'ICAR Agro-Climatic Basin'} &bull; ~25 Acres
                 </span>
               </div>
-              <div className="ml-3 pl-3 border-l border-slate-700 text-right font-mono text-[11px] text-slate-300">
-                <div>{selectedLocation.latitude}° N</div>
-                <div>{selectedLocation.longitude}° E</div>
+              <div className="ml-2 pl-2.5 border-l border-slate-700 text-right font-mono text-[10px] text-slate-300 shrink-0">
+                <div className="text-emerald-400 font-semibold">{selectedLocation.latitude.toFixed(4)}°N</div>
+                <div>{selectedLocation.longitude.toFixed(4)}°E</div>
               </div>
             </div>
           </div>

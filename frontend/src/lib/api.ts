@@ -535,6 +535,8 @@ export const api = {
     zone1_crop_override?: string;
     zone2_crop_override?: string;
     zone3_crop_override?: string;
+    field_name?: string;
+    field_area_m2?: number;
   }) =>
     fetchApi<any>('/india/evaluate', {
       method: 'POST',

@@ -234,12 +234,16 @@ class IndiaLocationService:
 
         soil_props = INDIAN_SOIL_REGISTRY.get(matched["soil"], INDIAN_SOIL_REGISTRY["Alluvial Soil"])
 
+        # Preserve exact field coordinates if provided by map click or GPS sensor
+        final_lat = float(lat) if lat is not None else float(matched["lat"])
+        final_lon = float(lon) if lon is not None else float(matched["lon"])
+
         return IndiaLocationLookupResponse(
             query=query or pincode or f"{lat},{lon}" or "Default",
             matched_district=matched["district"],
             state=matched["state"],
-            latitude=matched["lat"],
-            longitude=matched["lon"],
+            latitude=final_lat,
+            longitude=final_lon,
             elevation_m=matched["elev"],
             agro_climatic_zone=matched["zone"],
             zone_number=matched["zone_no"],

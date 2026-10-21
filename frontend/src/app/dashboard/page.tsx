@@ -133,6 +133,8 @@ export default function DashboardPage() {
         zone1_crop_override: crops.zone1,
         zone2_crop_override: crops.zone2,
         zone3_crop_override: crops.zone3,
+        field_name: loc.fieldName || (loc.tehsilVillage ? `${loc.tehsilVillage} Farm Basin` : undefined),
+        field_area_m2: loc.fieldAreaAcres ? loc.fieldAreaAcres * 4046.86 : undefined,
       });
 
       setEvalData(data);
@@ -303,6 +305,27 @@ export default function DashboardPage() {
           <p className="mt-1 text-xs text-slate-400 max-w-3xl">
             Real-time geospatial intelligence across India, live Open-Meteo & Tavily atmospheric forcing, ICAR agro-climatic soil physics, and closed-loop supervisory fuzzy valve control.
           </p>
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-emerald-300 font-semibold text-[11px]">
+              🌾 Farm Plot: {locInfo?.field_name || selectedLoc.fieldName || `${selectedLoc.district} Central Farmland`}
+            </span>
+            <span className="text-slate-500">•</span>
+            <span className="text-slate-300 font-medium text-[11px]">
+              {selectedLoc.tehsilVillage ? `${selectedLoc.tehsilVillage}, ` : ''}{selectedLoc.district}, {selectedLoc.state}
+            </span>
+            <span className="text-slate-500">•</span>
+            <span className="font-mono text-cyan-300 text-[11px] bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-800/40">
+              GPS: {selectedLoc.latitude.toFixed(4)}°N, {selectedLoc.longitude.toFixed(4)}°E
+            </span>
+            {selectedLoc.fieldAreaAcres && (
+              <>
+                <span className="text-slate-500">•</span>
+                <span className="text-amber-300 text-[11px] font-medium bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-800/40">
+                  {selectedLoc.fieldAreaAcres} Acres ({Math.round(selectedLoc.fieldAreaAcres * 4046.86).toLocaleString()} m²)
+                </span>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Quick Location Action Controls */}
