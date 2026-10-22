@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api, ControllerOverview, FuzzyVariableSchema, FuzzyRuleSchema, FuzzyEvaluateResponse } from '@/lib/api';
+import { soundEngine } from '@/lib/audioHaptics';
 import { TrendingUp, FlaskConical, Zap, ScrollText, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function FuzzyExplorerPage() {
@@ -117,6 +118,7 @@ export default function FuzzyExplorerPage() {
         firing_strength: Number(ar.weight ?? ar.firing_strength ?? 1.0),
       }));
 
+      soundEngine.playPing('success');
       setEvalResult({
         controller: res.controller_name || selectedController,
         inputs: res.inputs || inputValues,
@@ -125,6 +127,7 @@ export default function FuzzyExplorerPage() {
         fired_rules,
       });
     } catch (err: any) {
+      soundEngine.playPing('alert');
       setEvalError(`Inference evaluation error: ${err.message}`);
     } finally {
       setIsEvaluating(false);
@@ -382,9 +385,10 @@ export default function FuzzyExplorerPage() {
                     aria-valuenow={currentVal}
                     aria-valuemin={v.universe_min}
                     aria-valuemax={v.universe_max}
-                    onChange={(e) =>
-                      setInputValues({ ...inputValues, [v.name]: parseFloat(e.target.value) })
-                    }
+                    onChange={(e) => {
+                      setInputValues({ ...inputValues, [v.name]: parseFloat(e.target.value) });
+                      soundEngine.playSliderTick();
+                    }}
                     className="w-full accent-emerald-600 bg-slate-200 h-2 rounded-lg cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                   />
                   <div className="flex justify-between text-[10px] text-slate-500 font-mono">

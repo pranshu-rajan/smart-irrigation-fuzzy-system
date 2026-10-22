@@ -1,13 +1,18 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { api, SimulationSummaryResponse, TimeseriesResponse, TimeseriesRecord } from '@/lib/api';
 import LineChart from '@/components/LineChart';
 import MetricCard from '@/components/MetricCard';
 import EndToEndArchitectureEvaluator from '@/components/EndToEndArchitectureEvaluator';
-import { Bot, FileText, AlertTriangle, Settings2, Play, Sparkles, ArrowRight } from 'lucide-react';
+import DigitalTwin3D from '@/components/DigitalTwin3D';
+import ActuatorDigitalFlowStation from '@/components/ActuatorDigitalFlowStation';
+import SimulationScrubberBar from '@/components/SimulationScrubberBar';
+import { useSimulationPlayback } from '@/hooks/useSimulationPlayback';
+import { soundEngine } from '@/lib/audioHaptics';
+import { Bot, FileText, AlertTriangle, Settings2, Play, Sparkles, ArrowRight, Gauge, Layers } from 'lucide-react';
 
 function SimulationStudioContent() {
   const searchParams = useSearchParams();
@@ -71,6 +76,46 @@ function SimulationStudioContent() {
       setIsRunning(false);
     }
   };
+
+  // Telemetry playback engine (0 to 1440 mins with speed control)
+  const playback = useSimulationPlayback(timeseries, 2);
+
+  // Digital Twin live state derived from active simulation step
+  const twinZones = useMemo(() => {
+    const cropNames: Record<number, string> = { 1: 'Tomato', 2: 'Potato', 3: 'Maize' };
+    const soilNames: Record<number, string> = { 1: 'Loam', 2: 'Sandy Loam', 3: 'Clay' };
+    return [1, 2, 3].map((zId) => {
+      const st = playback.zoneStates[zId];
+      return {
+        id: zId,
+        name: `Zone ${zId}: ${cropNames[zId] || 'Crop'}`,
+        crop: cropNames[zId] || 'Crop',
+        soil: soilNames[zId] || 'Loam',
+        moisture: st ? (st.soilMoisture > 1 ? st.soilMoisture : st.soilMoisture * 100) : 24.5,
+        target: st ? (st.targetMoisture > 1 ? st.targetMoisture : st.targetMoisture * 100) : 28.0,
+        isIrrigating: st ? st.isIrrigating : false,
+        flowRateLpm: st ? st.flowRateLpm : 0.0,
+      };
+    });
+  }, [playback.zoneStates]);
+
+  // Actuator manifold live state derived from active simulation step
+  const actuatorZones = useMemo(() => {
+    const cropNames: Record<number, string> = { 1: 'Tomato', 2: 'Potato', 3: 'Maize' };
+    return [1, 2, 3].map((zId) => {
+      const st = playback.zoneStates[zId];
+      return {
+        zone_id: zId,
+        name: `Zone ${zId}: ${cropNames[zId] || 'Crop'}`,
+        crop: cropNames[zId] || 'Crop',
+        main_command_pct: st ? st.irrigationCommand : 0,
+        allocated_liters: st ? st.allocatedLiters : 0,
+        current_moisture_pct: st ? (st.soilMoisture > 1 ? st.soilMoisture : st.soilMoisture * 100) : 24.5,
+        target_moisture_pct: st ? (st.targetMoisture > 1 ? st.targetMoisture : st.targetMoisture * 100) : 28.0,
+        soil_stress_pct: st ? (st.soilStress > 1 ? st.soilStress : st.soilStress * 100) : 20.0,
+      };
+    });
+  }, [playback.zoneStates]);
 
   // Filter timeseries by selected zone
   const zoneRecords = timeseries.filter((r) => r.zone_id === selectedZone);
@@ -302,16 +347,39 @@ function SimulationStudioContent() {
         />
       </div>
 
+      {/* 2026 Live Telemetry Playback Scrubber Bar */}
+      <SimulationScrubberBar playback={playback} />
+
+      {/* 2026 Spatial Cyber-Agri Bento Grid: Living 3D Twin & Hydraulic Actuator Station */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* Living 3D Digital Twin Field */}
+        <DigitalTwin3D
+          zones={twinZones}
+          selectedZoneId={selectedZone}
+          onZoneSelect={(id) => setSelectedZone(id)}
+        />
+
+        {/* Real-Time Actuator Flow & Solenoid Station */}
+        <ActuatorDigitalFlowStation
+          zones={actuatorZones}
+          isSupplyConstrained={supplyScenario.includes('Scarcity') || supplyScenario.includes('Severe')}
+          totalAllocatedLiters={allocatedL}
+        />
+      </div>
+
       {/* 10 Time-Series Plots Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
-              Simulation Telemetry Plots — Zone {selectedZone}
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <span>Simulation Telemetry Plots — Zone {selectedZone}</span>
+              <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300/40">
+                Live Tracking @ {playback.currentTimeString}
+              </span>
             </h2>
-            <p className="text-xs text-slate-500">Live dynamic trajectory tracking and mass balance verification</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Dynamic closed-loop trajectory tracking and root-zone mass balance verification</p>
           </div>
-          <span className="text-xs text-slate-500 font-mono bg-white border border-slate-200 px-2.5 py-1 rounded-md">
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono bg-white dark:bg-[#0c1511] border border-slate-200 dark:border-emerald-950/80 px-2.5 py-1 rounded-md">
             {zoneRecords.length} records • Stride {downsampleStride}
           </span>
         </div>

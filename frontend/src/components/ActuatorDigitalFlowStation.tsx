@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { soundEngine } from '@/lib/audioHaptics';
 import { 
   Cpu, 
   Activity, 
@@ -52,9 +53,11 @@ export default function ActuatorDigitalFlowStation({
     if (mode === 'cutoff') {
       setEmergencyCutoff(true);
       setToastMessage('Safety Interlock: All solenoids forcibly closed.');
+      soundEngine.playRelayClick(false);
     } else {
       setEmergencyCutoff(false);
       setToastMessage(`Supervisory mode switched to ${mode.toUpperCase()} control.`);
+      soundEngine.playRelayClick(true);
     }
     if (onOverrideModeChange) {
       onOverrideModeChange(mode);

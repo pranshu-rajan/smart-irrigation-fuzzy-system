@@ -105,6 +105,10 @@ export interface TimeseriesRecord {
   rainfall_mm: number;
   effective_rainfall_mm: number;
   water_balance_residual: number;
+  temperature_c?: number;
+  relative_humidity_pct?: number;
+  solar_radiation_w_m2?: number;
+  wind_speed_m_s?: number;
 }
 
 export interface TimeseriesResponse {

@@ -17,6 +17,10 @@ import {
 import LineChart from '@/components/LineChart';
 import MetricCard from '@/components/MetricCard';
 import FormattedAIResponse from '@/components/FormattedAIResponse';
+import DigitalTwin3D from '@/components/DigitalTwin3D';
+import SimulationScrubberBar from '@/components/SimulationScrubberBar';
+import { useSimulationPlayback } from '@/hooks/useSimulationPlayback';
+import { soundEngine } from '@/lib/audioHaptics';
 import { 
   Sliders, 
   Cpu, 
@@ -119,6 +123,26 @@ export default function EndToEndStudioPage() {
   const [currentSimulation, setCurrentSimulation] = useState<SimulationSummaryResponse | null>(null);
   const [timeseriesRecords, setTimeseriesRecords] = useState<TimeseriesRecord[]>([]);
   const [activeChartZone, setActiveChartZone] = useState<number>(1);
+
+  // 2026 Real-Time Telemetry Playback Engine
+  const playback = useSimulationPlayback(timeseriesRecords, 2);
+
+  // Digital Twin state synchronized with active simulation step
+  const twinZones = useMemo(() => {
+    return zones.slice(0, activeZoneCount).map((z) => {
+      const st = playback.zoneStates[z.id];
+      return {
+        id: z.id,
+        name: z.name,
+        crop: z.crop,
+        soil: z.soil,
+        moisture: st ? (st.soilMoisture > 1 ? st.soilMoisture : st.soilMoisture * 100) : z.initial_moisture,
+        target: z.target_moisture,
+        isIrrigating: st ? st.isIrrigating : false,
+        flowRateLpm: st ? st.flowRateLpm : 0.0,
+      };
+    });
+  }, [zones, activeZoneCount, playback.zoneStates]);
 
   // Step 5: ReportLab PDF & Grounded AI Chat
   const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
@@ -1179,8 +1203,18 @@ export default function EndToEndStudioPage() {
             />
           </div>
 
+          {/* 2026 Real-Time Telemetry Scrubber Bar */}
+          <SimulationScrubberBar playback={playback} />
+
+          {/* 2026 Living 3D Digital Twin Field */}
+          <DigitalTwin3D
+            zones={twinZones}
+            selectedZoneId={activeChartZone}
+            onZoneSelect={(id) => setActiveChartZone(id)}
+          />
+
           {/* Telemetry Zone Switcher */}
-          <div className="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200">
+          <div className="flex items-center justify-between bg-slate-50 dark:bg-[#0c1511] p-3 rounded-2xl border border-slate-200 dark:border-emerald-950/80">
             <span className="text-xs font-semibold text-slate-700">Display Telemetry for Zone:</span>
             <div className="flex gap-2">
               {zones.slice(0, activeZoneCount).map((z) => (

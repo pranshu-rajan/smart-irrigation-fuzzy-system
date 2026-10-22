@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { SidebarProvider } from '@/context/SidebarContext';
 import { AuthProvider } from '@/context/AuthContext';
 import AppLayoutClient from '@/components/AppLayoutClient';
@@ -27,13 +28,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen bg-[#f8faf9] text-slate-900 font-sans selection:bg-emerald-500 selection:text-white antialiased">
-        <AuthProvider>
-          <SidebarProvider>
-            <AppLayoutClient>{children}</AppLayoutClient>
-          </SidebarProvider>
-        </AuthProvider>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} dark`} suppressHydrationWarning>
+      <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-emerald-500 selection:text-white antialiased transition-colors duration-300">
+        <ThemeProvider>
+          <AuthProvider>
+            <SidebarProvider>
+              <AppLayoutClient>{children}</AppLayoutClient>
+            </SidebarProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

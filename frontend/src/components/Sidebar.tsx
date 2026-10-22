@@ -82,12 +82,12 @@ export default function Sidebar() {
 
       {/* Left Sidebar Shell */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r border-slate-200/90 bg-white shadow-xs transition-all duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r border-slate-200/90 dark:border-emerald-950/80 bg-white dark:bg-[#070d0a] shadow-xs transition-all duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } ${isCollapsed ? 'lg:w-20' : 'lg:w-64'} w-64`}
       >
         {/* Brand Header */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-slate-100">
+        <div className="flex h-16 items-center justify-between px-4 border-b border-slate-100 dark:border-emerald-950/80">
           <Link
             href="/"
             onClick={closeSidebar}
@@ -100,13 +100,13 @@ export default function Sidebar() {
 
             {!isCollapsed && (
               <div className="lg:block overflow-hidden whitespace-nowrap">
-                <div className="text-sm font-bold tracking-tight text-slate-900 flex items-center gap-1.5">
+                <div className="text-sm font-bold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                   <span>AGRI-FUZZY</span>
-                  <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                  <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
                     HAFC
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-500 font-mono tracking-wider uppercase font-medium">
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono tracking-wider uppercase font-medium">
                   Smart Multizone
                 </div>
               </div>
@@ -116,7 +116,7 @@ export default function Sidebar() {
           {/* Desktop collapse toggle button */}
           <button
             onClick={toggleCollapse}
-            className={`hidden lg:flex items-center justify-center h-8 w-8 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors ${
+            className={`hidden lg:flex items-center justify-center h-8 w-8 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors ${
               isCollapsed ? 'hidden' : ''
             }`}
             title="Collapse sidebar"
@@ -128,7 +128,7 @@ export default function Sidebar() {
           {/* Close button on mobile inside drawer */}
           <button
             onClick={closeSidebar}
-            className="lg:hidden rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            className="lg:hidden rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
             aria-label="Close navigation"
           >
             <X className="h-5 w-5" />
@@ -140,7 +140,7 @@ export default function Sidebar() {
           {NAV_GROUPS.map((group) => (
             <div key={group.group} className="space-y-1">
               {!isCollapsed && (
-                <div className="px-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">
+                <div className="px-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
                   {group.group}
                 </div>
               )}
@@ -158,16 +158,16 @@ export default function Sidebar() {
                         isCollapsed ? 'lg:justify-center lg:px-2' : 'justify-between px-3'
                       } py-2.5 rounded-xl text-xs font-medium transition-all ${
                         isActive
-                          ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200/90 shadow-2xs'
-                          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 font-bold border border-emerald-200/90 dark:border-emerald-800/80 shadow-2xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50 hover:text-slate-900 dark:hover:text-slate-100'
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
                         <Icon
                           className={`h-4 w-4 shrink-0 transition-colors ${
                             isActive
-                              ? 'text-emerald-700'
-                              : 'text-slate-400 group-hover:text-emerald-600'
+                              ? 'text-emerald-700 dark:text-emerald-400'
+                              : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
                           }`}
                         />
                         {!isCollapsed && <span>{item.label}</span>}
@@ -178,7 +178,7 @@ export default function Sidebar() {
                           className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold ${
                             isActive
                               ? 'bg-emerald-600 text-white'
-                              : 'bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-700'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950 group-hover:text-emerald-700 dark:group-hover:text-emerald-300'
                           }`}
                         >
                           {item.badge}
@@ -193,23 +193,23 @@ export default function Sidebar() {
         </div>
 
         {/* Bottom System Status Panel */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50/60">
+        <div className="p-3 border-t border-slate-100 dark:border-emerald-950/80 bg-slate-50/60 dark:bg-[#09110d]">
           {!isCollapsed ? (
-            <div className="rounded-xl border border-emerald-200/80 bg-emerald-50/70 p-3 shadow-2xs space-y-2">
+            <div className="rounded-xl border border-emerald-200/80 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-[#0d1813] p-3 shadow-2xs space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
                   </span>
-                  <span className="text-xs font-bold text-emerald-950">HAFC Online</span>
+                  <span className="text-xs font-bold text-emerald-950 dark:text-emerald-300">HAFC Online</span>
                 </div>
-                <span className="text-[10px] font-mono text-emerald-700 font-bold bg-white px-1.5 py-0.5 rounded border border-emerald-200">
+                <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-bold bg-white dark:bg-slate-900 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                   0.00 mm
                 </span>
               </div>
 
-              <p className="text-[10px] text-slate-600 leading-tight">
+              <p className="text-[10px] text-slate-600 dark:text-slate-400 leading-tight">
                 3 zones in active closed-loop mass balance with supervisory priority dispatch.
               </p>
 
@@ -226,7 +226,7 @@ export default function Sidebar() {
             <div className="flex flex-col items-center gap-2">
               <button
                 onClick={toggleCollapse}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
                 title="Expand sidebar"
                 aria-label="Expand sidebar"
               >

@@ -120,12 +120,12 @@ interface IndiaEvaluationData {
 }
 
 const QUICK_REGIONS = [
-  { name: 'Ludhiana', label: '🌾 Ludhiana (Punjab)', sub: 'Alluvial • Wheat/Rice' },
-  { name: 'Pune', label: '🍇 Pune (Maharashtra)', sub: 'Black Soil • Sugarcane/Veg' },
-  { name: 'Varanasi', label: '🌽 Varanasi (UP)', sub: 'Gangetic Loam • Wheat/Paddy' },
-  { name: 'Mandya', label: '🌿 Mandya (Karnataka)', sub: 'Red Loam • Paddy/Ragi' },
-  { name: 'Guntur', label: '🌶️ Guntur (Andhra)', sub: 'Black Vertisol • Chilli/Cotton' },
-  { name: 'Jaipur', label: '🏜️ Jaipur (Rajasthan)', sub: 'Arid Sand • Mustard/Bajra' },
+  { name: 'Ludhiana', label: 'Ludhiana (Punjab)', sub: 'Alluvial • Wheat/Rice' },
+  { name: 'Pune', label: 'Pune (Maharashtra)', sub: 'Black Soil • Sugarcane/Veg' },
+  { name: 'Varanasi', label: 'Varanasi (UP)', sub: 'Gangetic Loam • Wheat/Paddy' },
+  { name: 'Mandya', label: 'Mandya (Karnataka)', sub: 'Red Loam • Paddy/Ragi' },
+  { name: 'Guntur', label: 'Guntur (Andhra)', sub: 'Black Vertisol • Chilli/Cotton' },
+  { name: 'Jaipur', label: 'Jaipur (Rajasthan)', sub: 'Arid Sand • Mustard/Bajra' },
 ];
 
 export default function IndiaPrecisionIrrigationHub() {
@@ -604,7 +604,8 @@ export default function IndiaPrecisionIrrigationHub() {
                   <span className="text-[10px] text-emerald-400 font-semibold">ICAR / IMD Agromet Service</span>
                 </div>
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <span>🇮🇳 Live Regional ICAR Agromet Intelligence</span>
+                  <span className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold border border-emerald-500/40">IN</span>
+                  <span>Live Regional ICAR Agromet Intelligence</span>
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
                   Synthesize real-time agricultural advisories for {evalData.location.district}, {evalData.location.state} with 120B reasoning grounded in live web bulletins.

@@ -306,8 +306,14 @@ export default function DashboardPage() {
             Real-time geospatial intelligence across India, live Open-Meteo & Tavily atmospheric forcing, ICAR agro-climatic soil physics, and closed-loop supervisory fuzzy valve control.
           </p>
           <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
-            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-emerald-300 font-semibold text-[11px]">
-              🌾 Farm Plot: {locInfo?.field_name || selectedLoc.fieldName || `${selectedLoc.district} Central Farmland`}
+            <span className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/10 border border-emerald-500/40 px-2.5 py-1 text-emerald-300 font-semibold text-[11px] shadow-sm shadow-emerald-950/40 backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <Sprout className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+              <span className="uppercase tracking-wider font-mono text-[10px] text-emerald-400/90 font-bold">Plot Locked:</span>
+              <span className="text-white font-medium">{locInfo?.field_name || selectedLoc.fieldName || `${selectedLoc.district} Central Farmland`}</span>
             </span>
             <span className="text-slate-500">•</span>
             <span className="text-slate-300 font-medium text-[11px]">

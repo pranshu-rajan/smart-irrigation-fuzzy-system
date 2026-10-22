@@ -472,8 +472,12 @@ export default function IndiaInteractiveMap({
                 <Check className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <span className="text-[10px] uppercase font-bold text-emerald-400 block tracking-wider font-mono">
-                  🌾 Farm Parcel Locked
+                <span className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1.5 tracking-wider font-mono">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
+                  </span>
+                  Parcel Boundary Locked
                 </span>
                 <span className="text-xs font-bold text-white block truncate">
                   {selectedLocation.fieldName || `${selectedLocation.district}, ${selectedLocation.state}`}
