@@ -247,21 +247,21 @@ export default function FuzzyStageDeepInspector({
   };
 
   return (
-    <div className={`rounded-2xl border border-slate-700/60 bg-slate-900/90 backdrop-blur-md p-5 text-white shadow-xl ${className}`}>
+    <div className={`rounded-2xl border border-emerald-200/90 bg-white p-5 text-slate-800 shadow-xl ${className}`}>
       {/* Zone Switcher Ribbon */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-800 pb-4 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-emerald-100 pb-4 mb-4">
         <div>
-          <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <Cpu className="h-4 w-4 text-emerald-400" />
+          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <Cpu className="h-4 w-4 text-emerald-600" />
             <span>Multi-Stage Fuzzy Inference Mathematical Inspector</span>
           </h3>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-slate-500">
             Select any agricultural zone from your map location to inspect Mamdani membership degrees and rule firings.
           </p>
         </div>
 
         {/* Zone Pill Buttons */}
-        <div className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-950 p-1">
+        <div className="flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50/50 p-1">
           {zones.map((z) => (
             <button
               key={z.zone_id}
@@ -269,7 +269,7 @@ export default function FuzzyStageDeepInspector({
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition cursor-pointer ${
                 selectedZoneId === z.zone_id
                   ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-emerald-700'
               }`}
             >
               Zone 0{z.zone_id}: {z.crop}
@@ -286,15 +286,15 @@ export default function FuzzyStageDeepInspector({
             onClick={() => setActiveStage(s.num)}
             className={`rounded-xl border p-2.5 text-left transition cursor-pointer flex flex-col justify-between ${
               activeStage === s.num
-                ? 'border-emerald-400 bg-emerald-950/40 text-white shadow-md'
-                : 'border-slate-800 bg-slate-950/40 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                ? 'border-emerald-400 bg-emerald-50 text-slate-900 shadow-xs'
+                : 'border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-emerald-200'
             }`}
           >
-            <span className="text-[10px] font-mono font-bold uppercase block text-slate-500">
+            <span className="text-[10px] font-mono font-bold uppercase block text-slate-400">
               STAGE 0{s.num}
             </span>
             <span className="text-xs font-semibold truncate mt-0.5 block">{s.short}</span>
-            <span className="text-sm font-bold font-mono text-emerald-400 mt-2 block">
+            <span className="text-sm font-bold font-mono text-emerald-700 mt-2 block">
               {s.value?.toFixed(1) || '0.0'}%
             </span>
           </button>
@@ -302,12 +302,12 @@ export default function FuzzyStageDeepInspector({
       </div>
 
       {/* Active Stage Details & Rule Activation */}
-      <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
-        <div className="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2">
-          <span className="text-xs font-bold text-white font-mono uppercase tracking-wide">
+      <div className="rounded-xl border border-emerald-100 bg-emerald-50/30 p-4">
+        <div className="flex items-center justify-between mb-3 border-b border-emerald-100 pb-2">
+          <span className="text-xs font-bold text-slate-900 font-mono uppercase tracking-wide">
             {STAGES[activeStage - 1].name}
           </span>
-          <span className="text-[11px] text-emerald-400 font-mono">
+          <span className="text-[11px] text-emerald-700 font-mono">
             Mamdani Min-Max • Centroid Defuzzification
           </span>
         </div>

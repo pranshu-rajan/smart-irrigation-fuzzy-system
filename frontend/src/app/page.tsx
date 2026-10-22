@@ -46,7 +46,8 @@ import {
   TrendingUp,
   RefreshCw,
   SlidersHorizontal,
-  Globe
+  Globe,
+  X
 } from 'lucide-react';
 
 // Preset configurations for beginners
@@ -155,6 +156,9 @@ export default function EndToEndStudioPage() {
   ]);
   const [chatInput, setChatInput] = useState<string>('');
   const [isChatLoading, setIsChatLoading] = useState<boolean>(false);
+  const [showQuickTour, setShowQuickTour] = useState<boolean>(false);
+  const [quickTourStep, setQuickTourStep] = useState<number>(0);
+  const [isInstantDemoRunning, setIsInstantDemoRunning] = useState<boolean>(false);
   const stepContentRef = useRef<HTMLDivElement>(null);
 
   // GSAP Smooth Transition on Step Change
@@ -306,6 +310,33 @@ export default function EndToEndStudioPage() {
     }
   };
 
+  // Instant 1-Click 24h Demo Handler
+  const handleInstantDemo = async () => {
+    setIsInstantDemoRunning(true);
+    setSimulationError(null);
+    soundEngine.playPing('mode');
+    applyPreset('balanced');
+    try {
+      const simSummary = await api.runSimulation({
+        scenario: 'Normal',
+        duration_hours: 24,
+        timestep_minutes: 1,
+        controller_type: 'fuzzy',
+        supply_scenario: 'Normal Supply',
+        zone_ids: [1, 2, 3],
+      });
+      setCurrentSimulation(simSummary);
+      const ts = await api.getSimulationTimeseries(simSummary.id, undefined, 2);
+      setTimeseriesRecords(ts.records || []);
+      setCurrentStep(4);
+      soundEngine.playPing('success');
+    } catch (err: any) {
+      setSimulationError(err.message || 'Demo simulation notice.');
+    } finally {
+      setIsInstantDemoRunning(false);
+    }
+  };
+
   // Step 5: Generate ReportLab PDF
   const handleGeneratePdfReport = async () => {
     if (!currentSimulation) return;
@@ -376,28 +407,28 @@ export default function EndToEndStudioPage() {
   return (
     <div className="space-y-8 pb-20 max-w-7xl mx-auto">
       {/* Featured National India GIS Map & Live Location Evaluator Hero Banner */}
-      <div className="rounded-3xl border border-emerald-500/40 bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950 p-5 sm:p-6 shadow-xl text-white flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <div className="rounded-3xl border border-emerald-300 bg-gradient-to-r from-emerald-50 via-teal-50/50 to-white p-5 sm:p-6 shadow-md text-slate-900 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
         <div className="flex items-start sm:items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 shrink-0 shadow-lg">
-            <Globe className="h-6 w-6 animate-pulse" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-800 shrink-0 shadow-xs">
+            <Globe className="h-6 w-6 text-emerald-700" />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-base sm:text-lg font-bold text-white">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900">
                 National India Precision Irrigation & Real-Time GIS Map
               </h2>
-              <span className="rounded-full bg-emerald-500/20 border border-emerald-400/40 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+              <span className="rounded-full bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-800">
                 LIVE GOOGLE & SATELLITE TILES
               </span>
             </div>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-xs text-slate-600 mt-1 max-w-2xl leading-relaxed">
               Hover over real satellite maps across India, click any farm coordinate, and run the real-time 5-stage Fuzzy Inference System with live Open-Meteo weather and ICAR soil physics.
             </p>
           </div>
         </div>
         <Link
           href="/dashboard"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-2.5 text-xs shadow-lg transition-all shrink-0 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 text-xs shadow-md shadow-emerald-700/15 transition-all shrink-0 cursor-pointer"
         >
           <span>Launch Interactive Map</span>
           <ArrowRight className="h-4 w-4" />
@@ -418,6 +449,26 @@ export default function EndToEndStudioPage() {
             <p className="text-sm text-slate-600 leading-relaxed">
               Configure your crops and soil parameters, specify environmental constraints, inspect the 5-subsystem Mamdani fuzzy logic cascade, execute the closed-loop simulation, and generate official audit reports with AI guidance.
             </p>
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                onClick={handleInstantDemo}
+                disabled={isInstantDemoRunning}
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-4 py-2 text-xs shadow-md shadow-emerald-700/20 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Zap className="h-4 w-4" />
+                <span>{isInstantDemoRunning ? 'Running 24h Simulation...' : 'Instant 1-Click 24h Demo'}</span>
+              </button>
+              <button
+                onClick={() => {
+                  setQuickTourStep(0);
+                  setShowQuickTour(true);
+                }}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-semibold px-4 py-2 text-xs shadow-2xs transition-all cursor-pointer"
+              >
+                <HelpCircle className="h-4 w-4 text-emerald-600" />
+                <span>New User 60s Tour</span>
+              </button>
+            </div>
           </div>
 
           {/* Quick Presets Pill Bar */}
@@ -1567,6 +1618,126 @@ export default function EndToEndStudioPage() {
         </div>
       )}
       </div>
+
+      {/* New User 60-Second Onboarding Tour Modal */}
+      {showQuickTour && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-xl rounded-3xl border border-emerald-200 bg-white p-6 shadow-2xl">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowQuickTour(false)}
+              className="absolute top-5 right-5 rounded-full p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Step Progress Indicators */}
+            <div className="flex items-center gap-2 mb-4">
+              {[0, 1, 2].map((idx) => (
+                <div
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all ${
+                    idx === quickTourStep
+                      ? 'w-8 bg-emerald-600'
+                      : idx < quickTourStep
+                      ? 'w-4 bg-emerald-300'
+                      : 'w-4 bg-slate-200'
+                  }`}
+                />
+              ))}
+              <span className="text-[11px] font-mono text-slate-500 ml-2 font-bold">
+                Step {quickTourStep + 1} of 3
+              </span>
+            </div>
+
+            {/* Tour Step Contents */}
+            {quickTourStep === 0 && (
+              <div className="space-y-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800">
+                  <Droplets className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">1. Precision Farm & Climate Inputs</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Real agriculture is dynamic. Each farm zone defines specific soil properties (Field Capacity, Wilting Point), crop growth stage coefficients (Kc), and target root-zone moisture.
+                  Atmospheric evaporative demand is computed per-minute using the official FAO-56 Penman-Monteith equation.
+                </p>
+                <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] font-mono text-slate-700">
+                  Inputs: Relative Soil Moisture (RSM), Temperature, Humidity, Solar, Wind, Rainfall
+                </div>
+              </div>
+            )}
+
+            {quickTourStep === 1 && (
+              <div className="space-y-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-100 text-teal-800">
+                  <Cpu className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">2. 5-Tier Hierarchical Mamdani Fuzzy Logic</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Unlike brittle binary ON/OFF timers, our cascade of 5 specialized Fuzzy Inference Systems (FIS) mimics expert agronomist intuition:
+                  evaluating Soil Stress, Weather Stress, Crop Water Demand, Supervisory Irrigation Commands, and Constrained Shared Reservoir Allocation.
+                </p>
+                <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] font-mono text-slate-700">
+                  Defuzzifier: 501-point Center of Gravity (Centroid) ensuring smooth valve actuation.
+                </div>
+              </div>
+            )}
+
+            {quickTourStep === 2 && (
+              <div className="space-y-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800">
+                  <ShieldCheck className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">3. Closed-Loop Invariants & AI Insights</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Every minute of closed-loop simulation preserves strict physical mass conservation (water balance residual ≤ 10⁻⁶ mm).
+                  During severe drought or water scarcity, priority water-filling guarantees cash crops survive without wasting a single drop.
+                </p>
+                <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] font-mono text-slate-700">
+                  Output: 1440-minute telemetry records, PDF engineering audits, and live Groq AI explainability.
+                </div>
+              </div>
+            )}
+
+            {/* Tour Action Buttons */}
+            <div className="mt-6 flex items-center justify-between pt-4 border-t border-slate-100">
+              {quickTourStep > 0 ? (
+                <button
+                  onClick={() => setQuickTourStep((s) => s - 1)}
+                  className="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 transition-all cursor-pointer"
+                >
+                  Back
+                </button>
+              ) : (
+                <div />
+              )}
+
+              <div className="flex items-center gap-2">
+                {quickTourStep < 2 ? (
+                  <button
+                    onClick={() => setQuickTourStep((s) => s + 1)}
+                    className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 text-xs transition-all cursor-pointer flex items-center gap-1.5"
+                  >
+                    <span>Next</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setShowQuickTour(false);
+                      handleInstantDemo();
+                    }}
+                    className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-5 py-2 text-xs shadow-md shadow-emerald-700/20 transition-all cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Zap className="h-3.5 w-3.5" />
+                    <span>Launch 24h Demo Now</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

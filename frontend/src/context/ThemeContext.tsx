@@ -20,10 +20,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check saved theme or default to clean light agronomy cockpit
+    // Enforce clean light theme based on white and light green
     const savedTheme = localStorage.getItem('agri_theme') as ThemeMode | null;
-    const initialTheme = savedTheme === 'dark' ? 'dark' : 'light';
-    setThemeState(initialTheme);
+    const initialTheme = savedTheme === 'dark' ? 'light' : 'light';
+    setThemeState('light');
+    localStorage.setItem('agri_theme', 'light');
 
     const savedAudio = localStorage.getItem('agri_audio_feedback');
     if (savedAudio !== null) {

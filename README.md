@@ -1,343 +1,425 @@
-# Smart Multizone Irrigation & Water Resource Management Platform
+# 🌾 Smart Multizone Irrigation & Water Resource Management Platform
 ### Hierarchical Adaptive Fuzzy Control (HAFC) & Digital Twin Ecosystem
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Next.js](https://img.shields.io/badge/Next.js-16.3.5_(Turbopack)-000000.svg?style=flat&logo=next.js&logoColor=white)](https://nextjs.org)
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://python.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Three.js](https://img.shields.io/badge/Three.js-WebGL_3D-black.svg?style=flat&logo=three.js&logoColor=white)](https://threejs.org)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38B2AC.svg?style=flat&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Test Suite](https://img.shields.io/badge/Tests-300_Passed-10B981.svg?style=flat&logo=pytest&logoColor=white)](https://docs.pytest.org)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
+[![Frontend Vercel](https://img.shields.io/badge/Frontend-Vercel_Production-000000.svg?style=for-the-badge&logo=vercel&logoColor=white)](https://irrigation-fuzzy-system.vercel.app/)
+[![Backend Render](https://img.shields.io/badge/Backend-Render_Live_API-46E3B7.svg?style=for-the-badge&logo=render&logoColor=white)](https://smart-irrigation-fuzzy-system.onrender.com/)
+[![Swagger Docs](https://img.shields.io/badge/API_Docs-Swagger_UI-85EA2D.svg?style=for-the-badge&logo=swagger&logoColor=black)](https://smart-irrigation-fuzzy-system.onrender.com/docs)
+[![Test Suite](https://img.shields.io/badge/Tests-346_Passed-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org)
 
-> **Academic Foundation**: B.Tech 3rd-Year Electronics & Instrumentation Engineering / Fuzzy Systems.  
-> **Core Principle**: The **Fuzzy Control System** provides the deterministic, mathematical, and control-theoretic foundation of this platform. It is not replaced by black-box machine learning or crude hysteresis thresholds.
+> 🌐 **Live Deployments:**
+> - **Production Web Application (Next.js)**: [https://irrigation-fuzzy-system.vercel.app/](https://irrigation-fuzzy-system.vercel.app/)
+> - **Production Backend Engine (FastAPI)**: [https://smart-irrigation-fuzzy-system.onrender.com/](https://smart-irrigation-fuzzy-system.onrender.com/)
+> - **Interactive Swagger / OpenAPI Docs**: [https://smart-irrigation-fuzzy-system.onrender.com/docs](https://smart-irrigation-fuzzy-system.onrender.com/docs)
 
 ---
 
-## 1. Executive Summary & Problem Context
+## 📖 1. What is this Project? (In Simple Terms)
 
-Agricultural irrigation accounts for approximately **70% of global freshwater withdrawals**. Conventional irrigation strategies operate either via open-loop timers or crude hysteresis thresholds (bang-bang switching). These approaches lead to excessive water waste, deep nutrient percolation, and crop stress resulting from over- or under-irrigation.
+Imagine you are managing a modern farm with multiple crops—say **Tomato**, **Wheat**, and **Maize**—growing in different types of soils (**Loam**, **Sand**, and **Clay**). 
 
-This project delivers a production-grade, closed-loop **Hierarchical Adaptive Mamdani Fuzzy Control Architecture (HAFC)** coupled with a **real-time 3D WebGL Digital Twin**, **interactive 24-hour simulation playback**, and a **National-Scale Indian GIS Engine** spanning 15 ICAR agro-climatic zones and 700+ districts.
+### The Problem in Traditional Farming:
+1. **Dumb Timers**: Most irrigation systems just turn water valves ON for 30 minutes every morning. If it rains, water is wasted and roots rot. If a severe heatwave hits, crops wither because 30 minutes isn't nearly enough.
+2. **Brutal Droughts**: When water in your shared tank or canal drops to 30%, dumb timers still try to irrigate everything equally until the tank runs completely dry, killing both your cash crops and your grain.
+3. **Black-Box AI Risks**: You cannot trust an unpredictable black-box neural network to operate expensive industrial water pumps, because if it hallucinates, crops can die overnight.
 
-### Key Capabilities
-- **Physics-Based Evapotranspiration**: Dynamic FAO-56 Penman-Monteith reference evapotranspiration ($ET_0$) driven by solar radiation, temperature, relative humidity, and wind speed.
-- **Hierarchical 5-FIS Control**: Decomposes complex multidimensional decisions into 5 modular Mamdani Fuzzy Inference Systems to prevent rule-base explosion.
-- **Strict Conservation Constraints**: Closed-loop 1D soil-water mass balance with physical bounds ($WP \le SM \le FC$) and guaranteed $0.00\text{ mm}$ mathematical residual closure.
-- **Supervisory Resource Allocation**: Deterministic water-filling algorithm with priority weighting, guaranteeing zero supply violations under severe reservoir scarcity.
-- **Living 3D WebGL Digital Twin**: Real-time Three.js field topology with dynamic soil hydration shaders, camera slerp interpolation, and proportional emitter spray.
-- **Simulation Playback Engine**: Scrubbable 24-hour ($1440\text{ min}$) timeline with variable speeds ($1\times$ to $30\times$), diurnal curve modeling, and live solenoid actuator telemetry.
-- **2026 UI Design System**: Clean, light agronomy theme by default with seamless toggle to dark cyber-cockpit mode, custom frosted glassmorphism, Web Audio synthesized haptic feedback, and a global keyboard command palette (`Cmd+K` / `Ctrl+K`).
-- **Explainable AI Advisory**: Grounded RAG agronomic copilot powered by Groq LLM and live web intelligence (Tavily), strictly bounded as an explanatory layer.
+### The Solution:
+This project is an **autonomous, mathematical, and explainable brain** for farm irrigation. 
+Instead of crude ON/OFF timers or unpredictable black-box neural networks, it uses **Hierarchical Mamdani Fuzzy Logic**. Just like an experienced human agronomist thinks:
+> *"If the soil is somewhat dry, and today's weather is scorching with heavy wind, but we have limited water in the reservoir, give 85% water to the high-priority Tomato cash crop and only 30% survival water to the drought-tolerant Maize."*
+
+The system runs **every single minute**, tracking real physics, calculating exact crop evapotranspiration, and actuating valves smoothly between **0% and 100%**.
 
 ---
 
-## 2. Control System Architecture
+## 🏛️ 2. High-Level Architecture & Information Flow
 
-The platform implements a closed-loop hierarchical topology that separates local zone dynamics from supervisory resource allocation:
+Where does data come from, how does it move through the system, and what happens at each stage?
 
 ```
-                         SMART MULTIZONE
-                        IRRIGATION SYSTEM
-                               │
-                               ▼
-                        WEATHER MODEL
-                  Temp, Humidity, Solar,
-                     Wind, Rainfall
-                               │
-                               ▼
-                     WEATHER STRESS FIS
-                               │
-                               ├──────────────────────┐
-                               ▼                      ▼
-                        ZONE INFORMATION       ET0 / ETC MODEL
-                  Crop, Soil, Area, FC, WP     ET0, Kc, ETc,
-                               │               Effective Rain,
-                               ▼               Water Demand
-                         SOIL DYNAMICS                │
-                         Soil Moisture                ▼
-                               │               WATER DEMAND FIS
-                               ▼                      │
-                        SOIL STRESS FIS               │
-                               │                      │
-                               ├──────────────────────┘
-                               ▼
-                     MAIN IRRIGATION FIS
-           Soil Stress + Weather Stress +
-           Water Demand + Moisture Error
-                               │
-                               ▼
-                      Irrigation Demand
-                               │
-                               ▼
-                    WATER ALLOCATION FIS
-            Available Water + Zone Demand
-            + Zone Stress + Zone Priority
-                               │
-                  ┌────────────┼────────────┐
-                  ▼            ▼            ▼
-                ZONE 1       ZONE 2       ZONE 3
-                  │            │            │
-                  └────────────┼────────────┘
-                               ▼
-                     SOIL WATER MODEL
-                               │
-                               ▼
-                     UPDATED SOIL MOISTURE
-                               │
-                               └──────► FEEDBACK LOOP (1-Minute Timestep)
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   EXTERNAL DATA SOURCES                                │
+├─────────────────────────┬──────────────────────────┬───────────────────────────────────┤
+│    Weather Data         │       Soil Physics       │       Crop Agronomy               │
+│ • Air Temperature       │ • Field Capacity (FC)    │ • Crop Coefficient (Kc)           │
+│ • Relative Humidity     │ • Wilting Point (WP)     │ • Growth Stage                    │
+│ • Solar Radiation       │ • Current Moisture       │ • Root Zone Depth                 │
+│ • Wind Speed & Rain     │ • Saturation Limit       │ • Economic Priority               │
+└────────────┬────────────┴─────────────┬────────────┴─────────────────┬─────────────────┘
+             │                          │                              │
+             ▼                          ▼                              ▼
+┌─────────────────────────┐  ┌───────────────────────────────────────────────────────────┐
+│ Atmospheric Physics     │  │ Soil-Water Tracking                                       │
+│ FAO-56 Penman-Monteith  │  │ Error = Target Moisture - Current Moisture                │
+│ Reference ET (ET0)      │  │ Relative Soil Moisture: RSM = (SM - WP) / (FC - WP)       │
+└────────────┬────────────┘  └──────────────────────────┬────────────────────────────────┘
+             │                                          │
+             └──────────────────┬───────────────────────┘
+                                │
+                                ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        THE 5 HIERARCHICAL FUZZY ENGINES (FIS)                          │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                        │
+│   [Input: RSM, Error]            [Input: Temp, Humidity, Solar, Wind, Rain]            │
+│            │                                           │                               │
+│            ▼                                           ▼                               │
+│  ┌───────────────────┐                       ┌───────────────────┐                     │
+│  │ FIS 1:            │                       │ FIS 2:            │                     │
+│  │ Soil Stress FIS   │                       │ Weather Stress FIS│                     │
+│  │ (25 Rules)        │                       │ (34 Rules)        │                     │
+│  └─────────┬─────────┘                       └─────────┬─────────┘                     │
+│            │                                           │                               │
+│            │           ┌───────────────────────────────┘                               │
+│            │           │                                                               │
+│            │           ▼               [Input: ETc, Deficit, Rain]                     │
+│            │   ┌───────────────┐                       │                               │
+│            │   │ Crop Demand   │                       ▼                               │
+│            │   │ Calculation   │             ┌───────────────────┐                     │
+│            │   │ ETc = Kc * ET0│             │ FIS 3:            │                     │
+│            │   └───────┬───────┘             │ Water Demand FIS  │                     │
+│            │           │                     │ (39 Rules)        │                     │
+│            │           │                     └─────────┬─────────┘                     │
+│            │           │                               │                               │
+│            ▼           ▼                               ▼                               │
+│  ┌───────────────────────────────────────────────────────────────┐                     │
+│  │ FIS 4: Main Irrigation Supervisory Controller (32 Rules)      │                     │
+│  │ Fuses Soil Stress + Weather Stress + Water Demand + Error     │                     │
+│  │ Output: Raw Zone Irrigation Demand (0 - 100%)                 │                     │
+│  └───────────────────────────────┬───────────────────────────────┘                     │
+│                                  │                                                     │
+│                                  ▼                                                     │
+│                [Input: Shared Reservoir Supply % & Priority]                           │
+│                                  │                                                     │
+│                                  ▼                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐                     │
+│  │ FIS 5: Shared Water Allocation Arbitrator (32 Rules)          │                     │
+│  │ Prioritizes high-value & distressed crops under drought       │                     │
+│  │ Guarantees: Total Allocated Water <= Total Available Supply   │                     │
+│  └───────────────────────────────┬───────────────────────────────┘                     │
+│                                  │                                                     │
+└──────────────────────────────────┼─────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        PHYSICAL ACTUATION & CLOSED LOOP SIMULATION                     │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ • Converts % command into physical flow rate (Liters / minute)                         │
+│ • Applies water to 1D Soil Water Balance Model:                                        │
+│     Soil_Moisture(t+1) = Soil_Moisture(t) + Rain + Irrigation - ETc - Drainage         │
+│ • Verifies physical conservation: Mathematical residual error <= 10⁻⁶ mm (Zero waste)  │
+│ • Feeds new soil moisture back into next minute's loop (1440 steps = 24 hours)         │
+└──────────────────────────────────┬─────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                       USER EXPERIENCE & REPORTING INTERFACE                            │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ • 3D WebGL Digital Twin (Three.js real-time crop hydration & valve spray)              │
+│ • 24-Hour Telemetry Playback with Variable Speed Scrubber (1x - 30x)                   │
+│ • Interactive Fuzzy Sandbox with real-time antecedent sliders & rule highlighting      │
+│ • Explainable AI Agronomist Copilot (Groq LLM + Tavily ICAR live search)               │
+│ • Industrial ReportLab Engineering PDF Audits & CSV Telemetry Export                   │
+└────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 3. The 5 Hierarchical Fuzzy Inference Systems (FIS)
+## 📥 3. Where Do the Inputs Come From?
 
-To eliminate the combinatorial curse of dimensionality ($5^4 = 625$ rules in a monolithic design), the system partitions decision-making into 5 modular Mamdani FIS layers using **minimum implication**, **maximum aggregation**, and **centroid defuzzification**:
+The system accepts 4 distinct groups of real-world inputs:
 
-| FIS Subsystem | Input Parameters | Linguistic Universe | Output Variable | Defuzzification |
-| :--- | :--- | :--- | :--- | :--- |
-| **1. Soil Stress FIS** | Soil Moisture ($SM$), Moisture Error ($e(t)$) | $SM$: Very Dry, Dry, Moderate, Wet, Very Wet<br>Error: Negative, Zero, Positive | Soil Stress ($0 \to 1$) | Centroid |
-| **2. Weather Stress FIS** | Air Temp ($T$), Relative Humidity ($RH$), Solar Radiation ($R_s$), Wind ($u_2$), Rainfall ($P$) | Temp, Humidity, Solar, Wind (4-5 sets each)<br>Rainfall: None, Light, Moderate, Heavy | Weather Stress ($0 \to 1$) | Centroid |
-| **3. Water Demand FIS** | Crop Evapotranspiration ($ET_c$), Soil Moisture Deficit, Effective Rain ($P_{\text{eff}}$) | $ET_c$: Low, Moderate, High<br>Deficit: None, Low, High<br>Rain: None, Moderate, Heavy | Water Demand ($0 \to 1$) | Centroid |
-| **4. Main Irrigation FIS** | Soil Stress, Weather Stress, Water Demand, Moisture Error | Stress/Demand: Low, Medium, High<br>Error: Neg, Zero, Pos | Irrigation Request ($0 \to 100\%$) | Centroid |
-| **5. Supervisory Allocation FIS** | Total Available Reservoir, Zone Demands, Zone Stresses, Crop Priorities | Resource Availability, Relative Urgency, Priority Weighting | Bounded Zone Volume ($L$) | Constrained Water-Filling |
+### A. Real-Time Meteorological Inputs (The Weather)
+* **Where it comes from**: Live Open-Meteo API, India Meteorological Department (IMD) agromet feeds, or synthetic climate benchmark scenarios (Normal, Hot & Dry, Rainy, Cloudy, Heatwave, Water Scarcity).
+* **Parameters**:
+  * **Temperature ($^\circ\text{C}$)**: Ambient air temperature at 2-meter elevation.
+  * **Relative Humidity ($\%$)**: Ambient atmospheric moisture.
+  * **Solar Radiation ($\text{W}/\text{m}^2$)**: Solar energy driving photosynthesis and evaporation.
+  * **Wind Speed ($\text{m}/\text{s}$)**: Air movement carrying vapor away from leaves.
+  * **Rainfall ($\text{mm}$)**: Natural precipitation directly infiltrating the topsoil.
 
----
+### B. Soil Physics Inputs (The Ground)
+* **Where it comes from**: Physical capacitive sensor readings or the built-in ICAR/USDA Soil Database (`data/soil_database.csv`).
+* **Parameters**:
+  * **Soil Moisture ($SM$)**: Volumetric water content ($\%$ or fraction).
+  * **Field Capacity ($FC$)**: Maximum water the soil can hold against gravity (excess drains away as deep percolation).
+  * **Wilting Point ($WP$)**: The moisture level below which plant roots cannot extract water (leading to permanent wilting).
+  * **Root Zone Depth ($Z_r$)**: Effective root depth (e.g., $0.6\text{ m}$ for tomato, $0.8\text{ m}$ for cotton).
 
-## 4. Mathematical Foundations
+### C. Crop Agronomy Inputs (The Plant)
+* **Where it comes from**: Food and Agriculture Organization (FAO-56) crop database (`data/crop_database.csv`).
+* **Parameters**:
+  * **Crop Coefficient ($K_c$)**: Multiplier reflecting transpiration across growth stages (e.g., Initial $0.6$, Mid-Season $1.15$, Maturity $0.8$).
+  * **Target Moisture**: Optimal root-zone hydration level set by the farmer.
+  * **Crop Economic Priority**: User-defined importance (e.g., high-value cash crop Tomato = 90, staple Wheat = 60, pasture Grass = 30).
 
-### 4.1 FAO-56 Penman-Monteith Evapotranspiration
-Reference crop evapotranspiration $ET_0$ ($\text{mm}\cdot\text{day}^{-1}$) is computed using the standard FAO-56 equation:
-
-$$ET_0 = \frac{0.408 \Delta (R_n - G) + \gamma \frac{900}{T + 273} u_2 (e_s - e_a)}{\Delta + \gamma (1 + 0.34 u_2)}$$
-
-Where:
-- $R_n$: Net radiation at crop surface ($\text{MJ}\cdot\text{m}^{-2}\cdot\text{day}^{-1}$)
-- $G$: Soil heat flux density ($\text{MJ}\cdot\text{m}^{-2}\cdot\text{day}^{-1}$, modeled near 0 for daily steps)
-- $T$: Mean air temperature at 2 m ($^\circ\text{C}$)
-- $u_2$: Wind speed at 2 m ($\text{m}\cdot\text{s}^{-1}$)
-- $e_s - e_a$: Vapor pressure deficit ($\text{kPa}$)
-- $\Delta$: Slope of saturation vapor pressure curve ($\text{kPa}\cdot^\circ\text{C}^{-1}$)
-- $\gamma$: Psychrometric constant ($\text{kPa}\cdot^\circ\text{C}^{-1}$)
-
-Crop evapotranspiration:
-$$ET_c = K_c \times ET_0$$
-
-### 4.2 Relative Soil Moisture & Error State
-- **Normalized Relative Soil Moisture ($RSM$)**:
-  $$RSM = \frac{SM(t) - WP}{FC - WP}$$
-- **Closed-Loop Moisture Error**:
-  $$e(t) = SM_{\text{target}} - SM(t)$$
-
-### 4.3 Discrete Soil-Water Mass Balance
-For discrete simulation step $t \to t+1$ ($\Delta t = 1\text{ min}$):
-
-$$SM(t+1) = SM(t) + I(t) + P_{\text{eff}}(t) - ET_c(t) - D(t)$$
-
-Subject to boundary conservation:
-$$WP \le SM(t) \le FC$$
-
-Where $D(t) = \max(0, SM(t) + I(t) + P_{\text{eff}}(t) - ET_c(t) - FC)$ represents deep percolation drainage beyond field capacity.
-
-### 4.4 Supervisory Bounded Water-Filling Allocation
-When total reservoir supply $W_{\text{avail}}$ is insufficient to satisfy total demand $\sum_i D_i$:
-
-$$\text{Alloc}_i = \min\left(D_i, \; W_{\text{avail}} \cdot \frac{w_i}{\sum_j w_j}\right), \quad w_i = f(\text{Stress}_i, \text{Priority}_i)$$
-
-Subject to hard invariants:
-1. **Supply-Cap Invariant**: $\sum_{i=1}^N \text{Alloc}_i \le W_{\text{avail}}$
-2. **Demand-Ceiling Invariant**: $\text{Alloc}_i \le D_i \quad \forall i$
-3. **Zero Supply Invariant**: $W_{\text{avail}} = 0 \implies \text{Alloc}_i = 0 \quad \forall i$
+### D. Shared Reservoir / Water Supply Inputs
+* **Where it comes from**: Farm tank level sensors, canal water meters, or municipal quotas.
+* **Parameters**:
+  * **Available Water Supply ($\%$)**: From $100\%$ (abundant) down to $20\%$ (emergency drought conditions).
 
 ---
 
-## 5. Agricultural Zone Specifications
+## 🧠 4. The 5 Fuzzy Inference Systems (FIS) Explained
 
-The system ships with default agricultural zones covering distinct soil hydrologies and crop growth stages:
+Instead of one gigantic unmanageable table with thousands of rules, the system splits human expertise into **5 specialized fuzzy engines**:
 
-| Zone | Crop Type | Soil Texture | Area ($m^2$) | Field Capacity ($FC$) | Wilting Point ($WP$) | Growth Stage | Base $K_c$ | Target $SM$ |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Zone 1** | Tomato | Sandy Loam | 100 | 0.28 | 0.14 | Mid-Season | 1.15 | 0.24 |
-| **Zone 2** | Wheat | Loamy Sand | 120 | 0.18 | 0.08 | Vegetative | 0.85 | 0.15 |
-| **Zone 3** | Maize | Clay Loam | 80 | 0.36 | 0.20 | Tasseling | 1.20 | 0.31 |
+| Engine | Inputs | What It Evaluates | Output |
+| :--- | :--- | :--- | :--- |
+| **FIS 1: Soil Stress** | Relative Soil Moisture (RSM), Moisture Tracking Error | How desperately does the soil need water right now? | **Soil Stress** ($0 - 100\%$) |
+| **FIS 2: Weather Stress** | Temp, Humidity, Solar Radiation, Wind Speed, Rain | How rapidly is the atmosphere sucking water from the field? | **Weather Stress** ($0 - 100\%$) |
+| **FIS 3: Water Demand** | Crop ET ($ET_c$), Water Deficit, Effective Rainfall | How much water does this specific crop need today? | **Water Demand** ($0 - 100\%$) |
+| **FIS 4: Main Controller** | Soil Stress, Weather Stress, Water Demand, Moisture Error | Overall decision: How wide should we open this zone's valve? | **Raw Irrigation Command** ($0 - 100\%$) |
+| **FIS 5: Water Allocation** | Total Reservoir Water, Zone Demand, Crop Stress, Priority | If water is scarce, who gets water first and how much? | **Constrained Allocation** ($0 - 100\%$) |
 
-All parameters are dynamically configurable via `config/config.json` and validated through `backend/app/schemas/`.
+### Defuzzification Standard:
+Every FIS uses the **Mamdani Min-Max Inference** mechanism with **501-point Centroid (Center of Area)** defuzzification. This ensures smooth, continuous valve actuation (e.g., $43.2\%$ duty cycle) rather than jarring ON/OFF valve shocks.
 
 ---
 
-## 6. Repository Structure
+## ⏱️ 5. Real-Time End-to-End Implementation & Execution Loop
+
+How does the whole system actually run in real time? Here is the exact **minute-by-minute ($t \to t+1$) execution cycle** as implemented across the codebase:
+
+```
+                                REAL-TIME 60-SECOND CONTROL CYCLE
+═══════════════════════════════════════════════════════════════════════════════════════════════
+  [00s] SENSOR INGESTION       [10s] ATMOSPHERIC PHYSICS    [20s] STAGE 1 & 2 FUZZY
+  • Read Weather (T, RH,       • FAO-56 Penman-Monteith     • FIS 1: Soil Stress (RSM, Error)
+    Solar, Wind, Rain)           ET0 (mm/min)               • FIS 2: Weather Stress (Weather)
+  • Read Soil Moisture         • ETc = Kc * ET0             • FIS 3: Water Demand (ETc, Deficit)
+    Sensors for each Zone      • Effective Rain Peff (USDA)
+                               • Deficit = max(0, ETc-Peff)
+                                      │                            │
+                                      ▼                            ▼
+  [30s] STAGE 3 SUPERVISORY    [40s] STAGE 4 CONSTRAINED    [50s] ACTUATION & TELEMETRY
+  • FIS 4: Main Irrigation       ALLOCATION (FIS 5)         • Dispatch Solenoid Valve Flow
+    Command (%) for each zone  • Check Reservoir Budget     • Run 1D Soil Balance Conservation
+  • Convert to Physical          Available Water (Liters)   • Zero-Residual Check (|err| <= 1e-6mm)
+    Volume: V_req = Depth*Area • Water-Filling Arbitrator:  • Stream to Next.js 3D Digital Twin
+                                 Alloc <= Budget Ceiling      (Update Soil Color & Particle Spray)
+═══════════════════════════════════════════════════════════════════════════════════════════════
+                                      │
+                                      └──────► LOOP ADVANCES: t = t + 1 minute (1440 steps/day)
+```
+
+### Step-by-Step Code Execution Trace:
+
+#### Step 1: Real-Time Environmental & Sensor Ingestion (`simulation/weather.py`)
+At timestep $t$, the system samples atmospheric conditions:
+* Temperature $T(t)$, Humidity $RH(t)$, Solar Radiation $R_s(t)$, Wind Speed $u_2(t)$, and Precipitation $P(t)$.
+* For each agricultural zone $i$, capacitive moisture probes report volumetric water content $SM_i(t)$.
+
+#### Step 2: Atmospheric Evapotranspiration Engine (`models/et0.py`, `models/etc.py`)
+1. Computes instantaneous reference evapotranspiration $ET_0(t)$ via the FAO-56 Penman-Monteith equation:
+   $$ET_0(t) = \frac{0.408 \Delta (R_n - G) + \gamma \frac{900}{T + 273} u_2 (e_s - e_a)}{\Delta + \gamma (1 + 0.34 u_2)}$$
+2. Computes crop-specific evapotranspiration using the crop coefficient $K_{c, i}$:
+   $$ET_{c, i}(t) = K_{c, i} \times ET_0(t)$$
+3. Computes effective precipitation $P_{\text{eff}}(t)$ and unmitigated crop deficit:
+   $$\text{Deficit}_i(t) = \max\Big(0, \; ET_{c, i}(t) - P_{\text{eff}}(t)\Big)$$
+
+#### Step 3: Local Physiological Stress Evaluation (FIS 1 & FIS 2)
+In parallel for every active zone:
+1. **Relative Soil Moisture (RSM)** is normalized between Wilting Point ($WP$) and Field Capacity ($FC$):
+   $$RSM_i(t) = \frac{SM_i(t) - WP_i}{FC_i - WP_i}$$
+2. Closed-loop tracking error: $e_i(t) = SM_{\text{target}, i} - SM_i(t)$.
+3. **`SoilStressFIS.evaluate(RSM, Error)`** (`fuzzy_engine/soil_stress.py`):
+   * Fuses RSM and moisture error across 25 Mamdani rules.
+   * Produces crisp physiological root stress index: $\text{SoilStress}_i(t) \in [0, 100]\%$.
+4. **`WeatherStressFIS.evaluate(T, RH, Rs, Wind, Rain)`** (`fuzzy_engine/weather_stress.py`):
+   * Fuses 5 meteorological variables across 34 Mamdani rules.
+   * Produces crisp atmospheric drying stress: $\text{WeatherStress}(t) \in [0, 100]\%$.
+
+#### Step 4: Crop Water Demand Estimation (FIS 3)
+* **`WaterDemandFIS.evaluate(ETc, Deficit, Peff)`** (`fuzzy_engine/water_demand.py`):
+  * Synthesizes plant transpiration demand across 39 Mamdani rules.
+  * Produces normalized demand: $\text{WaterDemand}_i(t) \in [0, 100]\%$.
+
+#### Step 5: Supervisory Valve Command Calculation (FIS 4)
+* **`MainIrrigationFIS.evaluate(SoilStress, WeatherStress, WaterDemand, Error)`** (`fuzzy_engine/irrigation.py`):
+  * Synthesizes all 4 stress & demand inputs across 32 Mamdani rules.
+  * Defuzzifies via 501-point centroid into raw valve duty cycle: $\text{DutyCycle}_i(t) \in [0, 100]\%$.
+  * Converts percentage duty cycle into requested water depth and physical volume:
+    $$\text{Depth}_{\text{req}, i}(t) = \frac{\text{DutyCycle}_i(t)}{100} \times \text{MaxApplicationRate} \quad (\text{mm})$$
+    $$V_{\text{req}, i}(t) = \text{Depth}_{\text{req}, i}(t) \times \text{Area}_i \quad (\text{Liters})$$
+
+#### Step 6: Multi-Zone Shared Supply Arbitration (FIS 5)
+When shared reservoir supply $W_{\text{avail}}(t)$ is constrained (e.g. drought or pump capacity limits):
+* **`WaterAllocationFIS.allocate_multizone(...)`** (`fuzzy_engine/water_allocation.py`):
+  * Synthesizes available water percentage, each zone's raw demand $V_{\text{req}, i}$, current crop stress, and economic priority $w_i$.
+  * Solves priority water-filling allocation:
+    $$V_{\text{alloc}, i}(t) = \min\left(V_{\text{req}, i}(t), \; W_{\text{avail}}(t) \times \frac{w_i \cdot \text{SoilStress}_i(t)}{\sum_j (w_j \cdot \text{SoilStress}_j(t))}\right)$$
+  * **Hard Invariant Guarantee**: $\sum_{i=1}^N V_{\text{alloc}, i}(t) \le W_{\text{avail}}(t)$ strictly enforced at every minute.
+
+#### Step 7: Physical Actuation & Soil Conservation Feedback
+1. **Physical Actuation**: Dispatches flow command to physical solenoid valves / relays:
+   $$\text{FlowRate}_i(t) = \frac{V_{\text{alloc}, i}(t)}{\Delta t} \quad (\text{L/min})$$
+2. **Dynamic 1D Soil Balance Update** (`models/water_balance.py`):
+   $$SM_i(t+1) = SM_i(t) + \frac{I_i(t) + P_{\text{eff}}(t) - ET_{c, i}(t) - D_i(t)}{Z_{r, i} \times 1000}$$
+3. **Conservation Check**: Validates that the mathematical water balance closure residual:
+   $$|\text{Residual}| = \Big|SM_i(t+1) - \Big(SM_i(t) + \text{Inflow} - \text{Outflow}\Big)\Big| \le 10^{-6}\text{ mm}$$
+
+#### Step 8: Real-Time Telemetry Streaming & 3D Digital Twin Update
+* Backend writes the 1-minute telemetry record to SQLite `platform.db` / Supabase.
+* Next.js frontend updates:
+  * **Three.js WebGL Digital Twin** ([`DigitalTwin3D.tsx`](file:///c:/Users/pranshu/Desktop/PROJECTS/irrigation_system_fullstack/frontend/src/components/DigitalTwin3D.tsx)): Terrain shader dynamically blends vertex colors from dry tan (`#D4A373`) to moist dark brown (`#3E2723`), and valve emitter particle systems spray water droplets proportional to flow rate.
+  * **Live Scrubber Timeline** ([`SimulationScrubberBar.tsx`](file:///c:/Users/pranshu/Desktop/PROJECTS/irrigation_system_fullstack/frontend/src/components/SimulationScrubberBar.tsx)): Scrubber advances smoothly with Web Audio relay clicks.
+  * **Explainable AI Advisor** ([`api.chatAI`](file:///c:/Users/pranshu/Desktop/PROJECTS/irrigation_system_fullstack/backend/app/api/routes/ai.py)): Farmer can click any minute on the timeline to ask *"Why did Zone 1 receive 42% water here?"* and receive a clear agronomist breakdown.
+
+---
+
+## ⚖️ 6. Physical Invariants & Mathematical Proofs
+
+The platform enforces strict scientific conservation laws at every minute of simulation:
+
+1. **Exact 1D Soil Water Mass Balance**:
+   $$\Delta \text{Soil Moisture} = \text{Rainfall} + \text{Irrigation} - \text{Evapotranspiration} (ET_c) - \text{Drainage}$$
+   Every single simulation step verifies that the balance residual satisfies:
+   $$|\text{Residual}| \le 10^{-6}\text{ mm}$$
+   Water never appears from nowhere or vanishes without a physical trace.
+
+2. **Strict Supply-Cap Conservation**:
+   $$\sum_{i=1}^{N} \text{Allocated Volume}_i \le \text{Available Reservoir Volume}$$
+   Under severe water scarcity (e.g. $40\%$ reservoir level), the supervisory allocation engine scales back water systematically, protecting high-priority cash crops while strictly respecting the reservoir ceiling.
+
+---
+
+## 💻 7. Technology Stack
+
+### Backend
+* **Python 3.11+**
+* **FastAPI**: Asynchronous high-performance RESTful API with automated OpenAPI / Swagger documentation.
+* **NumPy & Pandas**: Vectorized mathematical simulations and time-series aggregation.
+* **Scikit-Fuzzy & SciPy**: Scientific fuzzy inference, membership curves, and numeric integration.
+* **ReportLab**: Server-side vector PDF generation for engineering audits.
+* **SQLite + Supabase PostgreSQL**: Dual-tier storage (instant offline local mirror + cloud sync).
+* **Groq LLM + Tavily Search**: Agronomic advisory copilot with live IMD/ICAR advisory search.
+
+### Frontend
+* **Next.js 16.3.5 (Turbopack)**: State-of-the-art React 19 framework with fast compilation.
+* **TypeScript 5**: Complete type safety across all schemas and API responses.
+* **Tailwind CSS v4**: Modern CSS design system with custom dark and light agronomy themes.
+* **Three.js**: 3D WebGL Digital Twin rendering dynamic soil hydration and valve spray.
+* **Leaflet GIS**: Interactive satellite mapping with real-time Indian agro-climatic district data.
+* **Web Audio API**: Synthesized relay sound effects and haptic audio cues.
+
+---
+
+## 📁 8. Repository Directory Structure
 
 ```
 irrigation_system_fullstack/
-├── backend/                        # FastAPI REST service & core engines
+├── backend/                        # FastAPI REST API & Core Services
 │   └── app/
-│       ├── main.py                 # FastAPI application entrypoint & middleware
-│       ├── api/routes/             # Modular REST route handlers
-│       │   ├── fuzzy.py            # FIS evaluation endpoints
-│       │   ├── simulation.py       # Closed-loop simulation execution
-│       │   ├── allocation.py       # Multi-zone water allocation
-│       │   ├── optimization.py     # PSO parameter tuning
-│       │   ├── india.py            # National India GIS & weather data
-│       │   ├── ai.py               # Groq LLM agronomy copilot
-│       │   └── reports.py          # PDF generation & CSV export
-│       ├── database/               # Supabase & SQLite persistence
-│       │   └── migrations/         # PostgreSQL schema & RLS policies
-│       ├── schemas/                # Pydantic v2 input/output schemas
-│       └── services/               # Core business & computation logic
-├── frontend/                       # Next.js 16 (App Router) + React 19 UI
+│       ├── main.py                 # Application entrypoint & CORS middleware
+│       ├── api/routes/             # 14 REST routes (fuzzy, zones, sim, auth, ai, etc.)
+│       ├── core/                   # Security, settings, and logging configuration
+│       ├── database/               # Dual-tier persistence (SQLite + Supabase sync)
+│       ├── schemas/                # Pydantic v2 data contracts
+│       └── services/               # Fuzzy service, Tavily search, and PDF generation
+├── frontend/                       # Next.js 16 App Router UI
 │   ├── src/
-│   │   ├── app/                    # 15 interactive application routes
-│   │   │   ├── page.tsx            # End-to-End Architecture Studio
-│   │   │   ├── dashboard/          # National GIS & FIS Dashboard
-│   │   │   ├── simulation/         # 1440m Playback & Digital Twin
-│   │   │   ├── fuzzy/              # 5 FIS Diagnostics & Membership Viewers
-│   │   │   ├── allocation/         # Water-Filling Allocation Sandbox
-│   │   │   ├── optimization/       # PSO Parameter Convergence Studio
-│   │   │   ├── scenarios/          # 6 Environmental Benchmark Scenarios
-│   │   │   ├── zones/              # Soil Hydrology & Crop Profiles
-│   │   │   ├── ai/                 # Grounded AI Advisory Copilot
-│   │   │   ├── reports/            # PDF Audit Reports & Telemetry
-│   │   │   └── globals.css         # 2026 Design Tokens (Light/Dark)
-│   │   ├── components/             # Reusable engineering components
-│   │   │   ├── DigitalTwin3D.tsx   # Three.js WebGL Living Twin
-│   │   │   ├── SimulationScrubberBar.tsx # 24h Playback Scrubber
-│   │   │   ├── CommandPalette.tsx  # Global Cmd+K Search Palette
-│   │   │   ├── Sidebar.tsx         # Responsive Cockpit Navigation
-│   │   │   └── TopHeader.tsx       # Live Telemetry & Theme Switcher
-│   │   ├── context/                # Theme, Auth, & Sidebar Contexts
-│   │   ├── hooks/                  # useSimulationPlayback timeline hook
-│   │   └── lib/                    # API client & audio haptic engine
-├── fuzzy_engine/                   # Scikit-Fuzzy core membership & FIS logic
-├── simulation/                     # 24-hr closed-loop physics simulation
-├── optimization/                   # Offline Particle Swarm Optimization (PSO)
-├── data_processing/                # Weather generator & FAO-56 calculator
-├── config/                         # System JSON configs & agronomic constants
-├── docs/                           # 24 comprehensive mathematical thesis docs
-├── tests/                          # 300 automated pytest test cases
-└── requirements.txt                # Python production dependencies
+│   │   ├── app/                    # 15 application pages (fuzzy, sim, dashboard, etc.)
+│   │   ├── components/             # Reusable UI widgets (3D Twin, charts, sidebar)
+│   │   ├── context/                # Theme, sidebar, and auth state providers
+│   │   ├── hooks/                  # Simulation playback and timeline hooks
+│   │   └── lib/                    # API client, utilities, and Web Audio engine
+├── fuzzy_engine/                   # 5 Mamdani Fuzzy Inference Systems & MF Factory
+├── models/                         # FAO-56 Penman-Monteith ET0, ETc, and Soil Balance
+├── simulation/                     # 24h/7d multizone closed-loop simulation engine
+├── optimization/                   # Offline 18-D Particle Swarm Optimization (PSO)
+├── data/                           # Crop & soil databases, local SQLite platform.db
+├── data_processing/                # Weather preprocessors and dataset builders
+├── docs/                           # Architectural thesis documents & UX audit reports
+├── tests/                          # 346 automated pytest unit and integration tests
+├── scripts/                        # Master verification, analysis, and data scripts
+├── validate_env.py                 # Phase 0 environment & architecture validator
+├── requirements.txt                # Python backend dependencies
+└── render.yaml                     # Cloud deployment configuration
 ```
 
 ---
 
-## 7. Getting Started
+## 🚀 9. Quickstart Guide (How to Run Locally)
 
-### 7.1 Prerequisites
-- Python 3.11+
-- Node.js 18.18+ (or Node 20+)
-- Git
+### Prerequisites:
+* **Python 3.11+** installed (`python --version`)
+* **Node.js 18+** installed (`node --version`)
+* **Git**
 
-### 7.2 Backend Setup (FastAPI)
+### Step 1: Clone the Repository
 ```bash
-# Clone the repository
 git clone https://github.com/pranshu-rajan/smart-irrigation-fuzzy-system.git
 cd smart-irrigation-fuzzy-system
+```
 
+### Step 2: Start the Backend (Terminal 1)
+```bash
 # Create and activate virtual environment
 python -m venv venv
-# On Windows:
+
+# Windows:
 .\venv\Scripts\activate
-# On Linux/macOS:
+# Linux/macOS:
 source venv/bin/activate
 
-# Install Python dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# Start the FastAPI server (runs on port 8000)
-uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-Interactive API documentation will be available at:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+# Run environment validator
+python validate_env.py
 
-### 7.3 Frontend Setup (Next.js 16)
+# Launch FastAPI server (Port 8000)
+uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+* Interactive Swagger Docs: `http://localhost:8000/docs`
+* Live System Verification: `http://localhost:8000/api/verification/system`
+
+### Step 3: Start the Frontend (Terminal 2)
 ```bash
-# In a separate terminal, navigate to the frontend directory
 cd frontend
 
-# Install dependencies
-npm ci
+# Install npm dependencies
+npm install
 
-# Start Next.js development server with Turbopack (runs on port 3000)
+# Start Next.js development server with Turbopack (Port 3000)
 npm run dev
 ```
-Open `http://localhost:3000` in your browser.
-
-- **Theme**: Launches in clean, light agronomy mode by default. Click the Moon icon in the top header or use `Cmd+K` to toggle the dark cyber-cockpit mode.
-- **Audio Feedback**: Synthesized relay clicks and haptics are enabled by default and can be toggled via the speaker icon in the header.
-- **Keyboard Navigation**: Press `Cmd+K` (or `Ctrl+K`) anywhere to open the global command palette.
+* Open your browser at: `http://localhost:3000`
 
 ---
 
-## 8. Automated Testing & Verification
+## 🧪 10. Automated Testing & Verification
 
-The test suite validates every layer of the platform across 300 automated tests:
+The codebase includes an extensive suite of **346 automated tests** covering every mathematical property, physical boundary, fuzzy rule, and API endpoint:
 
 ```bash
-# Run the complete test suite
-pytest -v
+# Run the entire test suite
+pytest -q
 
-# Run with coverage report
-pytest --cov=backend --cov=fuzzy_engine --cov=simulation tests/
+# Run specific subsystem tests
+pytest tests/test_fuzzy_variables.py
+pytest tests/test_water_allocation.py
+pytest tests/test_multizone_closed_loop.py
+pytest tests/test_pso.py
 ```
 
-### Verification Invariant Matrix
-
-| Verification Criterion | Mathematical / Engineering Invariant | Test Status |
-| :--- | :--- | :--- |
-| **Full Regression Suite** | 300 automated tests covering all 5 FIS and closed loops | **300 Passed, 0 Failed** |
-| **Water Balance Residual** | 1D soil mass balance residual: $\vert \Delta SM - (I + P_{\text{eff}} - ET_c - D) \vert < 10^{-6}\text{ mm}$ | **Exact $0.00\text{ mm}$ closure** |
-| **Supply-Cap Invariant** | Total allocation under scarcity: $\sum \text{Alloc}_i \le W_{\text{avail}}$ | **0 violations across 1,000 cases** |
-| **Demand-Ceiling Invariant** | No zone receives more than requested: $\text{Alloc}_i \le D_i$ | **0 violations** |
-| **Zero Supply Invariant** | Empty reservoir: $W_{\text{avail}} = 0 \implies \text{Alloc}_i = 0$ | **Verified** |
-| **Zero Demand Invariant** | Satiated zone: $D_i = 0 \implies \text{Alloc}_i = 0$ | **Verified** |
-| **Offline PSO Decoupling** | Optimization is decoupled and strictly offline (never online) | **Verified** |
-| **Frontend Production Build** | Next.js 16.3.5 Turbopack production compilation | **15/15 routes static built, 0 errors** |
+### Verification Matrix Summary:
+* **Total Automated Tests**: **346 Passed (100%)**
+* **Frontend Static Pages**: **15/15 Prerendered with 0 Errors**
+* **Soil Water Balance Residual**: **$\le 10^{-6}\text{ mm}$ (Exact physical closure)**
+* **Shared Supply Conservation**: **Zero violations under drought & scarcity**
 
 ---
 
-## 9. Production Deployment Guide
+## 📜 11. Academic Citations & Standards
 
-### 9.1 Database (Supabase)
-1. Create a Supabase project at [supabase.com](https://supabase.com).
-2. Execute `backend/app/database/migrations/001_initial_schema.sql` in the Supabase SQL Editor.
-3. Retrieve the `Project URL` and API keys from **Project Settings > API**.
-
-### 9.2 Backend (Render / Railway / AWS)
-1. Deploy `smart-irrigation-fuzzy-system` as a Python Web Service.
-2. Build Command: `pip install -r requirements.txt`
-3. Start Command: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
-4. Set environment variables:
-   ```env
-   ENVIRONMENT=production
-   CORS_ORIGINS=https://your-frontend.vercel.app,http://localhost:3000
-   GROQ_API_KEY=your_groq_api_key
-   TAVILY_API_KEY=your_tavily_api_key
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_ANON_KEY=your_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   ```
-
-### 9.3 Frontend (Vercel)
-1. Import repository on [vercel.com](https://vercel.com) and set Root Directory to `frontend`.
-2. Configure Environment Variables:
-   ```env
-   NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
-   NEXT_PUBLIC_API_BASE=https://your-backend.onrender.com/api
-   ```
-3. Deploy.
+1. **FAO-56**: Allen, R. G., Pereira, L. S., Raes, D., & Smith, M. (1998). *Crop evapotranspiration - Guidelines for computing crop water requirements*. FAO Irrigation and Drainage Paper 56. Rome: Food and Agriculture Organization.
+2. **Fuzzy Logic**: Mamdani, E. H., & Assilian, S. (1975). *An experiment in linguistic synthesis with a fuzzy logic controller*. International Journal of Man-Machine Studies, 7(1), 1-13.
+3. **PSO Optimization**: Kennedy, J., & Eberhart, R. (1995). *Particle swarm optimization*. Proceedings of IEEE International Conference on Neural Networks.
+4. **Agro-Climatology**: Indian Council of Agricultural Research (ICAR), *Package of Practices & Agro-Climatic Zones of India*.
 
 ---
 
-## 10. Citation & Academic References
+## 📄 12. License
 
-1. **Allen, R. G., Pereira, L. S., Raes, D., & Smith, M. (1998)**. *Crop evapotranspiration - Guidelines for computing crop water requirements*. FAO Irrigation and drainage paper 56. Rome: FAO.
-2. **Mamdani, E. H., & Assilian, S. (1975)**. *An experiment in linguistic synthesis with a fuzzy logic controller*. International Journal of Man-Machine Studies, 7(1), 1-13.
-3. **Kennedy, J., & Eberhart, R. (1995)**. *Particle swarm optimization*. Proceedings of ICNN'95 - International Conference on Neural Networks, 4, 1942-1948.
-4. **ICAR (Indian Council of Agricultural Research)**. *Agro-Climatic Zones of India and Crop Water Requirements*.
-
----
-
-## 11. License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is open-source and licensed under the **MIT License**. Feel free to use, adapt, and build upon it for academic and commercial applications.

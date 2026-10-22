@@ -88,47 +88,47 @@ export default function PredictiveMoistureGraph({
   ];
 
   return (
-    <div className={`rounded-2xl border border-slate-700/60 bg-slate-900/90 backdrop-blur-md p-5 text-white shadow-xl ${className}`}>
+    <div className={`rounded-2xl border border-emerald-200/90 bg-white p-5 text-slate-800 shadow-xl ${className}`}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-800 pb-3 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-emerald-100 pb-3 mb-4">
         <div>
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4.5 w-4.5 text-emerald-400" />
-            <h3 className="text-sm sm:text-base font-bold text-white">
+            <TrendingUp className="h-4.5 w-4.5 text-emerald-600" />
+            <h3 className="text-sm sm:text-base font-bold text-slate-900">
               24-Hour Predictive Closed-Loop Soil Moisture Forecast
             </h3>
-            <span className="rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+            <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
               Closed-Loop Dynamic
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5">
+          <p className="text-[11px] text-slate-500 mt-0.5">
             Hourly simulation showing how fuzzy pulsed irrigation stabilizes root-zone moisture above Wilting Point ({wiltingPoint}%) and below Field Capacity ({fieldCapacity}%).
           </p>
         </div>
 
         {/* Legend Pills */}
         <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono">
-          <span className="inline-flex items-center gap-1 text-emerald-400">
+          <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold">
             <span className="h-2 w-2 rounded-full bg-emerald-500" />
             {crop1Name}
           </span>
-          <span className="inline-flex items-center gap-1 text-cyan-400">
-            <span className="h-2 w-2 rounded-full bg-cyan-500" />
+          <span className="inline-flex items-center gap-1 text-teal-700 font-semibold">
+            <span className="h-2 w-2 rounded-full bg-teal-500" />
             {crop2Name}
           </span>
-          <span className="inline-flex items-center gap-1 text-purple-400">
-            <span className="h-2 w-2 rounded-full bg-purple-500" />
+          <span className="inline-flex items-center gap-1 text-indigo-700 font-semibold">
+            <span className="h-2 w-2 rounded-full bg-indigo-500" />
             {crop3Name}
           </span>
-          <span className="inline-flex items-center gap-1 text-amber-400">
-            <span className="h-2 w-2 border border-amber-400 border-dashed" />
+          <span className="inline-flex items-center gap-1 text-amber-700 font-semibold">
+            <span className="h-2 w-2 border border-amber-500 border-dashed" />
             Hourly ET₀
           </span>
         </div>
       </div>
 
       {/* SVG Chart */}
-      <div className="w-full bg-slate-950/60 rounded-xl p-3 border border-slate-800">
+      <div className="w-full bg-emerald-50/20 rounded-xl p-3 border border-emerald-100">
         <LineChart
           labels={labels}
           datasets={datasets}
@@ -137,7 +137,7 @@ export default function PredictiveMoistureGraph({
           xAxisLabel="Simulation Hour (Diurnal Profile)"
           yAxisLabel="Volumetric Moisture / ET₀"
           referenceLines={[
-            { y: fieldCapacity, label: `FC (${fieldCapacity}%)`, color: '#10b981', dashed: true },
+            { y: fieldCapacity, label: `FC (${fieldCapacity}%)`, color: '#059669', dashed: true },
             { y: wiltingPoint, label: `WP (${wiltingPoint}%)`, color: '#ef4444', dashed: true },
           ]}
         />
@@ -145,21 +145,21 @@ export default function PredictiveMoistureGraph({
 
       {/* Forecast Highlights Footer */}
       <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-        <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-2.5">
+        <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-2.5">
           <span className="text-[10px] text-slate-500 block">Peak Solar Hour</span>
-          <span className="text-amber-400 font-bold block mt-0.5">13:00 (850 W/m²)</span>
+          <span className="text-amber-700 font-bold block mt-0.5">13:00 (850 W/m²)</span>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-2.5">
+        <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-2.5">
           <span className="text-[10px] text-slate-500 block">Irrigation Window</span>
-          <span className="text-cyan-400 font-bold block mt-0.5">06:00 - 08:00 (Pulsed)</span>
+          <span className="text-teal-700 font-bold block mt-0.5">06:00 - 08:00 (Pulsed)</span>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-2.5">
+        <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-2.5">
           <span className="text-[10px] text-slate-500 block">Daily ET₀ Integral</span>
-          <span className="text-emerald-400 font-bold block mt-0.5">4.85 mm/day</span>
+          <span className="text-emerald-700 font-bold block mt-0.5">4.85 mm/day</span>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-2.5">
+        <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-2.5">
           <span className="text-[10px] text-slate-500 block">Mass Balance Closure</span>
-          <span className="text-emerald-400 font-bold block mt-0.5">|Res| &lt; 10⁻⁶ mm</span>
+          <span className="text-emerald-700 font-bold block mt-0.5">|Res| &lt; 10⁻⁶ mm</span>
         </div>
       </div>
     </div>

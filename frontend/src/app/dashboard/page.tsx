@@ -288,45 +288,45 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 pb-20">
       {/* 1. Header Command Ribbon */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-3xl border border-slate-700/60 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-6 shadow-2xl text-white">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between rounded-3xl border border-emerald-200/90 bg-gradient-to-r from-emerald-50 via-teal-50/40 to-white p-6 shadow-sm text-slate-800">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-100 border border-emerald-200 text-emerald-700">
               <Globe className="h-5 w-5 animate-pulse" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-sans">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-sans">
               National Precision Irrigation Command Hub
             </h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-3 py-0.5 text-xs font-semibold text-emerald-400">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 border border-emerald-200 px-3 py-0.5 text-xs font-semibold text-emerald-800">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               5-STAGE FUZZY PIPELINE ACTIVE
             </span>
           </div>
-          <p className="mt-1 text-xs text-slate-400 max-w-3xl">
+          <p className="mt-1 text-xs text-slate-600 max-w-3xl">
             Real-time geospatial intelligence across India, live Open-Meteo & Tavily atmospheric forcing, ICAR agro-climatic soil physics, and closed-loop supervisory fuzzy valve control.
           </p>
           <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/10 border border-emerald-500/40 px-2.5 py-1 text-emerald-300 font-semibold text-[11px] shadow-sm shadow-emerald-950/40 backdrop-blur-md">
+            <span className="inline-flex items-center gap-1.5 rounded-lg bg-white border border-emerald-200 px-2.5 py-1 text-emerald-800 font-semibold text-[11px] shadow-xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <Sprout className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-              <span className="uppercase tracking-wider font-mono text-[10px] text-emerald-400/90 font-bold">Plot Locked:</span>
-              <span className="text-white font-medium">{locInfo?.field_name || selectedLoc.fieldName || `${selectedLoc.district} Central Farmland`}</span>
+              <Sprout className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span className="uppercase tracking-wider font-mono text-[10px] text-emerald-700 font-bold">Plot Locked:</span>
+              <span className="text-slate-900 font-medium">{locInfo?.field_name || selectedLoc.fieldName || `${selectedLoc.district} Central Farmland`}</span>
             </span>
-            <span className="text-slate-500">•</span>
-            <span className="text-slate-300 font-medium text-[11px]">
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-700 font-medium text-[11px]">
               {selectedLoc.tehsilVillage ? `${selectedLoc.tehsilVillage}, ` : ''}{selectedLoc.district}, {selectedLoc.state}
             </span>
-            <span className="text-slate-500">•</span>
-            <span className="font-mono text-cyan-300 text-[11px] bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-800/40">
+            <span className="text-slate-300">•</span>
+            <span className="font-mono text-cyan-800 text-[11px] bg-cyan-50 px-1.5 py-0.5 rounded border border-cyan-200">
               GPS: {selectedLoc.latitude.toFixed(4)}°N, {selectedLoc.longitude.toFixed(4)}°E
             </span>
             {selectedLoc.fieldAreaAcres && (
               <>
-                <span className="text-slate-500">•</span>
-                <span className="text-amber-300 text-[11px] font-medium bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-800/40">
+                <span className="text-slate-300">•</span>
+                <span className="text-amber-800 text-[11px] font-medium bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
                   {selectedLoc.fieldAreaAcres} Acres ({Math.round(selectedLoc.fieldAreaAcres * 4046.86).toLocaleString()} m²)
                 </span>
               </>
@@ -337,9 +337,9 @@ export default function DashboardPage() {
         {/* Quick Location Action Controls */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Reservoir Storage Slider */}
-          <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs text-slate-300">
-            <Droplets className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
-            <span className="text-[11px] text-slate-400 font-medium">Reservoir:</span>
+          <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-3 py-2 text-xs text-slate-700 shadow-xs">
+            <Droplets className="h-3.5 w-3.5 text-cyan-600 shrink-0" />
+            <span className="text-[11px] text-slate-500 font-medium">Reservoir:</span>
             <input
               type="range"
               min={20}
@@ -353,14 +353,14 @@ export default function DashboardPage() {
               className="h-1.5 w-24 accent-emerald-500 cursor-pointer"
               title={`Reservoir Storage: ${reservoirStoragePct}%`}
             />
-            <span className="font-mono text-emerald-400 font-semibold">{reservoirStoragePct}%</span>
+            <span className="font-mono text-emerald-700 font-semibold">{reservoirStoragePct}%</span>
           </div>
 
           {/* Re-Evaluate Trigger Button */}
           <button
             onClick={() => evaluateLocation(selectedLoc, reservoirStoragePct, climateScenario, zoneCropOverrides)}
             disabled={isEvaluating}
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-xs font-semibold text-white shadow-lg transition disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-xs font-semibold text-white shadow-md transition disabled:opacity-50 cursor-pointer"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isEvaluating ? 'animate-spin' : ''}`} />
             <span>{isEvaluating ? 'Evaluating FIS...' : 'Re-Evaluate Farm'}</span>
@@ -369,13 +369,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Real-Time Environmental Climate Stress Simulation Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-700/60 bg-slate-900/90 backdrop-blur-xl px-5 py-3.5 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-emerald-200/90 bg-white/95 backdrop-blur-xl px-5 py-3.5 shadow-sm">
         <div className="flex items-center gap-2">
-          <Activity className="h-4 w-4 text-emerald-400 animate-spin-slow" />
-          <span className="text-xs font-bold text-white uppercase tracking-wider">
+          <Activity className="h-4 w-4 text-emerald-600 animate-spin-slow" />
+          <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
             Atmospheric Forcing Engine:
           </span>
-          <span className="text-[11px] text-slate-400 hidden sm:inline">
+          <span className="text-[11px] text-slate-500 hidden sm:inline">
             Inject real-time climate stresses to evaluate dynamic fuzzy responses
           </span>
         </div>
@@ -385,8 +385,8 @@ export default function DashboardPage() {
             onClick={() => handleClimateChange('live')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
               climateScenario === 'live'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30 font-bold'
-                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+                ? 'bg-emerald-600 text-white shadow-xs font-bold'
+                : 'bg-emerald-50/60 text-slate-700 hover:text-emerald-800 hover:bg-emerald-100/60 border border-emerald-200/80'
             }`}
           >
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -397,11 +397,11 @@ export default function DashboardPage() {
             onClick={() => handleClimateChange('heatwave')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
               climateScenario === 'heatwave'
-                ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30 font-bold'
-                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+                ? 'bg-amber-600 text-white shadow-xs font-bold'
+                : 'bg-amber-50/60 text-amber-900 hover:bg-amber-100/60 border border-amber-200/80'
             }`}
           >
-            <Sun className="h-3.5 w-3.5 text-amber-300" />
+            <Sun className="h-3.5 w-3.5 text-amber-500" />
             <span>Heatwave (42°C)</span>
           </button>
 
@@ -409,11 +409,11 @@ export default function DashboardPage() {
             onClick={() => handleClimateChange('monsoon')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
               climateScenario === 'monsoon'
-                ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30 font-bold'
-                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+                ? 'bg-cyan-600 text-white shadow-xs font-bold'
+                : 'bg-cyan-50/60 text-cyan-900 hover:bg-cyan-100/60 border border-cyan-200/80'
             }`}
           >
-            <CloudRain className="h-3.5 w-3.5 text-cyan-300" />
+            <CloudRain className="h-3.5 w-3.5 text-cyan-600" />
             <span>Monsoon Deluge (35mm)</span>
           </button>
 
@@ -421,11 +421,11 @@ export default function DashboardPage() {
             onClick={() => handleClimateChange('drought')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
               climateScenario === 'drought'
-                ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30 font-bold'
-                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+                ? 'bg-rose-600 text-white shadow-xs font-bold'
+                : 'bg-rose-50/60 text-rose-900 hover:bg-rose-100/60 border border-rose-200/80'
             }`}
           >
-            <AlertTriangle className="h-3.5 w-3.5 text-rose-300" />
+            <AlertTriangle className="h-3.5 w-3.5 text-rose-500" />
             <span>Drought Scarcity (22% Pond)</span>
           </button>
 
@@ -433,11 +433,11 @@ export default function DashboardPage() {
             onClick={() => handleClimateChange('windy')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
               climateScenario === 'windy'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
-                : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+                ? 'bg-indigo-600 text-white shadow-xs font-bold'
+                : 'bg-indigo-50/60 text-indigo-900 hover:bg-indigo-100/60 border border-indigo-200/80'
             }`}
           >
-            <Wind className="h-3.5 w-3.5 text-indigo-300" />
+            <Wind className="h-3.5 w-3.5 text-indigo-600" />
             <span>High Wind Deficit</span>
           </button>
         </div>

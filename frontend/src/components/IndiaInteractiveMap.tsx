@@ -84,7 +84,7 @@ export default function IndiaInteractiveMap({
   const tileLayerRef = useRef<any>(null);
   const overlayLayerRef = useRef<any>(null);
 
-  const [activeLayer, setActiveLayer] = useState<'satellite' | 'street' | 'dark'>('satellite');
+  const [activeLayer, setActiveLayer] = useState<'satellite' | 'street' | 'dark'>('street');
   const [districts, setDistricts] = useState<Array<{ district: string; state: string; agro_climatic_zone: string; latitude: number; longitude: number }>>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -346,24 +346,24 @@ export default function IndiaInteractiveMap({
   };
 
   return (
-    <div className={`relative flex flex-col rounded-2xl overflow-hidden border border-slate-700/60 bg-slate-950 shadow-2xl ${className}`}>
+    <div className={`relative flex flex-col rounded-2xl overflow-hidden border border-emerald-200/90 bg-white shadow-xl ${className}`}>
       {/* 1. Header Toolbar & Search Bar */}
-      <div className="z-10 flex flex-wrap items-center justify-between gap-3 bg-slate-900/90 backdrop-blur-md px-4 py-3 border-b border-slate-800">
+      <div className="z-10 flex flex-wrap items-center justify-between gap-3 bg-white/95 backdrop-blur-md px-4 py-3 border-b border-emerald-100">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600">
             <Compass className="h-4 w-4 animate-spin-slow" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-white tracking-wide uppercase">
+              <span className="text-xs font-bold text-slate-900 tracking-wide uppercase">
                 India Spatial Geo-Inspector
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.2 text-[10px] font-semibold text-emerald-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.2 text-[10px] font-semibold text-emerald-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Live Map
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-500">
               Hover across India to inspect regional soil & climate; click to evaluate fuzzy irrigation.
             </p>
           </div>
@@ -384,26 +384,26 @@ export default function IndiaInteractiveMap({
                   setIsSearching(true);
                 }}
                 onFocus={() => setIsSearching(true)}
-                className="w-48 sm:w-60 rounded-xl border border-slate-700 bg-slate-800/90 pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                className="w-48 sm:w-60 rounded-xl border border-emerald-200 bg-emerald-50/30 pl-8 pr-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
               />
             </div>
 
             {/* Dropdown Results */}
             {isSearching && filteredDistricts.length > 0 && (
-              <div className="absolute left-0 mt-1.5 w-72 rounded-xl border border-slate-700 bg-slate-900/95 backdrop-blur-xl shadow-2xl overflow-hidden z-50 divide-y divide-slate-800">
+              <div className="absolute left-0 mt-1.5 w-72 rounded-xl border border-emerald-200 bg-white shadow-2xl overflow-hidden z-50 divide-y divide-emerald-50">
                 {filteredDistricts.map((d) => (
                   <button
                     key={`${d.district}-${d.state}`}
                     onClick={() => handleSelectDistrict(d)}
-                    className="w-full px-3.5 py-2.5 text-left text-xs hover:bg-emerald-950/40 hover:text-emerald-300 transition flex items-center justify-between group cursor-pointer"
+                    className="w-full px-3.5 py-2.5 text-left text-xs hover:bg-emerald-50 hover:text-emerald-700 transition flex items-center justify-between group cursor-pointer"
                   >
                     <div>
-                      <div className="font-semibold text-slate-200 group-hover:text-emerald-300">
+                      <div className="font-semibold text-slate-800 group-hover:text-emerald-700">
                         {d.district}, {d.state}
                       </div>
                       <div className="text-[10px] text-slate-500">{d.agro_climatic_zone}</div>
                     </div>
-                    <MapPin className="h-3.5 w-3.5 text-slate-600 group-hover:text-emerald-400 shrink-0" />
+                    <MapPin className="h-3.5 w-3.5 text-slate-400 group-hover:text-emerald-600 shrink-0" />
                   </button>
                 ))}
               </div>
@@ -411,11 +411,11 @@ export default function IndiaInteractiveMap({
           </div>
 
           {/* Layer Selector */}
-          <div className="flex items-center rounded-xl border border-slate-700 bg-slate-800/80 p-0.5 text-[11px] font-medium text-slate-300">
+          <div className="flex items-center rounded-xl border border-emerald-200 bg-emerald-50/50 p-0.5 text-[11px] font-medium text-slate-600">
             <button
               onClick={() => setActiveLayer('satellite')}
               className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
-                activeLayer === 'satellite' ? 'bg-emerald-600 text-white font-semibold' : 'hover:text-white'
+                activeLayer === 'satellite' ? 'bg-emerald-600 text-white font-semibold shadow-xs' : 'hover:text-emerald-700'
               }`}
             >
               Satellite
@@ -423,7 +423,7 @@ export default function IndiaInteractiveMap({
             <button
               onClick={() => setActiveLayer('street')}
               className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
-                activeLayer === 'street' ? 'bg-emerald-600 text-white font-semibold' : 'hover:text-white'
+                activeLayer === 'street' ? 'bg-emerald-600 text-white font-semibold shadow-xs' : 'hover:text-emerald-700'
               }`}
             >
               Terrain
@@ -431,7 +431,7 @@ export default function IndiaInteractiveMap({
             <button
               onClick={() => setActiveLayer('dark')}
               className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
-                activeLayer === 'dark' ? 'bg-emerald-600 text-white font-semibold' : 'hover:text-white'
+                activeLayer === 'dark' ? 'bg-emerald-600 text-white font-semibold shadow-xs' : 'hover:text-emerald-700'
               }`}
             >
               Dark
@@ -441,23 +441,23 @@ export default function IndiaInteractiveMap({
       </div>
 
       {/* 2. Map Canvas Viewport */}
-      <div className="relative h-[420px] sm:h-[480px] w-full bg-slate-950">
+      <div className="relative h-[420px] sm:h-[480px] w-full bg-emerald-50/20">
         <div ref={mapContainerRef} className="h-full w-full z-0" />
 
         {/* Floating Spatial Hover HUD (Top-Left of Map) */}
         {hoverInfo && (
-          <div className="absolute top-3 left-3 z-20 pointer-events-none rounded-xl border border-emerald-500/30 bg-slate-900/90 backdrop-blur-md px-3.5 py-2.5 text-slate-200 shadow-xl max-w-xs animate-in fade-in duration-150">
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 tracking-wider uppercase">
+          <div className="absolute top-3 left-3 z-20 pointer-events-none rounded-xl border border-emerald-200 bg-white/95 backdrop-blur-md px-3.5 py-2.5 text-slate-800 shadow-xl max-w-xs animate-in fade-in duration-150">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 tracking-wider uppercase">
               <Crosshair className="h-3 w-3 animate-spin-slow" />
               <span>Spatial Telemetry Cursor</span>
             </div>
-            <div className="mt-1 font-semibold text-xs text-white">
+            <div className="mt-1 font-semibold text-xs text-slate-900">
               {hoverInfo.nearestDistrict ? `${hoverInfo.nearestDistrict}, ${hoverInfo.nearestState}` : 'Subcontinent Region'}
             </div>
             {hoverInfo.zone && (
-              <div className="text-[10px] text-slate-400 truncate mt-0.5">{hoverInfo.zone}</div>
+              <div className="text-[10px] text-slate-500 truncate mt-0.5">{hoverInfo.zone}</div>
             )}
-            <div className="mt-1.5 flex items-center gap-3 font-mono text-[10px] text-slate-400 border-t border-slate-800 pt-1">
+            <div className="mt-1.5 flex items-center gap-3 font-mono text-[10px] text-slate-500 border-t border-slate-100 pt-1">
               <span>Lat: {hoverInfo.lat.toFixed(4)}°N</span>
               <span>Lng: {hoverInfo.lng.toFixed(4)}°E</span>
             </div>
@@ -466,28 +466,28 @@ export default function IndiaInteractiveMap({
 
         {/* Selected Agricultural Field Parcel Pill (Bottom-Left of Map) */}
         {selectedLocation && (
-          <div className="absolute bottom-3 left-3 z-20 rounded-2xl border border-emerald-500/40 bg-slate-900/95 backdrop-blur-md px-4 py-3 shadow-2xl max-w-sm">
+          <div className="absolute bottom-3 left-3 z-20 rounded-2xl border border-emerald-200 bg-white/95 backdrop-blur-md px-4 py-3 shadow-2xl max-w-sm">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-200 shrink-0">
                 <Check className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <span className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1.5 tracking-wider font-mono">
+                <span className="text-[10px] uppercase font-bold text-emerald-700 flex items-center gap-1.5 tracking-wider font-mono">
                   <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-600"></span>
                   </span>
                   Parcel Boundary Locked
                 </span>
-                <span className="text-xs font-bold text-white block truncate">
+                <span className="text-xs font-bold text-slate-900 block truncate">
                   {selectedLocation.fieldName || `${selectedLocation.district}, ${selectedLocation.state}`}
                 </span>
-                <span className="text-[10px] text-slate-400 block truncate font-mono">
+                <span className="text-[10px] text-slate-500 block truncate font-mono">
                   {selectedLocation.agro_climatic_zone || 'ICAR Agro-Climatic Basin'} &bull; ~25 Acres
                 </span>
               </div>
-              <div className="ml-2 pl-2.5 border-l border-slate-700 text-right font-mono text-[10px] text-slate-300 shrink-0">
-                <div className="text-emerald-400 font-semibold">{selectedLocation.latitude.toFixed(4)}°N</div>
+              <div className="ml-2 pl-2.5 border-l border-emerald-100 text-right font-mono text-[10px] text-slate-600 shrink-0">
+                <div className="text-emerald-700 font-semibold">{selectedLocation.latitude.toFixed(4)}°N</div>
                 <div>{selectedLocation.longitude.toFixed(4)}°E</div>
               </div>
             </div>
@@ -495,15 +495,15 @@ export default function IndiaInteractiveMap({
         )}
 
         {/* Quick Instructional Overlay (Bottom-Right) */}
-        <div className="absolute bottom-3 right-3 z-20 pointer-events-none rounded-lg bg-slate-900/80 backdrop-blur-sm border border-slate-800 px-2.5 py-1 text-[10px] text-slate-400">
+        <div className="absolute bottom-3 right-3 z-20 pointer-events-none rounded-lg bg-white/90 backdrop-blur-sm border border-emerald-200 px-2.5 py-1 text-[10px] text-slate-600 shadow-sm">
           Click any point to lock location & evaluate FIS
         </div>
       </div>
 
       {/* 3. Rapid Agricultural Hub Presets Ribbon */}
-      <div className="z-10 bg-slate-900/95 border-t border-slate-800 px-4 py-2.5 flex items-center gap-2 overflow-x-auto touch-scroll">
-        <span className="text-[11px] font-semibold text-slate-400 shrink-0 flex items-center gap-1">
-          <Sprout className="h-3.5 w-3.5 text-emerald-400" />
+      <div className="z-10 bg-white border-t border-emerald-100 px-4 py-2.5 flex items-center gap-2 overflow-x-auto touch-scroll">
+        <span className="text-[11px] font-semibold text-slate-600 shrink-0 flex items-center gap-1">
+          <Sprout className="h-3.5 w-3.5 text-emerald-600" />
           Agro Hubs:
         </span>
         <div className="flex items-center gap-1.5 shrink-0">
@@ -515,13 +515,13 @@ export default function IndiaInteractiveMap({
                 onClick={() => handleSelectPreset(p)}
                 className={`rounded-xl px-2.5 py-1 text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 ${
                   isSelected
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/50'
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold shadow-2xs'
+                    : 'bg-emerald-50/50 text-slate-700 hover:bg-emerald-100/70 hover:text-emerald-800 border border-emerald-100'
                 }`}
                 title={p.crop}
               >
                 <span>{p.name}</span>
-                <span className="text-[9px] text-slate-500 hidden sm:inline">({p.crop})</span>
+                <span className="text-[9px] text-slate-400 hidden sm:inline">({p.crop})</span>
               </button>
             );
           })}

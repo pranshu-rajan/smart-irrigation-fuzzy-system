@@ -206,72 +206,72 @@ export default function IndiaPrecisionIrrigationHub() {
   };
 
   const getLevelBadge = (val: number) => {
-    if (val < 25) return { text: 'LOW', bg: 'bg-emerald-950/80 border-emerald-500/40 text-emerald-400' };
-    if (val < 55) return { text: 'MODERATE', bg: 'bg-blue-950/80 border-blue-500/40 text-blue-400' };
-    if (val < 75) return { text: 'HIGH', bg: 'bg-amber-950/80 border-amber-500/40 text-amber-400' };
-    return { text: 'CRITICAL', bg: 'bg-rose-950/80 border-rose-500/40 text-rose-400' };
+    if (val < 25) return { text: 'LOW', bg: 'bg-emerald-50 border-emerald-200 text-emerald-800' };
+    if (val < 55) return { text: 'MODERATE', bg: 'bg-blue-50 border-blue-200 text-blue-800' };
+    if (val < 75) return { text: 'HIGH', bg: 'bg-amber-50 border-amber-200 text-amber-800' };
+    return { text: 'CRITICAL', bg: 'bg-rose-50 border-rose-200 text-rose-800' };
   };
 
   return (
     <div className="space-y-6">
       {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/60 via-slate-900 to-indigo-950/50 p-6 shadow-2xl backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-2xl border border-emerald-200/90 bg-gradient-to-r from-emerald-50 via-teal-50/50 to-white p-6 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400 mb-2">
-              <Compass className="h-3.5 w-3.5 animate-spin" style={{ animationDuration: '8s' }} />
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-100/70 px-3 py-1 text-xs font-semibold text-emerald-800 mb-2">
+              <Compass className="h-3.5 w-3.5 animate-spin text-emerald-700" style={{ animationDuration: '8s' }} />
               National Precision Agriculture • Real-Time India Infrastructure
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
               India Real-Time Multi-Zone Fuzzy Irrigation Architecture
             </h2>
-            <p className="mt-1 text-sm text-slate-300 max-w-3xl">
+            <p className="mt-1 text-sm text-slate-600 max-w-3xl">
               Enter any Indian district, village, city, or PIN code. The system executes live meteorological ingestion via Open-Meteo, 
               couples ICAR 15 Agro-Climatic & NBSS soil physics, and executes the complete 5-stage closed-loop Mamdani Fuzzy Control Cascade.
             </p>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <span className="block text-xs text-slate-400">Mass Conservation</span>
-              <span className="text-sm font-semibold text-emerald-400">|Residual| &lt; 10⁻⁶ mm</span>
+              <span className="block text-xs text-slate-500">Mass Conservation</span>
+              <span className="text-sm font-semibold text-emerald-700">|Residual| &lt; 10⁻⁶ mm</span>
             </div>
-            <div className="h-10 w-px bg-slate-700 hidden sm:block" />
+            <div className="h-10 w-px bg-emerald-200 hidden sm:block" />
             <div className="text-right hidden sm:block">
-              <span className="block text-xs text-slate-400">Fuzzy Inference</span>
-              <span className="text-sm font-semibold text-cyan-400">162 Mamdani Rules</span>
+              <span className="block text-xs text-slate-500">Fuzzy Inference</span>
+              <span className="text-sm font-semibold text-teal-700">162 Mamdani Rules</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Location Input & Fast Selectors */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg space-y-4">
+      <div className="rounded-xl border border-emerald-200 bg-white p-5 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
-            <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-400" />
+            <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-600" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleExecute()}
               placeholder="Enter any Indian district, city, state, or PIN code (e.g. Pune, Ludhiana, 141004)..."
-              className="w-full rounded-lg border border-slate-700 bg-slate-950/80 pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-emerald-200 bg-emerald-50/30 pl-11 pr-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-800 bg-slate-950 text-xs">
-              <Droplets className="h-4 w-4 text-cyan-400" />
-              <span className="text-slate-400">Reservoir:</span>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-emerald-200 bg-emerald-50/50 text-xs">
+              <Droplets className="h-4 w-4 text-cyan-600" />
+              <span className="text-slate-600">Reservoir:</span>
               <input
                 type="number"
                 min="10"
                 max="100"
                 value={reservoirStorage}
                 onChange={(e) => setReservoirStorage(Number(e.target.value))}
-                className="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-center text-white font-mono"
+                className="w-14 bg-white border border-emerald-200 rounded px-1.5 py-0.5 text-center text-slate-900 font-mono shadow-2xs"
               />
-              <span className="text-slate-400">%</span>
+              <span className="text-slate-500">%</span>
             </div>
 
             <button
@@ -327,183 +327,184 @@ export default function IndiaPrecisionIrrigationHub() {
       {evalData && (
         <div className="space-y-6">
           {/* Top Location & Agro-Climatic Profile */}
+          {/* Top Location & Agro-Climatic Profile */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow">
-              <div className="text-xs text-slate-400 flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5 text-emerald-400" /> Resolved Indian Region
+            <div className="rounded-xl border border-emerald-200 bg-white p-4 shadow-xs">
+              <div className="text-xs text-slate-500 flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 text-emerald-600" /> Resolved Indian Region
               </div>
-              <div className="text-lg font-bold text-white mt-1">
+              <div className="text-lg font-bold text-slate-900 mt-1">
                 {evalData.location.district}, {evalData.location.state}
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">
+              <div className="text-xs text-slate-500 mt-0.5">
                 {evalData.location.latitude.toFixed(2)}°N, {evalData.location.longitude.toFixed(2)}°E • {evalData.location.elevation_m}m elevation
               </div>
             </div>
 
-            <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow">
-              <div className="text-xs text-slate-400 flex items-center gap-1.5">
-                <Compass className="h-3.5 w-3.5 text-indigo-400" /> ICAR Agro-Climatic Zone
+            <div className="rounded-xl border border-emerald-200 bg-white p-4 shadow-xs">
+              <div className="text-xs text-slate-500 flex items-center gap-1.5">
+                <Compass className="h-3.5 w-3.5 text-teal-600" /> ICAR Agro-Climatic Zone
               </div>
-              <div className="text-sm font-bold text-indigo-300 mt-1 line-clamp-1">
+              <div className="text-sm font-bold text-teal-800 mt-1 line-clamp-1">
                 Zone #{evalData.location.zone_number}: {evalData.location.agro_climatic_zone}
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">
-                Seasonal Cycle: <span className="text-emerald-400 font-medium">{evalData.physics_agronomy.active_season}</span>
+              <div className="text-xs text-slate-500 mt-0.5">
+                Seasonal Cycle: <span className="text-emerald-700 font-medium">{evalData.physics_agronomy.active_season}</span>
               </div>
             </div>
 
-            <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow">
-              <div className="text-xs text-slate-400 flex items-center gap-1.5">
-                <Sprout className="h-3.5 w-3.5 text-amber-400" /> Dominant Regional Soil
+            <div className="rounded-xl border border-emerald-200 bg-white p-4 shadow-xs">
+              <div className="text-xs text-slate-500 flex items-center gap-1.5">
+                <Sprout className="h-3.5 w-3.5 text-amber-600" /> Dominant Regional Soil
               </div>
-              <div className="text-sm font-bold text-amber-300 mt-1">
+              <div className="text-sm font-bold text-slate-900 mt-1">
                 {evalData.location.dominant_soil}
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">
-                FC: <span className="text-white font-mono">{evalData.location.field_capacity_pct}%</span> • WP: <span className="text-white font-mono">{evalData.location.wilting_point_pct}%</span>
+              <div className="text-xs text-slate-500 mt-0.5">
+                FC: <span className="text-emerald-700 font-mono font-bold">{evalData.location.field_capacity_pct}%</span> • WP: <span className="text-rose-600 font-mono font-bold">{evalData.location.wilting_point_pct}%</span>
               </div>
             </div>
 
-            <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow">
-              <div className="text-xs text-slate-400 flex items-center gap-1.5">
-                <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" /> Benchmark Savings
+            <div className="rounded-xl border border-emerald-200 bg-white p-4 shadow-xs">
+              <div className="text-xs text-slate-500 flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> Benchmark Savings
               </div>
-              <div className="text-base font-bold text-emerald-400 mt-1 flex items-center gap-2">
+              <div className="text-base font-bold text-emerald-700 mt-1 flex items-center gap-2">
                 <span>+{evalData.water_savings_vs_onoff_pct}% vs On-Off</span>
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">
+              <div className="text-xs text-slate-500 mt-0.5">
                 <span>+{evalData.water_savings_vs_pid_pct}% vs PID Controller</span>
               </div>
             </div>
           </div>
 
           {/* Live Meteorology & FAO-56 Physics Strip */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div className="rounded-xl border border-emerald-200 bg-white p-5 shadow-xs space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-100 pb-3">
               <div className="flex items-center gap-2">
-                <CloudSun className="h-5 w-5 text-amber-400" />
-                <h3 className="font-semibold text-white text-sm sm:text-base">
+                <CloudSun className="h-5 w-5 text-amber-500" />
+                <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
                   Live Meteorological Readings (Open-Meteo High-Resolution Feed)
                 </h3>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-medium border border-emerald-500/40 bg-emerald-950/60 text-emerald-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-medium border border-emerald-200 bg-emerald-50 text-emerald-800">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                 {evalData.weather.is_live ? 'LIVE SATELLITE/NWP' : 'IMD CLIMATOLOGICAL'} • {evalData.weather.timestamp}
               </div>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 pt-1">
-              <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-center">
-                <span className="text-[11px] text-slate-400 block">Temperature</span>
-                <span className="text-xl font-bold font-mono text-amber-400">{evalData.weather.temperature_c}°C</span>
+              <div className="rounded-lg border border-emerald-100 bg-emerald-50/30 p-3 text-center">
+                <span className="text-[11px] text-slate-500 block">Temperature</span>
+                <span className="text-xl font-bold font-mono text-amber-700">{evalData.weather.temperature_c}°C</span>
               </div>
-              <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-center">
-                <span className="text-[11px] text-slate-400 block">Humidity</span>
-                <span className="text-xl font-bold font-mono text-cyan-400">{evalData.weather.humidity_percent}%</span>
+              <div className="rounded-lg border border-emerald-100 bg-emerald-50/30 p-3 text-center">
+                <span className="text-[11px] text-slate-500 block">Humidity</span>
+                <span className="text-xl font-bold font-mono text-teal-700">{evalData.weather.humidity_percent}%</span>
               </div>
-              <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-center">
-                <span className="text-[11px] text-slate-400 block">Solar Radiation</span>
-                <span className="text-xl font-bold font-mono text-yellow-300">{evalData.weather.solar_radiation_w_m2} <span className="text-xs font-normal">W/m²</span></span>
+              <div className="rounded-lg border border-emerald-100 bg-emerald-50/30 p-3 text-center">
+                <span className="text-[11px] text-slate-500 block">Solar Radiation</span>
+                <span className="text-xl font-bold font-mono text-amber-600">{evalData.weather.solar_radiation_w_m2} <span className="text-xs font-normal">W/m²</span></span>
               </div>
-              <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-center">
-                <span className="text-[11px] text-slate-400 block">2m Wind Speed</span>
-                <span className="text-xl font-bold font-mono text-indigo-300">{evalData.weather.wind_speed_m_s} <span className="text-xs font-normal">m/s</span></span>
+              <div className="rounded-lg border border-emerald-100 bg-emerald-50/30 p-3 text-center">
+                <span className="text-[11px] text-slate-500 block">2m Wind Speed</span>
+                <span className="text-xl font-bold font-mono text-indigo-700">{evalData.weather.wind_speed_m_s} <span className="text-xs font-normal">m/s</span></span>
               </div>
-              <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-center">
-                <span className="text-[11px] text-slate-400 block">Rainfall</span>
-                <span className="text-xl font-bold font-mono text-blue-400">{evalData.weather.rainfall_mm} <span className="text-xs font-normal">mm</span></span>
+              <div className="rounded-lg border border-emerald-100 bg-emerald-50/30 p-3 text-center">
+                <span className="text-[11px] text-slate-500 block">Rainfall</span>
+                <span className="text-xl font-bold font-mono text-blue-700">{evalData.weather.rainfall_mm} <span className="text-xs font-normal">mm</span></span>
               </div>
-              <div className="rounded-lg border border-emerald-500/30 bg-emerald-950/30 p-3 text-center">
-                <span className="text-[11px] text-emerald-400 block font-semibold">FAO-56 ET₀</span>
-                <span className="text-xl font-bold font-mono text-emerald-300">{evalData.physics_agronomy.et0_fao56_mm_day} <span className="text-xs font-normal">mm/d</span></span>
+              <div className="rounded-lg border border-emerald-200 bg-emerald-100/60 p-3 text-center">
+                <span className="text-[11px] text-emerald-800 block font-semibold">FAO-56 ET₀</span>
+                <span className="text-xl font-bold font-mono text-emerald-800">{evalData.physics_agronomy.et0_fao56_mm_day} <span className="text-xs font-normal">mm/d</span></span>
               </div>
             </div>
           </div>
 
           {/* 5-Stage Fuzzy Inference Architecture Cascade */}
-          <div className="rounded-xl border border-indigo-500/30 bg-slate-900/90 p-5 shadow-lg space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="rounded-xl border border-emerald-200 bg-white p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-emerald-100 pb-3">
               <div className="flex items-center gap-2">
-                <Cpu className="h-5 w-5 text-indigo-400" />
-                <h3 className="font-semibold text-white">
+                <Cpu className="h-5 w-5 text-emerald-600" />
+                <h3 className="font-semibold text-slate-900">
                   5-Stage Hierarchical Mamdani Fuzzy Control Cascade (162 Rules)
                 </h3>
               </div>
-              <span className="text-xs text-slate-400 font-mono">Min-Max Implication • Centroid Defuzzification</span>
+              <span className="text-xs text-slate-500 font-mono">Min-Max Implication • Centroid Defuzzification</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
               {/* Stage 1 */}
-              <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4 space-y-2 relative overflow-hidden">
-                <div className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">Stage 1 • FIS 1</div>
-                <div className="text-xs text-slate-400">Root-Zone Soil Stress</div>
-                <div className="text-2xl font-bold font-mono text-white">
+              <div className="rounded-xl border border-emerald-100 bg-emerald-50/30 p-4 space-y-2 relative overflow-hidden">
+                <div className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">Stage 1 • FIS 1</div>
+                <div className="text-xs text-slate-500">Root-Zone Soil Stress</div>
+                <div className="text-2xl font-bold font-mono text-slate-900">
                   {evalData.fuzzy_stages.stage1_soil_stress_pct}%
                 </div>
                 <div className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${getLevelBadge(evalData.fuzzy_stages.stage1_soil_stress_pct).bg}`}>
                   {getLevelBadge(evalData.fuzzy_stages.stage1_soil_stress_pct).text}
                 </div>
-                <div className="text-[10px] text-slate-400 pt-1">
+                <div className="text-[10px] text-slate-500 pt-1">
                   Inputs: RSM + Moisture Tracking Error e(t) [25 Rules]
                 </div>
               </div>
 
               {/* Stage 2 */}
-              <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4 space-y-2 relative overflow-hidden">
-                <div className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider">Stage 2 • FIS 2</div>
-                <div className="text-xs text-slate-400">Atmospheric Stress</div>
-                <div className="text-2xl font-bold font-mono text-white">
+              <div className="rounded-xl border border-amber-100 bg-amber-50/30 p-4 space-y-2 relative overflow-hidden">
+                <div className="text-[11px] font-semibold text-amber-700 uppercase tracking-wider">Stage 2 • FIS 2</div>
+                <div className="text-xs text-slate-500">Atmospheric Stress</div>
+                <div className="text-2xl font-bold font-mono text-slate-900">
                   {evalData.fuzzy_stages.stage2_weather_stress_pct}%
                 </div>
                 <div className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${getLevelBadge(evalData.fuzzy_stages.stage2_weather_stress_pct).bg}`}>
                   {getLevelBadge(evalData.fuzzy_stages.stage2_weather_stress_pct).text}
                 </div>
-                <div className="text-[10px] text-slate-400 pt-1">
+                <div className="text-[10px] text-slate-500 pt-1">
                   Inputs: T + RH + Rs + u₂ + Rain [34 Rules]
                 </div>
               </div>
 
               {/* Stage 3 */}
-              <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4 space-y-2 relative overflow-hidden">
-                <div className="text-[11px] font-semibold text-cyan-400 uppercase tracking-wider">Stage 3 • FIS 3</div>
-                <div className="text-xs text-slate-400">Crop Water Demand</div>
-                <div className="text-2xl font-bold font-mono text-white">
+              <div className="rounded-xl border border-teal-100 bg-teal-50/30 p-4 space-y-2 relative overflow-hidden">
+                <div className="text-[11px] font-semibold text-teal-700 uppercase tracking-wider">Stage 3 • FIS 3</div>
+                <div className="text-xs text-slate-500">Crop Water Demand</div>
+                <div className="text-2xl font-bold font-mono text-slate-900">
                   {evalData.fuzzy_stages.stage3_water_demand_pct}%
                 </div>
                 <div className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${getLevelBadge(evalData.fuzzy_stages.stage3_water_demand_pct).bg}`}>
                   {getLevelBadge(evalData.fuzzy_stages.stage3_water_demand_pct).text}
                 </div>
-                <div className="text-[10px] text-slate-400 pt-1">
+                <div className="text-[10px] text-slate-500 pt-1">
                   Inputs: ETc + Deficit + Peff [39 Rules]
                 </div>
               </div>
 
               {/* Stage 4 */}
-              <div className="rounded-xl border border-indigo-500/40 bg-indigo-950/20 p-4 space-y-2 relative overflow-hidden">
-                <div className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider">Stage 4 • FIS 4</div>
-                <div className="text-xs text-slate-400">Supervisory Valve Command</div>
-                <div className="text-2xl font-bold font-mono text-indigo-300">
+              <div className="rounded-xl border border-indigo-100 bg-indigo-50/30 p-4 space-y-2 relative overflow-hidden">
+                <div className="text-[11px] font-semibold text-indigo-700 uppercase tracking-wider">Stage 4 • FIS 4</div>
+                <div className="text-xs text-slate-500">Supervisory Valve Command</div>
+                <div className="text-2xl font-bold font-mono text-indigo-900">
                   {evalData.fuzzy_stages.stage4_main_command_pct}%
                 </div>
                 <div className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${getLevelBadge(evalData.fuzzy_stages.stage4_main_command_pct).bg}`}>
                   {getLevelBadge(evalData.fuzzy_stages.stage4_main_command_pct).text}
                 </div>
-                <div className="text-[10px] text-slate-400 pt-1">
+                <div className="text-[10px] text-slate-500 pt-1">
                   4-Layer Protection Kernel [32 Rules]
                 </div>
               </div>
 
               {/* Stage 5 */}
-              <div className="rounded-xl border border-emerald-500/40 bg-emerald-950/20 p-4 space-y-2 relative overflow-hidden">
-                <div className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">Stage 5 • FIS 5</div>
-                <div className="text-xs text-slate-400">Bounded Water-Filling</div>
-                <div className="text-2xl font-bold font-mono text-emerald-300">
+              <div className="rounded-xl border border-emerald-200 bg-emerald-100/40 p-4 space-y-2 relative overflow-hidden">
+                <div className="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider">Stage 5 • FIS 5</div>
+                <div className="text-xs text-slate-500">Bounded Water-Filling</div>
+                <div className="text-2xl font-bold font-mono text-emerald-800">
                   {evalData.total_allocated_liters.toLocaleString()} L
                 </div>
-                <div className="text-[10px] font-mono text-emerald-400">
+                <div className="text-[10px] font-mono text-emerald-700 font-bold">
                   {evalData.is_supply_constrained ? 'RATIONED SUPPLY' : 'OPTIMAL SUPPLY'}
                 </div>
-                <div className="text-[10px] text-slate-400 pt-1">
+                <div className="text-[10px] text-slate-500 pt-1">
                   Enforces Σ Alloc ≤ Available [32 Rules]
                 </div>
               </div>
@@ -511,67 +512,67 @@ export default function IndiaPrecisionIrrigationHub() {
           </div>
 
           {/* Multi-Zone Bounded Allocation Table */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div className="rounded-xl border border-emerald-200 bg-white p-5 shadow-xs space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-100 pb-3">
               <div>
-                <h3 className="font-semibold text-white flex items-center gap-2">
-                  <Layers className="h-4 w-4 text-emerald-400" />
+                <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-emerald-600" />
                   Multi-Zone Agricultural Plot Allocations ({evalData.location.district})
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Arbitrating limited local reservoir ({evalData.available_supply_liters.toLocaleString()} L available) across competing Indian crop zones.
                 </p>
               </div>
               <div className="text-right text-xs">
-                <span className="text-slate-400">Total Requested: </span>
-                <span className="font-mono text-white font-bold">{evalData.total_requested_liters.toLocaleString()} L</span>
-                <span className="text-slate-400 ml-2">Total Granted: </span>
-                <span className="font-mono text-emerald-400 font-bold">{evalData.total_allocated_liters.toLocaleString()} L</span>
+                <span className="text-slate-500">Total Requested: </span>
+                <span className="font-mono text-slate-900 font-bold">{evalData.total_requested_liters.toLocaleString()} L</span>
+                <span className="text-slate-500 ml-2">Total Granted: </span>
+                <span className="font-mono text-emerald-700 font-bold">{evalData.total_allocated_liters.toLocaleString()} L</span>
               </div>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400">
-                    <th className="py-2 px-3">Zone / Crop</th>
-                    <th className="py-2 px-3">Season & Kc</th>
-                    <th className="py-2 px-3">Moisture State</th>
-                    <th className="py-2 px-3">Soil Stress</th>
-                    <th className="py-2 px-3">Fuzzy Cmd</th>
-                    <th className="py-2 px-3">Requested</th>
-                    <th className="py-2 px-3">Allocated</th>
-                    <th className="py-2 px-3">Fulfillment</th>
-                    <th className="py-2 px-3">Status</th>
+                  <tr className="border-b border-emerald-100 text-slate-500 bg-emerald-50/40">
+                    <th className="py-2.5 px-3">Zone / Crop</th>
+                    <th className="py-2.5 px-3">Season & Kc</th>
+                    <th className="py-2.5 px-3">Moisture State</th>
+                    <th className="py-2.5 px-3">Soil Stress</th>
+                    <th className="py-2.5 px-3">Fuzzy Cmd</th>
+                    <th className="py-2.5 px-3">Requested</th>
+                    <th className="py-2.5 px-3">Allocated</th>
+                    <th className="py-2.5 px-3">Fulfillment</th>
+                    <th className="py-2.5 px-3">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
+                <tbody className="divide-y divide-emerald-50 font-mono text-slate-800">
                   {evalData.zone_allocations.map((z) => (
-                    <tr key={z.zone_id} className="hover:bg-slate-800/30">
-                      <td className="py-3 px-3 font-sans font-semibold text-white">
+                    <tr key={z.zone_id} className="hover:bg-emerald-50/50 transition">
+                      <td className="py-3 px-3 font-sans font-semibold text-slate-900">
                         {z.name}
-                        <span className="block text-[10px] text-slate-400 font-normal">{z.area_m2} m² • {z.soil_type}</span>
+                        <span className="block text-[10px] text-slate-500 font-normal">{z.area_m2} m² • {z.soil_type}</span>
                       </td>
                       <td className="py-3 px-3">
-                        <span className="text-slate-300 font-sans">{z.crop}</span>
-                        <span className="block text-[10px] text-indigo-400">Kc = {z.kc} ({z.season})</span>
+                        <span className="text-slate-700 font-sans">{z.crop}</span>
+                        <span className="block text-[10px] text-teal-700">Kc = {z.kc} ({z.season})</span>
                       </td>
                       <td className="py-3 px-3">
-                        <span className="text-white">{z.current_moisture_pct}%</span>
-                        <span className="text-slate-500 text-[10px] block">Target: {z.target_moisture_pct}%</span>
+                        <span className="text-slate-900">{z.current_moisture_pct}%</span>
+                        <span className="text-slate-400 text-[10px] block">Target: {z.target_moisture_pct}%</span>
                       </td>
-                      <td className="py-3 px-3 text-amber-300">{z.soil_stress_pct}%</td>
-                      <td className="py-3 px-3 text-indigo-300">{z.main_command_pct}%</td>
-                      <td className="py-3 px-3 text-slate-300">{z.requested_liters} L</td>
-                      <td className="py-3 px-3 text-emerald-400 font-bold">{z.allocated_liters} L</td>
+                      <td className="py-3 px-3 text-amber-700 font-bold">{z.soil_stress_pct}%</td>
+                      <td className="py-3 px-3 text-teal-700 font-bold">{z.main_command_pct}%</td>
+                      <td className="py-3 px-3 text-slate-600">{z.requested_liters} L</td>
+                      <td className="py-3 px-3 text-emerald-700 font-bold">{z.allocated_liters} L</td>
                       <td className="py-3 px-3">
                         <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                          z.fulfillment_ratio_pct >= 99 ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'
+                          z.fulfillment_ratio_pct >= 99 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                         }`}>
                           {z.fulfillment_ratio_pct}%
                         </span>
                       </td>
-                      <td className="py-3 px-3 font-sans text-[11px] font-medium text-slate-300">{z.status}</td>
+                      <td className="py-3 px-3 font-sans text-[11px] font-medium text-slate-600">{z.status}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -580,34 +581,34 @@ export default function IndiaPrecisionIrrigationHub() {
           </div>
 
           {/* Decision Summary Callout */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs text-slate-300 flex items-start gap-3">
-            <Sparkles className="h-5 w-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 text-xs text-slate-700 flex items-start gap-3 shadow-2xs">
+            <Sparkles className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
             <div>
-              <span className="font-semibold text-white block mb-0.5">Automated Agronomic Decision Rationale:</span>
+              <span className="font-semibold text-slate-900 block mb-0.5">Automated Agronomic Decision Rationale:</span>
               <p className="leading-relaxed">{evalData.decision_summary}</p>
             </div>
           </div>
 
           {/* LIVE ICAR AGROMET ADVISORY COPILOT (GPT-OSS-120B & TAVILY) */}
-          <div className="rounded-2xl border border-sky-900/60 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950/40 p-5 sm:p-6 shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+          <div className="rounded-2xl border border-emerald-200 bg-white p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-100 pb-4">
               <div>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="inline-flex items-center gap-1 rounded-md bg-sky-950/80 px-2.5 py-0.5 text-[10px] font-bold text-sky-400 border border-sky-800/60 uppercase">
+                  <span className="inline-flex items-center gap-1 rounded-md bg-teal-50 px-2.5 py-0.5 text-[10px] font-bold text-teal-800 border border-teal-200 uppercase">
                     <Globe className="h-3 w-3" /> Tavily Web Search Live
                   </span>
-                  <span className="text-xs text-slate-600">•</span>
-                  <span className="inline-flex items-center gap-1 rounded-md bg-purple-950/80 px-2.5 py-0.5 text-[10px] font-bold text-purple-400 border border-purple-800/60 uppercase">
+                  <span className="text-xs text-slate-300">•</span>
+                  <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 px-2.5 py-0.5 text-[10px] font-bold text-purple-800 border border-purple-200 uppercase">
                     <Brain className="h-3 w-3" /> Groq: openai/gpt-oss-120b
                   </span>
-                  <span className="text-xs text-slate-600">•</span>
-                  <span className="text-[10px] text-emerald-400 font-semibold">ICAR / IMD Agromet Service</span>
+                  <span className="text-xs text-slate-300">•</span>
+                  <span className="text-[10px] text-emerald-700 font-semibold">ICAR / IMD Agromet Service</span>
                 </div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold border border-emerald-500/40">IN</span>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold border border-emerald-300">IN</span>
                   <span>Live Regional ICAR Agromet Intelligence</span>
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   Synthesize real-time agricultural advisories for {evalData.location.district}, {evalData.location.state} with 120B reasoning grounded in live web bulletins.
                 </p>
               </div>
@@ -616,7 +617,7 @@ export default function IndiaPrecisionIrrigationHub() {
                 <button
                   onClick={handleFetchAgrometAdvisory}
                   disabled={advisoryLoading}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 text-white font-bold text-xs transition shadow-lg shadow-sky-950/50 cursor-pointer disabled:opacity-50 shrink-0"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-bold text-xs transition shadow-md shadow-emerald-600/20 cursor-pointer disabled:opacity-50 shrink-0"
                 >
                   {advisoryLoading ? (
                     <>
@@ -634,11 +635,11 @@ export default function IndiaPrecisionIrrigationHub() {
             </div>
 
             {advisoryLoading && (
-              <div className="p-4 rounded-xl border border-sky-800/50 bg-sky-950/30 text-xs text-sky-200 flex items-center gap-3 animate-pulse">
-                <Globe className="h-5 w-5 text-sky-400 animate-spin" />
+              <div className="p-4 rounded-xl border border-teal-200 bg-teal-50/50 text-xs text-teal-900 flex items-center gap-3 animate-pulse">
+                <Globe className="h-5 w-5 text-teal-600 animate-spin" />
                 <div>
                   <span className="font-semibold block">Querying Tavily for {evalData.location.district} Agromet Bulletins...</span>
-                  <span className="text-[11px] text-sky-300/80">Synthesizing with Groq openai/gpt-oss-120b reasoning model...</span>
+                  <span className="text-[11px] text-teal-700">Synthesizing with Groq openai/gpt-oss-120b reasoning model...</span>
                 </div>
               </div>
             )}
@@ -646,25 +647,25 @@ export default function IndiaPrecisionIrrigationHub() {
             {advisoryData && (
               <div className="space-y-4">
                 {/* Executive Summary */}
-                <div className="rounded-xl border border-slate-800 bg-slate-900/90 p-4 space-y-2">
-                  <span className="text-[10px] font-mono uppercase text-sky-400 font-bold tracking-wider block">
+                <div className="rounded-xl border border-emerald-100 bg-emerald-50/30 p-4 space-y-2">
+                  <span className="text-[10px] font-mono uppercase text-teal-800 font-bold tracking-wider block">
                     Agrometeorological Synthesis ({advisoryData.crop} • {evalData.location.dominant_soil})
                   </span>
-                  <p className="text-xs text-slate-200 leading-relaxed font-sans whitespace-pre-line">
+                  <p className="text-xs text-slate-700 leading-relaxed font-sans whitespace-pre-line">
                     {advisoryData.advisory_summary}
                   </p>
                 </div>
 
                 {/* Critical Farming Tips */}
                 {advisoryData.critical_farming_tips && advisoryData.critical_farming_tips.length > 0 && (
-                  <div className="rounded-xl border border-emerald-900/50 bg-emerald-950/20 p-4 space-y-2">
-                    <span className="text-[10px] font-mono uppercase text-emerald-400 font-bold tracking-wider block">
+                  <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 space-y-2">
+                    <span className="text-[10px] font-mono uppercase text-emerald-800 font-bold tracking-wider block">
                       Field Management Checklist (ICAR Best Practices)
                     </span>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
                       {advisoryData.critical_farming_tips.map((tip, tIdx) => (
-                        <li key={tIdx} className="flex items-start gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80">
-                          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <li key={tIdx} className="flex items-start gap-2 bg-white p-2.5 rounded-lg border border-emerald-100 shadow-2xs">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                           <span className="leading-snug">{tip}</span>
                         </li>
                       ))}
@@ -674,19 +675,19 @@ export default function IndiaPrecisionIrrigationHub() {
 
                 {/* 120B Chain-of-Thought Reasoning */}
                 {advisoryData.reasoning && (
-                  <div className="rounded-xl border border-purple-900/40 bg-purple-950/20 p-3">
+                  <div className="rounded-xl border border-purple-200 bg-purple-50/30 p-3">
                     <button
                       onClick={() => setShowReasoning(!showReasoning)}
-                      className="flex items-center justify-between w-full text-xs font-semibold text-purple-300 hover:text-purple-200 transition cursor-pointer"
+                      className="flex items-center justify-between w-full text-xs font-semibold text-purple-900 hover:text-purple-700 transition cursor-pointer"
                     >
                       <span className="flex items-center gap-1.5">
-                        <Brain className="h-4 w-4 text-purple-400" />
+                        <Brain className="h-4 w-4 text-purple-600" />
                         <span>120B Chain-of-Thought Reasoning Trace</span>
                       </span>
                       {showReasoning ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                     </button>
                     {showReasoning && (
-                      <div className="mt-2.5 p-3 rounded-lg bg-black/40 border border-purple-900/60 text-[10px] font-mono text-purple-200 leading-relaxed whitespace-pre-wrap max-h-52 overflow-y-auto">
+                      <div className="mt-2.5 p-3 rounded-lg bg-white border border-purple-200 text-[10px] font-mono text-purple-950 leading-relaxed whitespace-pre-wrap max-h-52 overflow-y-auto">
                         {advisoryData.reasoning}
                       </div>
                     )}
@@ -695,9 +696,9 @@ export default function IndiaPrecisionIrrigationHub() {
 
                 {/* Tavily Verified Web Sources */}
                 {advisoryData.web_sources && advisoryData.web_sources.length > 0 && (
-                  <div className="pt-2 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex items-center gap-1 text-[11px] text-slate-400">
-                      <Globe className="h-3.5 w-3.5 text-sky-400" />
+                  <div className="pt-2 border-t border-emerald-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                      <Globe className="h-3.5 w-3.5 text-teal-600" />
                       <span>Live Agricultural Sources:</span>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
@@ -707,7 +708,7 @@ export default function IndiaPrecisionIrrigationHub() {
                           href={src.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-sky-400 hover:text-sky-300 hover:border-sky-700 transition"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-[10px] text-teal-700 hover:text-emerald-700 hover:border-emerald-300 transition shadow-2xs"
                         >
                           <span className="truncate max-w-[220px]">{src.title}</span>
                           <ExternalLink className="h-2.5 w-2.5 shrink-0" />
