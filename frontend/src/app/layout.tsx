@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} dark`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans selection:bg-emerald-500 selection:text-white antialiased transition-colors duration-300">
         <ThemeProvider>
           <AuthProvider>

@@ -15,14 +15,14 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>('dark');
+  const [theme, setThemeState] = useState<ThemeMode>('light');
   const [audioFeedback, setAudioFeedback] = useState<boolean>(true);
   const [mounted, setMounted] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check saved theme or default to 2026 dark cyber-agri cockpit
+    // Check saved theme or default to clean light agronomy cockpit
     const savedTheme = localStorage.getItem('agri_theme') as ThemeMode | null;
-    const initialTheme = savedTheme === 'light' ? 'light' : 'dark';
+    const initialTheme = savedTheme === 'dark' ? 'dark' : 'light';
     setThemeState(initialTheme);
 
     const savedAudio = localStorage.getItem('agri_audio_feedback');

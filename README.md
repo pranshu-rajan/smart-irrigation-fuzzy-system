@@ -1,287 +1,343 @@
-# Smart Multizone Irrigation and Water Resource Management Using Hierarchical Adaptive Fuzzy Control
+# Smart Multizone Irrigation & Water Resource Management Platform
+### Hierarchical Adaptive Fuzzy Control (HAFC) & Digital Twin Ecosystem
 
-> **Academic Context**: B.Tech 3rd-Year Electronics & Instrumentation Engineering / Fuzzy Systems Project.  
-> **Core Principle**: The **Fuzzy Control System** is the mathematical and control-theoretic foundation of this project. It is not replaced by black-box machine learning or simple threshold switching.
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Next.js](https://img.shields.io/badge/Next.js-16.3.5_(Turbopack)-000000.svg?style=flat&logo=next.js&logoColor=white)](https://nextjs.org)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://python.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Three.js](https://img.shields.io/badge/Three.js-WebGL_3D-black.svg?style=flat&logo=three.js&logoColor=white)](https://threejs.org)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38B2AC.svg?style=flat&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![Test Suite](https://img.shields.io/badge/Tests-300_Passed-10B981.svg?style=flat&logo=pytest&logoColor=white)](https://docs.pytest.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
 
----
-
-## 1. Project Objective
-
-Agricultural irrigation accounts for approximately 70% of global freshwater withdrawals. Traditional irrigation systems operate either on fixed time schedules (open-loop) or simple hysteresis thresholds (bang-bang control), leading to significant water waste, nutrient runoff, and crop stress from over- or under-irrigation.
-
-This project implements a **closed-loop, intelligent multizone irrigation and water resource management system** using a **Hierarchical Adaptive Mamdani Fuzzy Control Architecture**. The system:
-1. Ingests dynamic environmental (weather), soil, crop, and available water resource parameters.
-2. Formulates reference evapotranspiration ($ET_0$) via the physics-based **FAO-56 Penman-Monteith** methodology.
-3. Computes crop-specific evapotranspiration ($ET_c = K_c \times ET_0$).
-4. Models dynamic soil-water balance considering infiltration, drainage, and saturation limits.
-5. Evaluates normalized relative soil moisture ($RSM$) and closed-loop moisture error $e(t) = SM_{\text{target}} - SM(t)$.
-6. Decomposes decision-making into **five modular Fuzzy Inference Systems (FIS)**:
-   - Soil Stress FIS
-   - Weather Stress FIS
-   - Water Demand FIS
-   - Main Irrigation Demand FIS
-   - Water Allocation FIS
-7. Resolves inter-zone competition for limited water reservoirs while maintaining plant health and strict soil moisture conservation.
-8. Provides mathematical explainability, benchmark comparisons (vs. On-Off and PID controllers), and MATLAB/Simulink validation.
+> **Academic Foundation**: B.Tech 3rd-Year Electronics & Instrumentation Engineering / Fuzzy Systems.  
+> **Core Principle**: The **Fuzzy Control System** provides the deterministic, mathematical, and control-theoretic foundation of this platform. It is not replaced by black-box machine learning or crude hysteresis thresholds.
 
 ---
 
-## 2. Core Architecture
+## 1. Executive Summary & Problem Context
 
-The system enforces a hierarchical, closed-loop control topology:
+Agricultural irrigation accounts for approximately **70% of global freshwater withdrawals**. Conventional irrigation strategies operate either via open-loop timers or crude hysteresis thresholds (bang-bang switching). These approaches lead to excessive water waste, deep nutrient percolation, and crop stress resulting from over- or under-irrigation.
+
+This project delivers a production-grade, closed-loop **Hierarchical Adaptive Mamdani Fuzzy Control Architecture (HAFC)** coupled with a **real-time 3D WebGL Digital Twin**, **interactive 24-hour simulation playback**, and a **National-Scale Indian GIS Engine** spanning 15 ICAR agro-climatic zones and 700+ districts.
+
+### Key Capabilities
+- **Physics-Based Evapotranspiration**: Dynamic FAO-56 Penman-Monteith reference evapotranspiration ($ET_0$) driven by solar radiation, temperature, relative humidity, and wind speed.
+- **Hierarchical 5-FIS Control**: Decomposes complex multidimensional decisions into 5 modular Mamdani Fuzzy Inference Systems to prevent rule-base explosion.
+- **Strict Conservation Constraints**: Closed-loop 1D soil-water mass balance with physical bounds ($WP \le SM \le FC$) and guaranteed $0.00\text{ mm}$ mathematical residual closure.
+- **Supervisory Resource Allocation**: Deterministic water-filling algorithm with priority weighting, guaranteeing zero supply violations under severe reservoir scarcity.
+- **Living 3D WebGL Digital Twin**: Real-time Three.js field topology with dynamic soil hydration shaders, camera slerp interpolation, and proportional emitter spray.
+- **Simulation Playback Engine**: Scrubbable 24-hour ($1440\text{ min}$) timeline with variable speeds ($1\times$ to $30\times$), diurnal curve modeling, and live solenoid actuator telemetry.
+- **2026 UI Design System**: Clean, light agronomy theme by default with seamless toggle to dark cyber-cockpit mode, custom frosted glassmorphism, Web Audio synthesized haptic feedback, and a global keyboard command palette (`Cmd+K` / `Ctrl+K`).
+- **Explainable AI Advisory**: Grounded RAG agronomic copilot powered by Groq LLM and live web intelligence (Tavily), strictly bounded as an explanatory layer.
+
+---
+
+## 2. Control System Architecture
+
+The platform implements a closed-loop hierarchical topology that separates local zone dynamics from supervisory resource allocation:
 
 ```
                          SMART MULTIZONE
-                       IRRIGATION SYSTEM
-                              │
-                              ▼
-                       WEATHER MODEL
-                 Temp, Humidity, Solar,
-                    Wind, Rainfall
-                              │
-                              ▼
-                    WEATHER STRESS FIS
-                              │
-                              ├──────────────────────┐
-                              ▼                      ▼
-                       ZONE INFORMATION       ET0 / ETC MODEL
-                 Crop, Soil, Area, FC, WP     ET0, Kc, ETc,
-                              │               Effective Rain,
-                              ▼               Water Demand
-                        SOIL DYNAMICS                │
-                        Soil Moisture                ▼
-                              │               WATER DEMAND FIS
-                              ▼                      │
-                       SOIL STRESS FIS               │
-                              │                      │
-                              ├──────────────────────┘
-                              ▼
-                    MAIN IRRIGATION FIS
-          Soil Stress + Weather Stress +
-          Water Demand + Moisture Error
-                              │
-                              ▼
-                     Irrigation Demand
-                              │
-                              ▼
-                   WATER ALLOCATION FIS
-           Available Water + Zone Demand
-           + Zone Stress + Zone Priority
-                              │
-                 ┌────────────┼────────────┐
-                 ▼            ▼            ▼
-               ZONE 1       ZONE 2       ZONE 3
-                 │            │            │
-                 └────────────┼────────────┘
-                              ▼
-                    SOIL WATER MODEL
-                              │
-                              ▼
-                    UPDATED SOIL MOISTURE
-                              │
-                              └──────► FEEDBACK LOOP
+                        IRRIGATION SYSTEM
+                               │
+                               ▼
+                        WEATHER MODEL
+                  Temp, Humidity, Solar,
+                     Wind, Rainfall
+                               │
+                               ▼
+                     WEATHER STRESS FIS
+                               │
+                               ├──────────────────────┐
+                               ▼                      ▼
+                        ZONE INFORMATION       ET0 / ETC MODEL
+                  Crop, Soil, Area, FC, WP     ET0, Kc, ETc,
+                               │               Effective Rain,
+                               ▼               Water Demand
+                         SOIL DYNAMICS                │
+                         Soil Moisture                ▼
+                               │               WATER DEMAND FIS
+                               ▼                      │
+                        SOIL STRESS FIS               │
+                               │                      │
+                               ├──────────────────────┘
+                               ▼
+                     MAIN IRRIGATION FIS
+           Soil Stress + Weather Stress +
+           Water Demand + Moisture Error
+                               │
+                               ▼
+                      Irrigation Demand
+                               │
+                               ▼
+                    WATER ALLOCATION FIS
+            Available Water + Zone Demand
+            + Zone Stress + Zone Priority
+                               │
+                  ┌────────────┼────────────┐
+                  ▼            ▼            ▼
+                ZONE 1       ZONE 2       ZONE 3
+                  │            │            │
+                  └────────────┼────────────┘
+                               ▼
+                     SOIL WATER MODEL
+                               │
+                               ▼
+                     UPDATED SOIL MOISTURE
+                               │
+                               └──────► FEEDBACK LOOP (1-Minute Timestep)
 ```
 
 ---
 
-## 3. The Five Fuzzy Inference Systems (FIS)
+## 3. The 5 Hierarchical Fuzzy Inference Systems (FIS)
 
-The control architecture avoids single-stage monolithic rule explosion by structuring decisions into five hierarchical subsystems using **Mamdani inference**, **Min-Max (Mamdani minimum implication, maximum aggregation)**, and **Centroid defuzzification**:
+To eliminate the combinatorial curse of dimensionality ($5^4 = 625$ rules in a monolithic design), the system partitions decision-making into 5 modular Mamdani FIS layers using **minimum implication**, **maximum aggregation**, and **centroid defuzzification**:
 
-| FIS Subsystem | Inputs | Output | Linguistic Variables |
-| :--- | :--- | :--- | :--- |
-| **1. Soil Stress FIS** | • Soil Moisture ($SM$)<br>• Moisture Error ($e(t)$) | Soil Stress | **SM**: Very Dry, Dry, Moderate, Wet, Very Wet<br>**Error**: Very Negative, Negative, Zero, Positive, Very Positive<br>**Stress**: Very Low, Low, Moderate, High, Extreme |
-| **2. Weather Stress FIS** | • Temperature ($T$)<br>• Relative Humidity ($RH$)<br>• Solar Radiation ($R_s$)<br>• Wind Speed ($u_2$)<br>• Rainfall ($P$) | Weather Stress | **Temp**: Low, Moderate, High, Very High<br>**Humidity**: Very Low, Low, Moderate, High, Very High<br>**Solar**: Very Low, Low, Moderate, High, Very High<br>**Wind**: Low, Moderate, High, Very High<br>**Rain**: None, Light, Moderate, Heavy<br>**Stress**: Low, Moderate, High, Extreme |
-| **3. Water Demand FIS** | • Crop Evapotranspiration ($ET_c$)<br>• Water Deficit ($WD$)<br>• Effective Rainfall ($P_{\text{eff}}$) | Water Demand | **ETc**: Very Low, Low, Moderate, High, Very High<br>**Deficit**: None, Low, Moderate, High, Extreme<br>**Rain**: None, Low, Moderate, High<br>**Demand**: None, Low, Moderate, High, Very High |
-| **4. Main Irrigation FIS** | • Soil Stress<br>• Weather Stress<br>• Water Demand<br>• Moisture Error | Irrigation Command | **Command**: OFF, Very Low, Low, Medium, High, Very High<br>*(Normalized 0–100 scale, translated to volume, flow rate, and duration)* |
-| **5. Water Allocation FIS** | • Zone Demand<br>• Zone Stress<br>• Available Water<br>• Zone Priority | Zone Allocation | Constrained multi-zone optimization ensuring $\sum \text{Allocated}_i \le \text{Available Water}$ based on stress urgency and crop economic priority. |
+| FIS Subsystem | Input Parameters | Linguistic Universe | Output Variable | Defuzzification |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Soil Stress FIS** | Soil Moisture ($SM$), Moisture Error ($e(t)$) | $SM$: Very Dry, Dry, Moderate, Wet, Very Wet<br>Error: Negative, Zero, Positive | Soil Stress ($0 \to 1$) | Centroid |
+| **2. Weather Stress FIS** | Air Temp ($T$), Relative Humidity ($RH$), Solar Radiation ($R_s$), Wind ($u_2$), Rainfall ($P$) | Temp, Humidity, Solar, Wind (4-5 sets each)<br>Rainfall: None, Light, Moderate, Heavy | Weather Stress ($0 \to 1$) | Centroid |
+| **3. Water Demand FIS** | Crop Evapotranspiration ($ET_c$), Soil Moisture Deficit, Effective Rain ($P_{\text{eff}}$) | $ET_c$: Low, Moderate, High<br>Deficit: None, Low, High<br>Rain: None, Moderate, Heavy | Water Demand ($0 \to 1$) | Centroid |
+| **4. Main Irrigation FIS** | Soil Stress, Weather Stress, Water Demand, Moisture Error | Stress/Demand: Low, Medium, High<br>Error: Neg, Zero, Pos | Irrigation Request ($0 \to 100\%$) | Centroid |
+| **5. Supervisory Allocation FIS** | Total Available Reservoir, Zone Demands, Zone Stresses, Crop Priorities | Resource Availability, Relative Urgency, Priority Weighting | Bounded Zone Volume ($L$) | Constrained Water-Filling |
 
 ---
 
 ## 4. Mathematical Foundations
 
 ### 4.1 FAO-56 Penman-Monteith Evapotranspiration
-Reference crop evapotranspiration $ET_0$ ($\text{mm}\cdot\text{day}^{-1}$) is calculated using the standard FAO-56 equation:
+Reference crop evapotranspiration $ET_0$ ($\text{mm}\cdot\text{day}^{-1}$) is computed using the standard FAO-56 equation:
 
 $$ET_0 = \frac{0.408 \Delta (R_n - G) + \gamma \frac{900}{T + 273} u_2 (e_s - e_a)}{\Delta + \gamma (1 + 0.34 u_2)}$$
 
 Where:
-- $R_n$: Net radiation at the crop surface ($\text{MJ}\cdot\text{m}^{-2}\cdot\text{day}^{-1}$)
-- $G$: Soil heat flux density ($\text{MJ}\cdot\text{m}^{-2}\cdot\text{day}^{-1}$)
-- $T$: Mean daily air temperature at 2 m height ($^\circ\text{C}$)
-- $u_2$: Wind speed at 2 m height ($\text{m}\cdot\text{s}^{-1}$)
-- $e_s$: Saturation vapour pressure ($\text{kPa}$)
-- $e_a$: Actual vapour pressure ($\text{kPa}$)
-- $\Delta$: Slope of the vapour pressure curve ($\text{kPa}\cdot^\circ\text{C}^{-1}$)
+- $R_n$: Net radiation at crop surface ($\text{MJ}\cdot\text{m}^{-2}\cdot\text{day}^{-1}$)
+- $G$: Soil heat flux density ($\text{MJ}\cdot\text{m}^{-2}\cdot\text{day}^{-1}$, modeled near 0 for daily steps)
+- $T$: Mean air temperature at 2 m ($^\circ\text{C}$)
+- $u_2$: Wind speed at 2 m ($\text{m}\cdot\text{s}^{-1}$)
+- $e_s - e_a$: Vapor pressure deficit ($\text{kPa}$)
+- $\Delta$: Slope of saturation vapor pressure curve ($\text{kPa}\cdot^\circ\text{C}^{-1}$)
 - $\gamma$: Psychrometric constant ($\text{kPa}\cdot^\circ\text{C}^{-1}$)
 
-Crop evapotranspiration under standard conditions:
+Crop evapotranspiration:
 $$ET_c = K_c \times ET_0$$
 
-### 4.2 Soil Moisture Normalization & Error Dynamics
-- **Relative Soil Moisture ($RSM$)**:
+### 4.2 Relative Soil Moisture & Error State
+- **Normalized Relative Soil Moisture ($RSM$)**:
   $$RSM = \frac{SM(t) - WP}{FC - WP}$$
-  Where $WP$ is Wilting Point and $FC$ is Field Capacity.
-- **Moisture Error**:
+- **Closed-Loop Moisture Error**:
   $$e(t) = SM_{\text{target}} - SM(t)$$
 
-### 4.3 Soil Water Balance Equation
-For discrete simulation step $t \to t+1$:
+### 4.3 Discrete Soil-Water Mass Balance
+For discrete simulation step $t \to t+1$ ($\Delta t = 1\text{ min}$):
+
 $$SM(t+1) = SM(t) + I(t) + P_{\text{eff}}(t) - ET_c(t) - D(t)$$
-Subject to physical constraints:
+
+Subject to boundary conservation:
 $$WP \le SM(t) \le FC$$
-Where:
-- $I(t)$: Effective applied irrigation
-- $P_{\text{eff}}(t)$: Effective precipitation
-- $ET_c(t)$: Evapotranspiration loss
-- $D(t)$: Deep percolation / drainage beyond field capacity
+
+Where $D(t) = \max(0, SM(t) + I(t) + P_{\text{eff}}(t) - ET_c(t) - FC)$ represents deep percolation drainage beyond field capacity.
+
+### 4.4 Supervisory Bounded Water-Filling Allocation
+When total reservoir supply $W_{\text{avail}}$ is insufficient to satisfy total demand $\sum_i D_i$:
+
+$$\text{Alloc}_i = \min\left(D_i, \; W_{\text{avail}} \cdot \frac{w_i}{\sum_j w_j}\right), \quad w_i = f(\text{Stress}_i, \text{Priority}_i)$$
+
+Subject to hard invariants:
+1. **Supply-Cap Invariant**: $\sum_{i=1}^N \text{Alloc}_i \le W_{\text{avail}}$
+2. **Demand-Ceiling Invariant**: $\text{Alloc}_i \le D_i \quad \forall i$
+3. **Zero Supply Invariant**: $W_{\text{avail}} = 0 \implies \text{Alloc}_i = 0 \quad \forall i$
 
 ---
 
-## 5. Agricultural Configuration (Default 3 Zones)
+## 5. Agricultural Zone Specifications
 
-| Zone | Crop | Soil Type | Area ($m^2$) | Field Capacity ($FC$) | Wilting Point ($WP$) | Growth Stage | Base $K_c$ |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Zone 1** | Tomato | Loam | 100 | 0.28 | 0.14 | Mid-season | 1.15 |
-| **Zone 2** | Wheat | Sandy | 120 | 0.18 | 0.08 | Development | 0.85 |
-| **Zone 3** | Maize | Clay | 80 | 0.36 | 0.20 | Mid-season | 1.20 |
+The system ships with default agricultural zones covering distinct soil hydrologies and crop growth stages:
 
-All parameters are fully configuration-driven via `config/config.json` and `config/schemas.py`.
+| Zone | Crop Type | Soil Texture | Area ($m^2$) | Field Capacity ($FC$) | Wilting Point ($WP$) | Growth Stage | Base $K_c$ | Target $SM$ |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Zone 1** | Tomato | Sandy Loam | 100 | 0.28 | 0.14 | Mid-Season | 1.15 | 0.24 |
+| **Zone 2** | Wheat | Loamy Sand | 120 | 0.18 | 0.08 | Vegetative | 0.85 | 0.15 |
+| **Zone 3** | Maize | Clay Loam | 80 | 0.36 | 0.20 | Tasseling | 1.20 | 0.31 |
 
----
-
-## 6. Simulation Scenarios & Scope
-
-- **Default Resolution**: 24 hours at 1-minute intervals ($1440$ simulation steps).
-- **Scalable To**: 7-day and 30-day extended multi-crop cycles.
-- **Six Deterministic/Stochastic Weather Profiles**:
-  1. **Normal**: Moderate diurnal temperature and solar cycles.
-  2. **Hot & Dry**: High temperature ($35^\circ\text{C}$+), low humidity ($<30\%$), elevated wind.
-  3. **Rainy**: Intermittent precipitation events, saturated humidity, suppressed solar.
-  4. **Cloudy**: Diminished solar irradiance, moderate temperatures.
-  5. **Heatwave**: Persistent extreme thermal stress with acute vapour pressure deficit.
-  6. **Water Scarcity**: Severely restricted reservoir volume triggering prioritization algorithms.
+All parameters are dynamically configurable via `config/config.json` and validated through `backend/app/schemas/`.
 
 ---
 
-## 7. Technology Stack
+## 6. Repository Structure
 
-- **Engineering Language**: Python 3.11+
-- **Fuzzy Inference Engine**: `scikit-fuzzy`, `numpy`, `scipy`
-- **Data Modeling & Validation**: `pydantic v2`
-- **Data Analysis & Export**: `pandas`, `matplotlib`, `plotly`
-- **API & Service Layer**: `fastapi`, `uvicorn`
-- **Reference & Validation Environment**: MATLAB / Simulink Fuzzy Logic Toolbox
-- **Testing**: `pytest`, `pytest-asyncio`
+```
+irrigation_system_fullstack/
+├── backend/                        # FastAPI REST service & core engines
+│   └── app/
+│       ├── main.py                 # FastAPI application entrypoint & middleware
+│       ├── api/routes/             # Modular REST route handlers
+│       │   ├── fuzzy.py            # FIS evaluation endpoints
+│       │   ├── simulation.py       # Closed-loop simulation execution
+│       │   ├── allocation.py       # Multi-zone water allocation
+│       │   ├── optimization.py     # PSO parameter tuning
+│       │   ├── india.py            # National India GIS & weather data
+│       │   ├── ai.py               # Groq LLM agronomy copilot
+│       │   └── reports.py          # PDF generation & CSV export
+│       ├── database/               # Supabase & SQLite persistence
+│       │   └── migrations/         # PostgreSQL schema & RLS policies
+│       ├── schemas/                # Pydantic v2 input/output schemas
+│       └── services/               # Core business & computation logic
+├── frontend/                       # Next.js 16 (App Router) + React 19 UI
+│   ├── src/
+│   │   ├── app/                    # 15 interactive application routes
+│   │   │   ├── page.tsx            # End-to-End Architecture Studio
+│   │   │   ├── dashboard/          # National GIS & FIS Dashboard
+│   │   │   ├── simulation/         # 1440m Playback & Digital Twin
+│   │   │   ├── fuzzy/              # 5 FIS Diagnostics & Membership Viewers
+│   │   │   ├── allocation/         # Water-Filling Allocation Sandbox
+│   │   │   ├── optimization/       # PSO Parameter Convergence Studio
+│   │   │   ├── scenarios/          # 6 Environmental Benchmark Scenarios
+│   │   │   ├── zones/              # Soil Hydrology & Crop Profiles
+│   │   │   ├── ai/                 # Grounded AI Advisory Copilot
+│   │   │   ├── reports/            # PDF Audit Reports & Telemetry
+│   │   │   └── globals.css         # 2026 Design Tokens (Light/Dark)
+│   │   ├── components/             # Reusable engineering components
+│   │   │   ├── DigitalTwin3D.tsx   # Three.js WebGL Living Twin
+│   │   │   ├── SimulationScrubberBar.tsx # 24h Playback Scrubber
+│   │   │   ├── CommandPalette.tsx  # Global Cmd+K Search Palette
+│   │   │   ├── Sidebar.tsx         # Responsive Cockpit Navigation
+│   │   │   └── TopHeader.tsx       # Live Telemetry & Theme Switcher
+│   │   ├── context/                # Theme, Auth, & Sidebar Contexts
+│   │   ├── hooks/                  # useSimulationPlayback timeline hook
+│   │   └── lib/                    # API client & audio haptic engine
+├── fuzzy_engine/                   # Scikit-Fuzzy core membership & FIS logic
+├── simulation/                     # 24-hr closed-loop physics simulation
+├── optimization/                   # Offline Particle Swarm Optimization (PSO)
+├── data_processing/                # Weather generator & FAO-56 calculator
+├── config/                         # System JSON configs & agronomic constants
+├── docs/                           # 24 comprehensive mathematical thesis docs
+├── tests/                          # 300 automated pytest test cases
+└── requirements.txt                # Python production dependencies
+```
 
 ---
 
-## 8. Development Roadmap (Phase 0 to 28)
+## 7. Getting Started
 
-- [x] **Phase 0**: Foundation, Project Skeleton, Config, Schemas, Validation Scripts, Smoke Tests
-- [x] **Phase 1**: Dataset & Agricultural Parameter Foundation
-- [x] **Phase 2**: Exploratory Data Analysis (EDA)
-- [x] **Phase 3**: Dynamic Weather Engine
-- [x] **Phase 4**: FAO-56 Penman-Monteith ET0 / ETc Models
-- [x] **Phase 5**: Soil Dynamics & Water Balance Engine
-- [x] **Phase 6**: Fuzzy Variables & Membership Functions
-- [x] **Phase 7**: Soil Stress FIS
-- [x] **Phase 8**: Weather Stress FIS
-- [x] **Phase 9–10**: Water Demand FIS & Main Irrigation FIS
-- [x] **Phase 11**: Single-Zone Closed-Loop Simulation (24h, 1440 timesteps)
-- [x] **Phase 12**: Three-Zone Multizone Closed-Loop Simulation (12,960 records)
-- [x] **Phase 13–13.1**: Supervisory Water Allocation FIS & Deterministic Bounded Priority Water-Filling Audit
-- [x] **Phase 14**: Offline Particle Swarm Optimization (PSO) for 18 FIS Parameters
-- [x] **Phase 15–18**: Production FastAPI Service Layer & REST Endpoints (`backend/app/`)
-- [x] **Phase 19**: Supabase Database Schema (RLS) & SQLite Mirror (`backend/app/database/`)
-- [x] **Phase 20**: Next.js 16 + React 19 Frontend Platform (15 Interactive Pages) (`frontend/`)
-- [x] **Phase 21–22**: Groq LLM Advisory Copilot & Grounded RAG with Tavily Live Search (`backend/app/services/ai_service.py`)
-- [x] **Phase 23**: Automated Engineering Audit PDF Reports via ReportLab (`backend/app/services/report_service.py`)
-- [x] **Phase 24**: Comprehensive Test Suite infrastructure and regression coverage
-- [x] **Phase 25**: National-Level India GIS Engine (15 ICAR Agro-Climatic Zones, 700+ Districts, Live Open-Meteo Weather & Interactive Satellite Map Dashboard)
+### 7.1 Prerequisites
+- Python 3.11+
+- Node.js 18.18+ (or Node 20+)
+- Git
 
----
-
-## 9. Platform Quickstart
-
-### 9.1 Backend API Server (FastAPI)
+### 7.2 Backend Setup (FastAPI)
 ```bash
-# Run the FastAPI backend service on port 8000
+# Clone the repository
+git clone https://github.com/pranshu-rajan/smart-irrigation-fuzzy-system.git
+cd smart-irrigation-fuzzy-system
+
+# Create and activate virtual environment
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Start the FastAPI server (runs on port 8000)
 uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-Interactive API documentation is available at `http://localhost:8000/docs`.
+Interactive API documentation will be available at:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
-### 9.2 Frontend Application (Next.js 16)
+### 7.3 Frontend Setup (Next.js 16)
 ```bash
+# In a separate terminal, navigate to the frontend directory
 cd frontend
+
+# Install dependencies
 npm ci
+
+# Start Next.js development server with Turbopack (runs on port 3000)
 npm run dev
 ```
-Open `http://localhost:3000` to access the full-stack engineering platform.
+Open `http://localhost:3000` in your browser.
 
-For production, set `NEXT_PUBLIC_API_BASE` to the deployed Render API (see `frontend/.env.production.example`).
+- **Theme**: Launches in clean, light agronomy mode by default. Click the Moon icon in the top header or use `Cmd+K` to toggle the dark cyber-cockpit mode.
+- **Audio Feedback**: Synthesized relay clicks and haptics are enabled by default and can be toggled via the speaker icon in the header.
+- **Keyboard Navigation**: Press `Cmd+K` (or `Ctrl+K`) anywhere to open the global command palette.
 
-### 9.3 Running Automated Tests
+---
+
+## 8. Automated Testing & Verification
+
+The test suite validates every layer of the platform across 300 automated tests:
+
 ```bash
-# Run full automated regression suite (300 tests)
+# Run the complete test suite
 pytest -v
+
+# Run with coverage report
+pytest --cov=backend --cov=fuzzy_engine --cov=simulation tests/
 ```
 
----
+### Verification Invariant Matrix
 
-## 10. Deployment Guide
-
-### 10.1 Database Deployment (Supabase)
-1. Create a new project in [Supabase](https://supabase.com).
-2. Navigate to the **SQL Editor** in your Supabase dashboard.
-3. Open `backend/app/database/migrations/001_initial_schema.sql` and run it to create all tables (`profiles`, `zones`, `simulation_runs`, `simulation_results`, `optimization_runs`, `reports`, `ai_conversations`, `ai_messages`) along with Row-Level Security (RLS) policies and indexes.
-4. Copy your `Project URL`, `anon public key`, and `service_role secret key` from **Project Settings > API**.
-
-### 10.2 Backend Deployment (Render)
-1. Push this repository to GitHub.
-2. In [Render](https://render.com), click **New + > Blueprint** and link your GitHub repository. Render will automatically detect `render.yaml`.
-3. Alternatively, create a **Web Service**:
-   - **Environment**: Python 3.11
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
-4. Configure Environment Variables on Render:
-   - `ENVIRONMENT`: `production`
-   - `CORS_ORIGINS`: `https://your-frontend.vercel.app,http://localhost:3000`
-   - `GROQ_API_KEY`: your Groq API key
-   - `SUPABASE_URL`: your Supabase Project URL
-   - `SUPABASE_ANON_KEY`: your Supabase anon key
-   - `SUPABASE_SERVICE_ROLE_KEY`: your Supabase service role key
-
-### 10.3 Frontend Deployment (Vercel)
-1. Import your GitHub repository into [Vercel](https://vercel.com).
-2. Set the **Root Directory** to `frontend`.
-3. Vercel automatically detects Next.js.
-4. Add Environment Variables in Vercel:
-   - `NEXT_PUBLIC_API_URL`: `https://your-backend.onrender.com` (or `NEXT_PUBLIC_API_BASE`: `https://your-backend.onrender.com/api`)
-   - `NEXT_PUBLIC_SUPABASE_URL`: `https://your-project.supabase.co` (optional, sqlite works out of the box)
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: `your_supabase_anon_key` (optional)
-5. Click **Deploy**.
-
----
-
-## 11. Platform Verification Matrix
-
-| Verification Aspect | Specification | Verified Status |
+| Verification Criterion | Mathematical / Engineering Invariant | Test Status |
 | :--- | :--- | :--- |
-| **Regression Tests** | Full engineering test suite | **300 Passed, 0 Failed, 0 Skipped** |
-| **Water Balance Residual** | 1D soil mass balance closure | **0.00e+00 mm exact (< 1e-6 mm)** |
-| **Supply-Cap Invariant** | Total allocation under scarcity | **Σ Alloc ≤ Supply (0 violations across 1,000 cases)** |
-| **Demand-Ceiling Invariant** | No zone receives > request | **Alloc ≤ Req (0 violations)** |
-| **Zero Supply Invariant** | Empty reservoir behavior | **Alloc = 0 when Supply = 0** |
-| **Zero Demand Invariant** | Satiated zone behavior | **Alloc = 0 when Demand = 0** |
-| **Offline Optimization** | PSO Decoupling guarantee | **Strictly offline (never online)** |
-| **Advisory AI** | Groq LLM boundary | **Advisory / Explanatory only** |
-| **Frontend Static Build** | Next.js 16.3.5 Turbopack | **15/15 routes built, 0 errors** |
+| **Full Regression Suite** | 300 automated tests covering all 5 FIS and closed loops | **300 Passed, 0 Failed** |
+| **Water Balance Residual** | 1D soil mass balance residual: $\vert \Delta SM - (I + P_{\text{eff}} - ET_c - D) \vert < 10^{-6}\text{ mm}$ | **Exact $0.00\text{ mm}$ closure** |
+| **Supply-Cap Invariant** | Total allocation under scarcity: $\sum \text{Alloc}_i \le W_{\text{avail}}$ | **0 violations across 1,000 cases** |
+| **Demand-Ceiling Invariant** | No zone receives more than requested: $\text{Alloc}_i \le D_i$ | **0 violations** |
+| **Zero Supply Invariant** | Empty reservoir: $W_{\text{avail}} = 0 \implies \text{Alloc}_i = 0$ | **Verified** |
+| **Zero Demand Invariant** | Satiated zone: $D_i = 0 \implies \text{Alloc}_i = 0$ | **Verified** |
+| **Offline PSO Decoupling** | Optimization is decoupled and strictly offline (never online) | **Verified** |
+| **Frontend Production Build** | Next.js 16.3.5 Turbopack production compilation | **15/15 routes static built, 0 errors** |
 
 ---
 
-*For detailed examination defense, see [docs/VIVA_GUIDE.md](docs/VIVA_GUIDE.md).*
+## 9. Production Deployment Guide
 
+### 9.1 Database (Supabase)
+1. Create a Supabase project at [supabase.com](https://supabase.com).
+2. Execute `backend/app/database/migrations/001_initial_schema.sql` in the Supabase SQL Editor.
+3. Retrieve the `Project URL` and API keys from **Project Settings > API**.
 
+### 9.2 Backend (Render / Railway / AWS)
+1. Deploy `smart-irrigation-fuzzy-system` as a Python Web Service.
+2. Build Command: `pip install -r requirements.txt`
+3. Start Command: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
+4. Set environment variables:
+   ```env
+   ENVIRONMENT=production
+   CORS_ORIGINS=https://your-frontend.vercel.app,http://localhost:3000
+   GROQ_API_KEY=your_groq_api_key
+   TAVILY_API_KEY=your_tavily_api_key
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_ANON_KEY=your_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+   ```
 
+### 9.3 Frontend (Vercel)
+1. Import repository on [vercel.com](https://vercel.com) and set Root Directory to `frontend`.
+2. Configure Environment Variables:
+   ```env
+   NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
+   NEXT_PUBLIC_API_BASE=https://your-backend.onrender.com/api
+   ```
+3. Deploy.
 
+---
+
+## 10. Citation & Academic References
+
+1. **Allen, R. G., Pereira, L. S., Raes, D., & Smith, M. (1998)**. *Crop evapotranspiration - Guidelines for computing crop water requirements*. FAO Irrigation and drainage paper 56. Rome: FAO.
+2. **Mamdani, E. H., & Assilian, S. (1975)**. *An experiment in linguistic synthesis with a fuzzy logic controller*. International Journal of Man-Machine Studies, 7(1), 1-13.
+3. **Kennedy, J., & Eberhart, R. (1995)**. *Particle swarm optimization*. Proceedings of ICNN'95 - International Conference on Neural Networks, 4, 1942-1948.
+4. **ICAR (Indian Council of Agricultural Research)**. *Agro-Climatic Zones of India and Crop Water Requirements*.
+
+---
+
+## 11. License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
