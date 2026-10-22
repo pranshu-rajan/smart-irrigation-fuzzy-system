@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import IndiaInteractiveMap, { SelectedLocation } from '@/components/IndiaInteractiveMap';
+import FuzzyArchitectureLiveCascade from '@/components/FuzzyArchitectureLiveCascade';
 import MetricCard from '@/components/MetricCard';
 import SoilHydrologyProfile from '@/components/SoilHydrologyProfile';
 import FuzzyStageDeepInspector from '@/components/FuzzyStageDeepInspector';
@@ -207,11 +208,11 @@ export default function DashboardPage() {
           // Parse **bold** markers
           const parts = para.split(/(\*\*.*?\*\*)/g);
           return (
-            <p key={pIdx} className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p key={pIdx} className="text-xs sm:text-sm text-slate-700 leading-relaxed">
               {parts.map((part, idx) => {
                 if (part.startsWith('**') && part.endsWith('**')) {
                   return (
-                    <strong key={idx} className="font-semibold text-emerald-300">
+                    <strong key={idx} className="font-semibold text-emerald-800">
                       {part.slice(2, -2)}
                     </strong>
                   );
@@ -455,6 +456,22 @@ export default function DashboardPage() {
       <IndiaInteractiveMap
         onLocationSelect={handleLocationSelect}
         selectedLocation={selectedLoc}
+        isEvaluating={isEvaluating}
+      />
+
+      {/* 2.5 Live 5-Stage Fuzzy Architecture Cascade (Instant Map Region Output) */}
+      <FuzzyArchitectureLiveCascade
+        location={locInfo || selectedLoc}
+        weather={weather}
+        physics={physics}
+        fuzzyStages={stages}
+        zones={zones}
+        totalRequestedLiters={evalData?.total_requested_liters}
+        totalAllocatedLiters={evalData?.total_allocated_liters}
+        fulfillmentRatioPct={evalData?.overall_fulfillment_ratio_pct}
+        reservoirStoragePct={reservoirStoragePct}
+        isEvaluating={isEvaluating}
+        onReEvaluate={() => evaluateLocation(selectedLoc, reservoirStoragePct, climateScenario, zoneCropOverrides)}
       />
 
       {/* 3. Real-Time Physical & Evaporative Forcing Metrics (4 High-Density Cards) */}
@@ -489,7 +506,17 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* 4. Advanced Feature B: 24-Hour Predictive Closed-Loop Soil Moisture Forecast */}
+      {/* 4. Advanced Feature A: Deep 5-Stage FIS Subsystem Inspector for Every Zone */}
+      <FuzzyStageDeepInspector
+        zones={zones}
+        weatherStress={stages?.stage2_weather_stress_pct || 48.0}
+        et0Val={physics?.et0_fao56_mm_day || 4.5}
+        reservoirStorage={reservoirStoragePct}
+        weather={weather}
+        location={locInfo || selectedLoc}
+      />
+
+      {/* 5. Advanced Feature B: 24-Hour Predictive Closed-Loop Soil Moisture Forecast */}
       <PredictiveMoistureGraph
         hourlyTelemetry={hourlyTelemetry}
         fieldCapacity={locInfo?.field_capacity_pct || 28.0}
@@ -497,14 +524,6 @@ export default function DashboardPage() {
         crop1Name={zones[0]?.crop || 'Kharif Crop'}
         crop2Name={zones[1]?.crop || 'Rabi Crop'}
         crop3Name={zones[2]?.crop || 'Zaid Crop'}
-      />
-
-      {/* 5. Advanced Feature A: Deep 5-Stage FIS Subsystem Inspector for Every Zone */}
-      <FuzzyStageDeepInspector
-        zones={zones}
-        weatherStress={stages?.stage2_weather_stress_pct || 48.0}
-        et0Val={physics?.et0_fao56_mm_day || 4.5}
-        reservoirStorage={reservoirStoragePct}
       />
 
       {/* 6. Advanced Feature C: Real-Time Soil Hydrology & Hydraulic Horizon Profile */}
@@ -719,16 +738,16 @@ export default function DashboardPage() {
       />
 
       {/* 9. AI Agronomist Copilot (Groq Llama 3.3 70B & Tavily Live Knowledge) */}
-      <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 via-slate-900 to-slate-950 p-6 shadow-xl text-white">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
+      <div className="rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-sm text-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-emerald-100 pb-3 mb-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-200">
               <Bot className="h-4.5 w-4.5" />
             </div>
             <div>
-              <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                 <span>AI Agronomist Field Copilot</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2 py-0.2 text-[10px] font-semibold text-emerald-300">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-200 px-2 py-0.2 text-[10px] font-semibold text-emerald-800">
                   <Sparkles className="h-2.5 w-2.5" />
                   Groq 70B • Tavily Live Search
                 </span>
@@ -737,7 +756,7 @@ export default function DashboardPage() {
           </div>
           <Link
             href="/ai"
-            className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+            className="text-xs font-semibold text-emerald-700 hover:text-emerald-900 flex items-center gap-1"
           >
             <span>Open Dedicated AI Advisory</span>
             <ArrowUpRight className="h-3.5 w-3.5" />
@@ -745,15 +764,15 @@ export default function DashboardPage() {
         </div>
 
         {loadingAdvisory ? (
-          <div className="flex items-center gap-3 py-4 text-xs text-slate-400">
-            <RefreshCw className="h-4 w-4 animate-spin text-emerald-400" />
+          <div className="flex items-center gap-3 py-4 text-xs text-slate-500">
+            <RefreshCw className="h-4 w-4 animate-spin text-emerald-600" />
             <span>Consulting Groq agronomy knowledge base & real-time crop advisory...</span>
           </div>
         ) : advisory ? (
           <div className="space-y-4">
             {/* Rich Formatted Summary Paragraphs */}
-            <div className="rounded-2xl border border-slate-800/80 bg-slate-950/70 p-4 sm:p-5 shadow-inner">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 font-mono block mb-2">
+            <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/30 p-4 sm:p-5 shadow-2xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 font-mono block mb-2">
                 Grounded Agronomic Evaluation
               </span>
               {renderFormattedSummary(advisory.advisory_summary)}
@@ -770,16 +789,16 @@ export default function DashboardPage() {
                     return (
                       <div
                         key={idx}
-                        className="flex items-start gap-3 rounded-2xl bg-slate-950/80 border border-slate-800/90 p-4 text-xs text-slate-200 shadow-sm hover:border-emerald-500/40 hover:bg-slate-950 transition-all"
+                        className="flex items-start gap-3 rounded-2xl bg-white border border-emerald-200/80 p-4 text-xs text-slate-800 shadow-2xs hover:border-emerald-400 hover:bg-emerald-50/20 transition-all"
                       >
-                        <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0 mt-0.5 border border-emerald-500/20">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 shrink-0 mt-0.5 border border-emerald-200">
                           <CheckCircle2 className="h-4 w-4" />
                         </div>
                         <div className="space-y-1">
-                          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-400 font-mono">
+                          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-800 font-mono">
                             {parsed.title}
                           </span>
-                          <p className="text-xs text-slate-300 leading-relaxed">
+                          <p className="text-xs text-slate-600 leading-relaxed">
                             {parsed.body}
                           </p>
                         </div>
@@ -790,7 +809,7 @@ export default function DashboardPage() {
             )}
           </div>
         ) : (
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Select any district on the interactive map above to generate instant AI agronomist field schedules.
           </p>
         )}

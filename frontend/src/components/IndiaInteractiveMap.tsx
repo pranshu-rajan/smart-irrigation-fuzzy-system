@@ -32,6 +32,7 @@ export interface SelectedLocation {
 interface IndiaInteractiveMapProps {
   onLocationSelect: (location: SelectedLocation) => void;
   selectedLocation?: SelectedLocation | null;
+  isEvaluating?: boolean;
   className?: string;
 }
 
@@ -75,6 +76,7 @@ const MAP_LAYERS: Record<'satellite' | 'street' | 'dark', MapLayerConfig> = {
 export default function IndiaInteractiveMap({
   onLocationSelect,
   selectedLocation,
+  isEvaluating = false,
   className = '',
 }: IndiaInteractiveMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -443,6 +445,15 @@ export default function IndiaInteractiveMap({
       {/* 2. Map Canvas Viewport */}
       <div className="relative h-[420px] sm:h-[480px] w-full bg-emerald-50/20">
         <div ref={mapContainerRef} className="h-full w-full z-0" />
+
+        {/* Real-Time Fuzzy Inference Engine Status Overlay */}
+        {isEvaluating && (
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 rounded-full border border-emerald-400 bg-white/95 px-4 py-2 text-xs font-bold text-emerald-900 shadow-xl backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200">
+            <RefreshCw className="h-3.5 w-3.5 text-emerald-600 animate-spin" />
+            <span>Running 5-Stage Fuzzy Engine for {selectedLocation?.district || 'Selected Region'}...</span>
+            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+          </div>
+        )}
 
         {/* Floating Spatial Hover HUD (Top-Left of Map) */}
         {hoverInfo && (
