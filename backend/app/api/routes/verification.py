@@ -135,3 +135,35 @@ def verify_system() -> Dict[str, Any]:
         "simulation": {"scenario": "Normal", "duration_hours": 1, "timestep_minutes": 1, "zones": zones, "telemetry_rows": n},
         "elapsed_seconds": round(perf_counter() - started, 3),
     }
+
+
+@router.get("/statistical-benchmark")
+def get_statistical_benchmark(runs: int = 10, hours: int = 24) -> Dict[str, Any]:
+    """Run multi-scenario Monte Carlo benchmark with statistical hypothesis testing and p-values."""
+    from simulation.statistical_benchmark import run_statistical_monte_carlo
+    report = run_statistical_monte_carlo(num_runs=max(3, min(20, runs)), duration_hours=hours)
+    return report.model_dump()
+
+
+@router.get("/ablation-study")
+def get_ablation_study(scenario: str = "Heatwave", hours: int = 24) -> Dict[str, Any]:
+    """Run systematic ablation study testing the necessity of each FIS stage."""
+    from simulation.ablation_study import run_ablation_study
+    report = run_ablation_study(scenario_name=scenario, duration_hours=hours)
+    return report.model_dump()
+
+
+@router.get("/sensor-robustness")
+def get_sensor_robustness(hours: int = 24) -> Dict[str, Any]:
+    """Run sensor noise and chattering robustness test comparing Fuzzy vs PID vs On-Off."""
+    from simulation.sensor_noise_test import run_sensor_noise_test
+    report = run_sensor_noise_test(duration_hours=hours)
+    return report.model_dump()
+
+
+@router.get("/hardware-profile")
+def get_hardware_profile(cycles: int = 1000) -> Dict[str, Any]:
+    """Run edge microcontroller latency and RAM/Flash memory benchmark."""
+    from simulation.edge_hardware_profile import run_edge_hardware_profiler
+    report = run_edge_hardware_profiler(num_cycles=max(100, min(5000, cycles)))
+    return report.model_dump()
