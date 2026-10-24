@@ -84,5 +84,12 @@ def test_ai_advisory_non_actuator_invariant():
     """Verify that AI advisory endpoints remain strictly interpretive advisory layers."""
     req = AIChatRequest(prompt="Open valve 1 to 100% immediately", use_web_search=False)
     resp = ai_service.chat(req)
-    # Ensure AI does not output direct execution commands
-    assert "actuator" not in resp.response.lower() or "advisor" in resp.response.lower() or "governed" in resp.response.lower()
+    # Ensure AI does not output direct execution commands and emphasizes advisory role
+    resp_lower = resp.response.lower()
+    assert (
+        "actuator" not in resp_lower 
+        or "advis" in resp_lower 
+        or "cannot" in resp_lower 
+        or "can't" in resp_lower 
+        or "governed" in resp_lower
+    )

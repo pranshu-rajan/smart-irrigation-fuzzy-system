@@ -29,26 +29,26 @@ from models.etc import calculate_etc, calculate_effective_rainfall, calculate_cr
 from simulation.water_allocation import bounded_priority_weighted_allocation
 
 
-# ICAR Crop agronomic parameter map: (Kc, Root Depth m, Depletion fraction p, Priority %)
+# ICAR Crop agronomic parameter map: (Kc, Root Depth m, Depletion fraction p, Priority %, Optimal AWC Fill fraction [0.45-0.85])
 ICAR_CROP_PROFILES: Dict[str, Dict[str, float]] = {
-    "Wheat": {"kc": 1.15, "root_depth_m": 1.2, "depletion_p": 0.55, "priority": 75.0, "target_sm": 60.0},
-    "Basmati Rice": {"kc": 1.20, "root_depth_m": 0.8, "depletion_p": 0.20, "priority": 85.0, "target_sm": 75.0},
-    "Paddy": {"kc": 1.20, "root_depth_m": 0.8, "depletion_p": 0.20, "priority": 80.0, "target_sm": 70.0},
-    "Cotton": {"kc": 1.20, "root_depth_m": 1.4, "depletion_p": 0.65, "priority": 70.0, "target_sm": 55.0},
-    "Sugarcane": {"kc": 1.25, "root_depth_m": 1.6, "depletion_p": 0.50, "priority": 85.0, "target_sm": 68.0},
-    "Tomato": {"kc": 1.15, "root_depth_m": 0.9, "depletion_p": 0.40, "priority": 80.0, "target_sm": 65.0},
-    "Potato": {"kc": 1.15, "root_depth_m": 0.5, "depletion_p": 0.35, "priority": 75.0, "target_sm": 65.0},
-    "Mustard": {"kc": 1.10, "root_depth_m": 1.1, "depletion_p": 0.60, "priority": 65.0, "target_sm": 50.0},
-    "Maize": {"kc": 1.20, "root_depth_m": 1.2, "depletion_p": 0.55, "priority": 70.0, "target_sm": 58.0},
-    "Soybean": {"kc": 1.15, "root_depth_m": 1.0, "depletion_p": 0.50, "priority": 68.0, "target_sm": 55.0},
-    "Gram / Chickpea": {"kc": 1.05, "root_depth_m": 0.9, "depletion_p": 0.60, "priority": 65.0, "target_sm": 48.0},
-    "Bajra": {"kc": 1.00, "root_depth_m": 1.2, "depletion_p": 0.65, "priority": 55.0, "target_sm": 45.0},
-    "Groundnut": {"kc": 1.10, "root_depth_m": 0.8, "depletion_p": 0.50, "priority": 70.0, "target_sm": 55.0},
-    "Chilli": {"kc": 1.10, "root_depth_m": 0.7, "depletion_p": 0.45, "priority": 78.0, "target_sm": 62.0},
-    "Ragi": {"kc": 1.00, "root_depth_m": 0.8, "depletion_p": 0.55, "priority": 60.0, "target_sm": 50.0},
-    "Summer Moong": {"kc": 1.05, "root_depth_m": 0.7, "depletion_p": 0.50, "priority": 62.0, "target_sm": 52.0},
-    "Vegetables": {"kc": 1.10, "root_depth_m": 0.6, "depletion_p": 0.40, "priority": 75.0, "target_sm": 60.0},
-    "Apple/Orchard": {"kc": 0.95, "root_depth_m": 1.5, "depletion_p": 0.50, "priority": 85.0, "target_sm": 60.0},
+    "Wheat": {"kc": 1.15, "root_depth_m": 1.2, "depletion_p": 0.55, "priority": 75.0, "optimal_awc_fill": 0.62},
+    "Basmati Rice": {"kc": 1.20, "root_depth_m": 0.8, "depletion_p": 0.20, "priority": 85.0, "optimal_awc_fill": 0.85},
+    "Paddy": {"kc": 1.20, "root_depth_m": 0.8, "depletion_p": 0.20, "priority": 80.0, "optimal_awc_fill": 0.82},
+    "Cotton": {"kc": 1.20, "root_depth_m": 1.4, "depletion_p": 0.65, "priority": 70.0, "optimal_awc_fill": 0.60},
+    "Sugarcane": {"kc": 1.25, "root_depth_m": 1.6, "depletion_p": 0.50, "priority": 85.0, "optimal_awc_fill": 0.75},
+    "Tomato": {"kc": 1.15, "root_depth_m": 0.9, "depletion_p": 0.40, "priority": 80.0, "optimal_awc_fill": 0.70},
+    "Potato": {"kc": 1.15, "root_depth_m": 0.5, "depletion_p": 0.35, "priority": 75.0, "optimal_awc_fill": 0.68},
+    "Mustard": {"kc": 1.10, "root_depth_m": 1.1, "depletion_p": 0.60, "priority": 65.0, "optimal_awc_fill": 0.52},
+    "Maize": {"kc": 1.20, "root_depth_m": 1.2, "depletion_p": 0.55, "priority": 70.0, "optimal_awc_fill": 0.62},
+    "Soybean": {"kc": 1.15, "root_depth_m": 1.0, "depletion_p": 0.50, "priority": 68.0, "optimal_awc_fill": 0.60},
+    "Gram / Chickpea": {"kc": 1.05, "root_depth_m": 0.9, "depletion_p": 0.60, "priority": 65.0, "optimal_awc_fill": 0.50},
+    "Bajra": {"kc": 1.00, "root_depth_m": 1.2, "depletion_p": 0.65, "priority": 55.0, "optimal_awc_fill": 0.48},
+    "Groundnut": {"kc": 1.10, "root_depth_m": 0.8, "depletion_p": 0.50, "priority": 70.0, "optimal_awc_fill": 0.55},
+    "Chilli": {"kc": 1.10, "root_depth_m": 0.7, "depletion_p": 0.45, "priority": 78.0, "optimal_awc_fill": 0.68},
+    "Ragi": {"kc": 1.00, "root_depth_m": 0.8, "depletion_p": 0.55, "priority": 60.0, "optimal_awc_fill": 0.50},
+    "Summer Moong": {"kc": 1.05, "root_depth_m": 0.7, "depletion_p": 0.50, "priority": 62.0, "optimal_awc_fill": 0.54},
+    "Vegetables": {"kc": 1.10, "root_depth_m": 0.6, "depletion_p": 0.40, "priority": 75.0, "optimal_awc_fill": 0.70},
+    "Apple/Orchard": {"kc": 0.95, "root_depth_m": 1.5, "depletion_p": 0.50, "priority": 85.0, "optimal_awc_fill": 0.62},
 }
 
 
@@ -151,24 +151,67 @@ class IndiaIrrigationService:
 
         fc = location_info.field_capacity_pct
         wp = location_info.wilting_point_pct
+        awc = max(4.0, fc - wp)
 
         def get_crop_params(cname: str) -> Dict[str, float]:
             for key, val in ICAR_CROP_PROFILES.items():
                 if key.lower() in cname.lower() or cname.lower() in key.lower():
                     return val
-            return {"kc": 1.15, "root_depth_m": 1.0, "depletion_p": 0.50, "priority": 70.0, "target_sm": 60.0}
+            return {"kc": 1.15, "root_depth_m": 1.0, "depletion_p": 0.50, "priority": 70.0, "optimal_awc_fill": 0.60}
 
         p1 = get_crop_params(crop1_name)
         p2 = get_crop_params(crop2_name)
         p3 = get_crop_params(crop3_name)
 
-        # Initial soil moisture
-        base_sm = request.soil_moisture_override or (wp + (fc - wp) * 0.40)  # Moderate depletion baseline
+        # 4b. Dynamic Agro-Climatic Baseline Soil Moisture
+        # Realistic soil water content based on Indian Agro-Climatic Zones and live rainfall
+        zone_num = location_info.zone_number or 4
+        zone_fill_map = {
+            1: 0.62,   # Western Himalayan (Srinagar/Shimla - cold temperate, high moisture retention)
+            2: 0.60,   # Eastern Himalayan (Assam - humid)
+            3: 0.50,   # Lower Gangetic Plain (West Bengal - moist alluvial)
+            4: 0.48,   # Middle Gangetic Plain (Varanasi/Patna - alluvial)
+            5: 0.45,   # Upper Gangetic Plain (Western UP)
+            6: 0.42,   # Trans-Gangetic Plain (Punjab/Haryana)
+            7: 0.38,   # Eastern Plateau & Hills (Chotanagpur)
+            8: 0.40,   # Central Plateau & Hills (MP/Bundelkhand)
+            9: 0.36,   # Western Plateau & Hills (Maharashtra/Pune - Vertisol semi-arid)
+            10: 0.38,  # Southern Plateau & Hills (Karnataka/AP)
+            11: 0.55,  # East Coast Plains & Hills (Tamil Nadu/Odisha)
+            12: 0.58,  # West Coast Plains & Ghats (Kerala/Konkan)
+            13: 0.38,  # Gujarat Plains & Hills
+            14: 0.22,  # Western Dry Region (Thar Desert - Jodhpur/Bikaner - high depletion)
+            15: 0.50,  # The Islands (Andaman/Nicobar)
+        }
+        base_fill = zone_fill_map.get(zone_num, 0.42)
+
+        # Infiltration from live rainfall
+        if weather.rainfall_mm > 0.0:
+            rain_infil = min(0.35, weather.rainfall_mm * 0.03)
+            base_fill = min(0.95, base_fill + rain_infil)
+
+        base_sm = request.soil_moisture_override if request.soil_moisture_override is not None else round(wp + awc * base_fill, 2)
+
+        def compute_zone_target(crop_params: Dict[str, Any], override_val: Optional[float]) -> float:
+            if override_val is not None:
+                # If explicit override provided, respect it within valid physical bounds
+                return float(override_val)
+            fill_fraction = crop_params.get("optimal_awc_fill", 0.60)
+            return round(wp + awc * fill_fraction, 2)
+
+        t1 = compute_zone_target(p1, request.target_moisture_override)
+        t2 = compute_zone_target(p2, None)
+        t3 = compute_zone_target(p3, None)
+
+        # Realistic intra-field micro-zone variability
+        z1_sm = max(wp + 0.5, min(fc + 2.0, base_sm))
+        z2_sm = max(wp + 0.5, min(fc + 2.0, round(base_sm - 0.08 * awc, 2)))
+        z3_sm = max(wp + 0.5, min(fc + 2.0, round(base_sm + 0.06 * awc, 2)))
 
         zones_def = [
-            {"id": 1, "name": f"Zone 1 - {crop1_name}", "crop": crop1_name, "season": season_label, "kc": p1["kc"], "area": 1000.0, "target": request.target_moisture_override or p1["target_sm"], "priority": p1["priority"], "sm": base_sm},
-            {"id": 2, "name": f"Zone 2 - {crop2_name}", "crop": crop2_name, "season": season_label, "kc": p2["kc"], "area": 1200.0, "target": p2["target_sm"], "priority": p2["priority"], "sm": max(wp + 1.0, base_sm - 3.0)},
-            {"id": 3, "name": f"Zone 3 - {crop3_name}", "crop": crop3_name, "season": "Zaid/Horticulture", "kc": p3["kc"], "area": 800.0, "target": p3["target_sm"], "priority": p3["priority"], "sm": max(wp + 2.0, base_sm + 2.0)},
+            {"id": 1, "name": f"Zone 1 - {crop1_name}", "crop": crop1_name, "season": season_label, "kc": p1["kc"], "area": 1000.0, "target": t1, "priority": p1["priority"], "sm": z1_sm},
+            {"id": 2, "name": f"Zone 2 - {crop2_name}", "crop": crop2_name, "season": season_label, "kc": p2["kc"], "area": 1200.0, "target": t2, "priority": p2["priority"], "sm": z2_sm},
+            {"id": 3, "name": f"Zone 3 - {crop3_name}", "crop": crop3_name, "season": "Zaid/Horticulture", "kc": p3["kc"], "area": 800.0, "target": t3, "priority": p3["priority"], "sm": z3_sm},
         ]
 
         # 5. Cascaded 5-Stage Fuzzy Evaluation
@@ -182,6 +225,7 @@ class IndiaIrrigationService:
         ))
 
         zone_outputs: List[IndiaZoneAllocation] = []
+        raw_requests: Dict[int, float] = {}
         fuzzy_requests: Dict[int, float] = {}
         priorities: Dict[int, float] = {}
 
@@ -202,8 +246,12 @@ class IndiaIrrigationService:
             z_target = z["target"]
 
             # Stage 1: Soil Stress FIS
-            rsm = max(0.0, min(1.0, (z_sm - wp) / (fc - wp))) if fc > wp else 0.5
-            moisture_err = float(np.clip(z_target - z_sm, -30.0, 30.0))
+            # Relative Available Soil Moisture (RSM in [0, 1])
+            rsm = max(0.0, min(1.0, (z_sm - wp) / awc))
+            # Normalized moisture error mapped to FIS universe [-30.0, +30.0]
+            # Positive error = target > current (soil depleted below target, needs irrigation)
+            moisture_err = float(np.clip(((z_target - z_sm) / awc) * 20.0, -30.0, 30.0))
+
             soil_stress = float(fuzzy_service.instances["soil_stress"].evaluate(
                 rsm=rsm,
                 moisture_error=moisture_err,
@@ -238,6 +286,7 @@ class IndiaIrrigationService:
             ))
 
             weighted_req_l = req_l * (fis_alloc_factor / 100.0)
+            raw_requests[zid] = req_l
             fuzzy_requests[zid] = weighted_req_l
             priorities[zid] = z["priority"]
 
@@ -246,6 +295,7 @@ class IndiaIrrigationService:
                     "soil_stress": round(soil_stress, 1),
                     "water_demand": round(water_demand, 1),
                     "main_irrigation_command": round(main_cmd, 1),
+                    "allocation_factor": round(fis_alloc_factor, 1),
                     "rsm": round(rsm, 2),
                     "etc_mm_day": round(etc, 2),
                 }
@@ -281,14 +331,15 @@ class IndiaIrrigationService:
             available_supply_l=available_supply_l,
         )
 
-        total_req = sum(fuzzy_requests.values())
+        total_req = sum(raw_requests.values())
         total_alloc = sum(granted_allocations.values())
         is_constrained = (total_req > available_supply_l + 1e-4) or (total_alloc < total_req - 1e-2)
+        overall_fulfillment = round((total_alloc / total_req * 100.0) if total_req > 0 else 100.0, 1)
 
         for zo in zone_outputs:
             zid = zo.zone_id
             granted = granted_allocations.get(zid, 0.0)
-            req = fuzzy_requests.get(zid, 0.0)
+            req = raw_requests.get(zid, 0.0)
             ratio = (granted / req * 100.0) if req > 0.0 else 100.0
             zo.allocated_liters = round(granted, 1)
             zo.fulfillment_ratio_pct = round(ratio, 1)
@@ -299,28 +350,44 @@ class IndiaIrrigationService:
             else:
                 zo.status = "DEFICIT (Priority-Protected)"
 
-        # 7. Generate 24-Hour Predictive Closed-Loop Telemetry
+        # 7. Generate 24-Hour Predictive Closed-Loop Telemetry with Physical Root Depths
         hourly_series: List[IndiaSimulationTimestep] = []
         curr_sm1 = zones_def[0]["sm"]
         curr_sm2 = zones_def[1]["sm"]
         curr_sm3 = zones_def[2]["sm"]
+        root_z1 = p1.get("root_depth_m", 1.0)
+        root_z2 = p2.get("root_depth_m", 1.0)
+        root_z3 = p3.get("root_depth_m", 0.8)
+
+        z1_alloc = granted_allocations.get(1, 0.0)
+        z2_alloc = granted_allocations.get(2, 0.0)
+        z3_alloc = granted_allocations.get(3, 0.0)
 
         for h in range(24):
             time_str = f"{h:02d}:00"
-            # Hourly diurnal temperature & radiation
+            # Diurnal temperature & radiation cycle
             t_h = weather.temperature_c + 4.0 * math.sin((h - 9) * math.pi / 12.0)
             rad_h = max(0.0, weather.solar_radiation_w_m2 * math.sin((h - 6) * math.pi / 12.0)) if 6 <= h <= 18 else 0.0
             et0_h = max(0.0, (et0_val / 24.0) * (rad_h / (weather.solar_radiation_w_m2 + 1e-3) * 2.0 if rad_h > 0 else 0.2))
 
-            # Simulate irrigation pulse between 06:00 and 08:00
-            irrig_l = (total_alloc / 2.0) if h in [6, 7] else 0.0
+            # Scheduled irrigation pulse applied between 06:00 and 08:00
+            irrig_h1 = (z1_alloc / 2.0) if h in [6, 7] else 0.0
+            irrig_h2 = (z2_alloc / 2.0) if h in [6, 7] else 0.0
+            irrig_h3 = (z3_alloc / 2.0) if h in [6, 7] else 0.0
+            total_irrig_h = irrig_h1 + irrig_h2 + irrig_h3
 
-            # Dynamic soil water step for Zone 1
-            delta_irrig_pct = (irrig_l * 0.4 / (zones_def[0]["area"] * 10.0)) * 100.0
-            delta_et_pct = (et0_h * zones_def[0]["kc"] / 10.0)
-            curr_sm1 = max(wp, min(fc + 2.0, curr_sm1 + delta_irrig_pct - delta_et_pct))
-            curr_sm2 = max(wp, min(fc + 2.0, curr_sm2 + (delta_irrig_pct * 0.8) - (delta_et_pct * 0.9)))
-            curr_sm3 = max(wp, min(fc + 2.0, curr_sm3 + (delta_irrig_pct * 0.6) - (delta_et_pct * 1.1)))
+            # Physical 1D Soil Water Balance (Applied mm / (10 * Root Depth))
+            d_irrig1_pct = ((irrig_h1 / zones_def[0]["area"]) / (10.0 * root_z1)) * 100.0
+            d_et1_pct = ((et0_h * zones_def[0]["kc"]) / (10.0 * root_z1)) * 100.0
+            curr_sm1 = max(wp, min(fc + 2.0, curr_sm1 + d_irrig1_pct - d_et1_pct))
+
+            d_irrig2_pct = ((irrig_h2 / zones_def[1]["area"]) / (10.0 * root_z2)) * 100.0
+            d_et2_pct = ((et0_h * zones_def[1]["kc"]) / (10.0 * root_z2)) * 100.0
+            curr_sm2 = max(wp, min(fc + 2.0, curr_sm2 + d_irrig2_pct - d_et2_pct))
+
+            d_irrig3_pct = ((irrig_h3 / zones_def[2]["area"]) / (10.0 * root_z3)) * 100.0
+            d_et3_pct = ((et0_h * zones_def[2]["kc"]) / (10.0 * root_z3)) * 100.0
+            curr_sm3 = max(wp, min(fc + 2.0, curr_sm3 + d_irrig3_pct - d_et3_pct))
 
             hourly_series.append(
                 IndiaSimulationTimestep(
@@ -333,7 +400,7 @@ class IndiaIrrigationService:
                     zone1_moisture=round(curr_sm1, 1),
                     zone2_moisture=round(curr_sm2, 1),
                     zone3_moisture=round(curr_sm3, 1),
-                    irrigation_liters=round(irrig_l, 1),
+                    irrigation_liters=round(total_irrig_h, 1),
                 )
             )
 
@@ -363,11 +430,13 @@ class IndiaIrrigationService:
                 "stage2_weather_stress_pct": round(weather_stress, 1),
                 "stage3_water_demand_pct": first_zone_metrics.get("water_demand", 45.0),
                 "stage4_main_command_pct": first_zone_metrics.get("main_irrigation_command", 40.0),
+                "stage5_allocation_factor_pct": first_zone_metrics.get("allocation_factor", 91.6),
                 "stage5_water_allocation_active": True,
             },
             zone_allocations=zone_outputs,
             total_requested_liters=round(total_req, 1),
             total_allocated_liters=round(total_alloc, 1),
+            overall_fulfillment_ratio_pct=overall_fulfillment,
             available_supply_liters=round(available_supply_l, 1),
             is_supply_constrained=is_constrained,
             hourly_telemetry=hourly_series,

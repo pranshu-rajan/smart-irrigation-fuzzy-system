@@ -117,6 +117,7 @@ class IndiaEvaluationResponse(BaseModel):
     zone_allocations: List[IndiaZoneAllocation]
     total_requested_liters: float
     total_allocated_liters: float
+    overall_fulfillment_ratio_pct: Optional[float] = Field(100.0, description="Overall water fulfillment across all zones (%)")
     available_supply_liters: float
     is_supply_constrained: bool = Field(..., alias="is_supply_constrained")
     hourly_telemetry: List[IndiaSimulationTimestep]

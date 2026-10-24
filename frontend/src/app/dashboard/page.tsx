@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import IndiaInteractiveMap, { SelectedLocation } from '@/components/IndiaInteractiveMap';
@@ -79,6 +79,10 @@ export default function DashboardPage() {
   const [loadingAdvisory, setLoadingAdvisory] = useState<boolean>(false);
   const [evalHistory, setEvalHistory] = useState<Array<{ district: string; state: string; timestamp: string; et0: number; allocated: number }>>([]);
   const [reservoirStoragePct, setReservoirStoragePct] = useState<number>(75);
+  const [tavilyCredits, setTavilyCredits] = useState<{ remaining: number; total: number }>({ remaining: 942, total: 1000 });
+
+  // In-session cache for AI Advisories to prevent redundant Tavily credit consumption
+  const advisoryCacheRef = useRef<Record<string, any>>({});
 
   // 2026 Interactive Features State
   const [climateScenario, setClimateScenario] = useState<'live' | 'heatwave' | 'monsoon' | 'drought' | 'windy'>('live');
@@ -163,8 +167,16 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Fetch Groq AI Agronomist advisory
+  // Fetch Groq AI Agronomist advisory (with session caching to protect Tavily search credits)
   const fetchAdvisory = async (evaluation: any) => {
+    const distKey = `${evaluation.location?.district || selectedLoc.district}_${evaluation.zone_allocations?.[0]?.crop || 'crop'}`;
+    
+    // Check in-session cache first (0 network calls, 0 Tavily credits consumed)
+    if (advisoryCacheRef.current[distKey]) {
+      setAdvisory(advisoryCacheRef.current[distKey]);
+      return;
+    }
+
     setLoadingAdvisory(true);
     try {
       const adv = await api.getIndiaAgrometAdvisory({
@@ -177,6 +189,8 @@ export default function DashboardPage() {
         current_temp_c: evaluation.weather?.temperature_c || 28.0,
         current_humidity_pct: evaluation.weather?.humidity_percent || 55.0,
       });
+      // Store in session cache
+      advisoryCacheRef.current[distKey] = adv;
       setAdvisory(adv);
     } catch (err) {
       console.warn('Could not fetch agromet advisory:', err);
@@ -254,6 +268,14 @@ export default function DashboardPage() {
   // Initial load on mount
   useEffect(() => {
     evaluateLocation(DEFAULT_LOCATION, reservoirStoragePct, climateScenario, zoneCropOverrides);
+    // Fetch live Tavily credit ledger status
+    api.getTavilyCreditStatus()
+      .then((data) => {
+        if (data && data.credits_remaining !== undefined) {
+          setTavilyCredits({ remaining: data.credits_remaining, total: data.total_credits || 1000 });
+        }
+      })
+      .catch(() => {});
   }, [evaluateLocation]);
 
   // Handle map selection
@@ -745,11 +767,15 @@ export default function DashboardPage() {
               <Bot className="h-4.5 w-4.5" />
             </div>
             <div>
-              <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-sm sm:text-base font-bold text-slate-900 flex flex-wrap items-center gap-2">
                 <span>AI Agronomist Field Copilot</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-200 px-2 py-0.2 text-[10px] font-semibold text-emerald-800">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-200 px-2 py-0.5 text-[10px] font-semibold text-emerald-800">
                   <Sparkles className="h-2.5 w-2.5" />
                   Groq 70B • Tavily Live Search
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-cyan-50 border border-cyan-200 px-2 py-0.5 text-[10px] font-semibold text-cyan-800 font-mono">
+                  <ShieldCheck className="h-2.5 w-2.5 text-cyan-600" />
+                  Tavily Guard: {tavilyCredits.remaining}/{tavilyCredits.total} Credits (7-Day Disk Cache Active)
                 </span>
               </h2>
             </div>

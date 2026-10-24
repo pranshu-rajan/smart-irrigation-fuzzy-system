@@ -61,3 +61,10 @@ def get_agromet_advisory(request: IndiaAgrometAdvisoryRequest) -> IndiaAgrometAd
             status_code=500,
             detail=f"Error generating agromet advisory for '{request.district}': {str(e)}"
         )
+
+
+@router.get("/tavily-credits")
+def get_tavily_credit_status() -> Dict[str, Any]:
+    """Retrieve Tavily search credits ledger, cache count, and safety threshold status."""
+    from backend.app.services.tavily_service import tavily_search_service
+    return tavily_search_service.get_credit_status()

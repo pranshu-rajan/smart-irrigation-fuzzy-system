@@ -569,5 +569,13 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(params),
     }),
+  getTavilyCreditStatus: () =>
+    fetchApi<{
+      total_credits: number;
+      credits_used: number;
+      credits_remaining: number;
+      cache_entries_count: number;
+      safety_cutoff_threshold: number;
+    }>('/india/tavily-credits'),
 };
 
